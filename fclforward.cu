@@ -1,6 +1,6 @@
 #include "main.h"
 
-__global__ void forward_cuda(int* x, int * y, int * z) {
+__global__ void forward_cuda() {
 
 }
 extern "C" int full_forward_device(int *host_a, int *host_b, int *host_c ) {

@@ -22,7 +22,7 @@
 
 #include "main.h"
 
-extern "C" int full_forward_device(int *host_a, int *host_b, int *host_c );
+extern "C" int full_forward_device();
 
 
 
