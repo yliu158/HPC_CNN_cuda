@@ -1,4 +1,4 @@
-#include <main.h>
+#include "main.h"
 
 __global__ void forward_cuda(int* x, int * y, int * z) {
 
