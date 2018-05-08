@@ -22,6 +22,47 @@
 
 #include "main.h"
 
+extern "C" int full_forward_device(int *host_a, int *host_b, int *host_c );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 using std::size_t;
 using Precision = double;
 constexpr double DELTA_H = 1E-5;
@@ -1667,45 +1708,9 @@ main() {
         assert(a5(1, 1) == 1.1f);
         assert(a5(1, 2) == 1.1f);
     }
-
-    run3();
+    full_forward_device();
+    // run3();
 }
-
-extern "C" int full_forward_device(int *host_a, int *host_b, int *host_c );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
