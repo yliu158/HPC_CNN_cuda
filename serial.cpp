@@ -20,6 +20,8 @@
 #include <iostream>
 #include <iomanip>
 
+#include "main.h"
+
 using std::size_t;
 using Precision = double;
 constexpr double DELTA_H = 1E-5;
@@ -1668,6 +1670,44 @@ main() {
 
     run3();
 }
+
+extern "C" int full_forward_device(int *host_a, int *host_b, int *host_c );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
  * Everything below here is unused.
