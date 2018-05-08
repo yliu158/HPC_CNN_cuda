@@ -1,5 +1,4 @@
 run: serial.o fclforward.o link
-	./test
 
 serial.o: serial.cpp main.h
 	g++ -std=c++17 -c serial.cpp main.h
