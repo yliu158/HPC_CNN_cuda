@@ -1,12 +1,19 @@
 #include "main.h"
 
+__global__ void dot_product() {
+
+}
+
 __global__ void full_forward(int* weight, int* input, int* output) {
   int index = threadIdx.x + blockDim.x*threadIdx.y;
   output[index] = weight[index] * input[index];
+  dim3 grid_size(64,1,1);
+  dim3 block_size(7,7,1);
+  dot_product<<<grid_size, block_size>>>();
 }
 
 void full_device_forward(int * w, int * i, int * o) {
-  printf("test of cuda forward function.");
+  printf("test of cuda forward function.\n");
   int *d_w, *d_i, *d_o;
   cudaMalloc((int**)&d_w, sizeof(int)*16);
   cudaMalloc((int**)&d_i, sizeof(int)*16);
@@ -14,9 +21,9 @@ void full_device_forward(int * w, int * i, int * o) {
   cudaMemcpy(d_w, w, sizeof(int)*16,cudaMemcpyHostToDevice);
   cudaMemcpy(d_i, i, sizeof(int)*16,cudaMemcpyHostToDevice);
   cudaMemcpy(d_o, o, sizeof(int)*16,cudaMemcpyHostToDevice);
-  dim3 block_size(1,1,1);
-  dim3 thread_size(4,4,1);
-  full_forward<<<block_size, thread_size>>>(d_w, d_i, d_o);
+  dim3 grid_size(1,1,1);
+  dim3 block_size(4,4,1);
+  full_forward<<<grid_size, block_size>>>(d_w, d_i, d_o);
   cudaMemcpy(w, d_w, sizeof(int)*16,cudaMemcpyDeviceToHost);
   cudaMemcpy(i, d_i, sizeof(int)*16,cudaMemcpyDeviceToHost);
   cudaMemcpy(o, d_o, sizeof(int)*16,cudaMemcpyDeviceToHost);
