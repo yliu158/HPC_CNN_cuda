@@ -984,8 +984,6 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     }
 }
 
-void full_device_forward(int * in_host, int * we_host, int * ou_host);
-
 /*
  * FullyConnectedLayer
  */
@@ -1232,6 +1230,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::check_downstream_derivative(const int l
     }
 }
 
+void full_device_forward(double * w, double * i, double * o);
 
 template <typename IN_DIMS, size_t N_NEURONS>
 void
@@ -1266,30 +1265,8 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     }
 
     // cuda method
-                  // int *w, *i, *o;
-                  // w = (int*)malloc(sizeof(int)*16);
-                  // i = (int*)malloc(sizeof(int)*16);
-                  // o = (int*)malloc(sizeof(int)*16);
-                  //
-                  // for (int e = 0; e < 16; ++e) {
-                  //   i[e] = 2;
-                  //   w[e] = e;
-                  //   o[e] = 0;
-                  //   printf("%d  %d  %d\n", w[e], i[e], o[e]);
-                  // }
 
-                  // full_device_forward(w, i, o);
-
-                  // for (int j = 0; j < 16; ++j) {
-                  //   printf("%d\n", o[j]);
-                  // }
-                  // free(w);
-                  // free(i);
-                  // free(o);
-
-    
-
-
+    full_device_forward(&weight, &input, &output);
 }
 
 
