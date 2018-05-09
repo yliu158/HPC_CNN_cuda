@@ -34,7 +34,7 @@ __global__ void padding(float* origin, float* padded) {
 
 template <typename IN_DIMS, size_t N_FILTERS>
 void
-conv_forward_device(const Input &input,
+ConvolutionalLayer<IN_DIMS, N_FILTERS>::conv_forward_device(const Input &input,
   const Filter &filter, const Bias &bias, Output &output) {
     // dim3 grids(2,2,1);
     // dim3 blocks(16, 16, 1);
