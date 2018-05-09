@@ -1,15 +1,8 @@
 #include "main.h"
 
-__global__ void dot_product() {
-
-}
-
 __global__ void full_forward(int* weight, int* input, int* output) {
   int index = threadIdx.x + blockDim.x*threadIdx.y;
   output[index] = weight[index] * input[index];
-  dim3 grid_size(64,1,1);
-  dim3 block_size(7,7,1);
-  dot_product<<<grid_size, block_size>>>();
 }
 
 void full_device_forward(int * w, int * i, int * o) {
