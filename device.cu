@@ -1,25 +1,42 @@
 #include "main.h"
 
 __global__ void full_forward(int* weight, int* input, int* output) {
-
+  int index = threadIdx.x + threadDim.x*threadIdx.y;
+  output[index] = weight[index] * input[index];
 }
 
-template <typename IN_DIMS, size_t N_NEURONS>
-void
-FullyConnectedLayer<IN_DIMS, N_NEURONS>::device_forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias, const Array<double, N_NEURONS> &dropped, Output &output) {
+void full_device_forward(int * in_host, int * we_host, int * ou_host) {
   printf("test of cuda forward function.");
   int *w, *i, *o;
-  w = (int*)malloc(sizeof(int)); 
-  i = (int*)malloc(sizeof(int));
-  o = (int*)malloc(sizeof(int));
-  int *d_w, *d_i, *d_o;
-  cudaMalloc((int**)&d_w, sizeof(int));
-  cudaMalloc((int**)&d_i, sizeof(int));
-  cudaMalloc((int**)&d_o, sizeof(int));
-  cudaMemcpy(d_w, w, sizeof(int),cudaMemcpyHostToDevice);
-  cudaMemcpy(d_i, i, sizeof(int),cudaMemcpyHostToDevice);
-  cudaMemcpy(d_o, o, sizeof(int),cudaMemcpyHostToDevice);
+  w = (int*)malloc(sizeof(int)*16);
+  i = (int*)malloc(sizeof(int)*16);
+  o = (int*)malloc(sizeof(int)*16);
 
+  for (int e = 0; e < 16; ++e) {
+    i[e] = 2;
+    w[e] = e;
+    o[e] = 0;
+    printf("%d  %d  %d\n", w[e], i[e], o[e]);
+  }
+
+
+  int *d_w, *d_i, *d_o;
+  cudaMalloc((int**)&d_w, sizeof(int)*16);
+  cudaMalloc((int**)&d_i, sizeof(int)*16);
+  cudaMalloc((int**)&d_o, sizeof(int)*16);
+  cudaMemcpy(d_w, w, sizeof(int)*16,cudaMemcpyHostToDevice);
+  cudaMemcpy(d_i, i, sizeof(int)*16,cudaMemcpyHostToDevice);
+  cudaMemcpy(d_o, o, sizeof(int)*16,cudaMemcpyHostToDevice);
+  dim3 block_size(1,1,1);
+  dim3 thread_size(4,4,1);
+  full_forward<<<block_size, thread_size>>>(d_w, d_i, d_o);
+  cudaMemcpy(w, d_w, sizeof(int)*16,cudaMemcpyDeviceToHost);
+  cudaMemcpy(i, d_i, sizeof(int)*16,cudaMemcpyDeviceToHost);
+  cudaMemcpy(o, d_o, sizeof(int)*16,cudaMemcpyDeviceToHost);
+
+  for (int e = 0; e < 16; ++e) {
+    printf("%d\n", o[e]);
+  }
   free(w);
   free(i);
   free(o);

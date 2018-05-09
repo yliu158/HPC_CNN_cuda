@@ -984,6 +984,8 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     }
 }
 
+void full_device_forward(int * in_host, int * we_host, int * ou_host);
+
 /*
  * FullyConnectedLayer
  */
@@ -1035,7 +1037,6 @@ class FullyConnectedLayer : public HasInputLayer<IN_DIMS>, public HasOutputLayer
             this->forward(in, this->m_weight, this->m_bias, this->m_all_kept, out);
             return this->next_layer->predict(out);
         }
-        void device_forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias, const Array<double, N_NEURONS> &dropped, Output &output);
 
     private:
 
