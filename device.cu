@@ -5,7 +5,7 @@ __global__ void full_forward(int* weight, int* input, int* output) {
   output[index] = weight[index] * input[index];
 }
 
-void full_device_forward(int * in_host, int * we_host, int * ou_host) {
+void full_device_forward(int * w, int * i, int * o) {
   printf("test of cuda forward function.");
   int *d_w, *d_i, *d_o;
   cudaMalloc((int**)&d_w, sizeof(int)*16);
