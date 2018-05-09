@@ -1674,6 +1674,8 @@ main() {
 
     // full_forward_device();
     // run3();
+    int *x, *y, *z;
+    full_device_forward(x, y, z);
 }
 
 
