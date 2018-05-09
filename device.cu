@@ -1,7 +1,7 @@
 #include "main.h"
 
 __global__ void full_forward(int* weight, int* input, int* output) {
-  int index = threadIdx.x + threadDim.x*threadIdx.y;
+  int index = threadIdx.x + blockDim.x*threadIdx.y;
   output[index] = weight[index] * input[index];
 }
 
