@@ -768,10 +768,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::check_downstream_derivative(const int la
 
 template <typename IN_DIMS, size_t N_FILTERS>
 void
-conv_forward_device();
-
-template <typename IN_DIMS, size_t N_FILTERS>
-void
 ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter &filter, const Bias &bias, Output &output) {
 
     Array<double, IN_D, IN_H + 2*PADDING, IN_W + 2*PADDING> in_padded;
@@ -1039,6 +1035,7 @@ class FullyConnectedLayer : public HasInputLayer<IN_DIMS>, public HasOutputLayer
             this->forward(in, this->m_weight, this->m_bias, this->m_all_kept, out);
             return this->next_layer->predict(out);
         }
+        void device_forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias, const Array<double, N_NEURONS> &dropped, Output &output);
 
     private:
 
@@ -1233,10 +1230,6 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::check_downstream_derivative(const int l
         }
     }
 }
-
-template <typename IN_DIMS, size_t N_NEURONS>
-int full_forward_device(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias,
- const Array<double, N_NEURONS> &dropped, Output &output);
 
 
 template <typename IN_DIMS, size_t N_NEURONS>
