@@ -768,7 +768,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::check_downstream_derivative(const int la
 
 template <typename IN_DIMS, size_t N_FILTERS>
 void
-ConvolutionalLayer<IN_DIMS, N_FILTERS>::conv_forward_device(const Input &input, const Filter &filter, const Bias &bias, Output &output);
+conv_forward_device();
 
 template <typename IN_DIMS, size_t N_FILTERS>
 void
