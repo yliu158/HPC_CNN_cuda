@@ -20,10 +20,9 @@ void full_device_forward(int * w, int * i, int * o) {
   cudaMemcpy(w, d_w, sizeof(int)*16,cudaMemcpyDeviceToHost);
   cudaMemcpy(i, d_i, sizeof(int)*16,cudaMemcpyDeviceToHost);
   cudaMemcpy(o, d_o, sizeof(int)*16,cudaMemcpyDeviceToHost);
-
-  for (int e = 0; e < 16; ++e) {
-    printf("%d\n", o[e]);
-  }
+  cudaFree(d_w);
+  cudaFree(d_i);
+  cudaFree(d_o);
 }
 // __global__ void conv_forward() {
 //
