@@ -1688,6 +1688,9 @@ main() {
 
     full_device_forward(w, i, o);
 
+    for (int j = 0; j < 16; ++j) {
+      printf("%d\n", o[j]);
+    }
     free(w);
     free(i);
     free(o);
