@@ -768,6 +768,10 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::check_downstream_derivative(const int la
 
 template <typename IN_DIMS, size_t N_FILTERS>
 void
+conv_forward_device(const Input &input, const Filter &filter, const Bias &bias, Output &output);
+
+template <typename IN_DIMS, size_t N_FILTERS>
+void
 ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter &filter, const Bias &bias, Output &output) {
 
     Array<double, IN_D, IN_H + 2*PADDING, IN_W + 2*PADDING> in_padded;
@@ -1593,7 +1597,7 @@ run3() {
 
             // size_t training_index = 0;
 
-            for (int r = 0; r < 10; r++) {
+            for (int r = 0; r < 600; r++) {
 
                 if (r%50 == 0) {
 
@@ -1672,7 +1676,9 @@ main() {
         assert(a5(1, 1) == 1.1f);
         assert(a5(1, 2) == 1.1f);
     }
-    full_forward_device();
+
+
+    // full_forward_device();
     // run3();
 }
 
