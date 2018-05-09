@@ -22,47 +22,6 @@
 
 #include "main.h"
 
-extern "C" int full_forward_device();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 using std::size_t;
 using Precision = double;
 constexpr double DELTA_H = 1E-5;
@@ -1270,6 +1229,11 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::check_downstream_derivative(const int l
         }
     }
 }
+
+template <typename IN_DIMS, size_t N_NEURONS>
+int full_forward_device(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias,
+  const Array<double, N_NEURONS> &dropped, Output &output);
+
 
 template <typename IN_DIMS, size_t N_NEURONS>
 void
