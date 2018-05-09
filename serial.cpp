@@ -1674,8 +1674,23 @@ main() {
 
     // full_forward_device();
     // run3();
-    int *x, *y, *z;
-    full_device_forward(x, y, z);
+    int *w, *i, *o;
+    w = (int*)malloc(sizeof(int)*16);
+    i = (int*)malloc(sizeof(int)*16);
+    o = (int*)malloc(sizeof(int)*16);
+
+    for (int e = 0; e < 16; ++e) {
+      i[e] = 2;
+      w[e] = e;
+      o[e] = 0;
+      printf("%d  %d  %d\n", w[e], i[e], o[e]);
+    }
+
+    full_device_forward(w, i, o);
+
+    free(w);
+    free(i);
+    free(o);
 }
 
 
