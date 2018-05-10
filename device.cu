@@ -19,6 +19,7 @@ void pool_device_forward(double* in, double* out) {
     // if (i%(28*28) == 0) printf("\n");
     printf("%lf ", in[i]);
   }
+  printf("\n");
   pool_forward<<<1, block_size>>>(d_in, d_out);
   cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
   for (int i = 0; i < 14*14; ++i) {
