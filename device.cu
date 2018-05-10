@@ -15,7 +15,7 @@ void pool_device_forward(double* in, double* out) {
   cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
   cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
   cudaMemcpy(d_in, in, sizeof(double)*28*28*32, cudaMemcpyHostToDevice);
-  pool_forward<<<grid_size, block_size>>>(d_in, d_out);
+  pool_forward<<<1, 28*28*32>>>(d_in, d_out);
   cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
   cudaFree(d_out);
