@@ -1269,7 +1269,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     // printf(typeid(weight).name());
     // printf(typeid(input).name());
     // printf(typeid(output).name());
-    full_device_forward(&weight[0][0][0][0], &input[0][0][0], &output[0][0][0]);
+    full_device_forward((double*)&weight[0][0][0][0], (double*)&input[0][0][0], (double*)&output[0][0][0]);
 }
 
 
