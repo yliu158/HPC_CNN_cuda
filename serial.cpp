@@ -1711,17 +1711,17 @@ main() {
     in = (double*)malloc(sizeof(double)*28*28*32);
     out = (double*)malloc(sizeof(double)*14*14*32);
     for (int i = 0; i < 28*28*32; ++i) {
-      in[i] = rand()%2;
-      printf("%d ", in[i]);
+      in[i] = (double)(rand()%2);
       if (i%28 == 0)printf("\n");
       if (i%(28*28) == 0) printf("\n");
+      printf("%lf ", in[i]);
       out[i/2] = 0;
     }
 
     pool_device_forward(in, out);
     for (int i = 0; i < 14*14*32; ++i) {
-      printf("%d ", out[i]);
       if (i%14 == 0) printf("\n");
+      printf("%lf ", out[i]);
     }
     free(in);
     free(out);
