@@ -11,13 +11,13 @@ __global__ void pool_forward(double* in, double* out) {
 
 void pool_device_forward(double* in, double* out) {
   dim3 block_size(28,28,32);
-  dim3 grid_size(1,1,1);
+  dim3 grid_size(32,1,1);
   double *d_in, *d_out;
   cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
   cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
   cudaMemcpy(d_in, in, sizeof(double)*28*28*32, cudaMemcpyHostToDevice);
 
-  pool_forward<<<1, 28*28*32>>>(d_in, d_out);
+  pool_forward<<<grid_size, block_size>>>(d_in, d_out);
 
   cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
