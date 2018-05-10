@@ -2,7 +2,7 @@
 
 __global__ void pool_forward(double* in, double* out) {
   int out_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
-  int in_id = threadIdx.x*2 + (threadIdx.y*2)*(blockDim.x*2) + blockIdx.x*(blockDim.x*blockDim.y)*4;
+  int in_id = threadIdx.x*2 + (threadIdx.y*2)*(blockDim.x*2) + blockIdx.x*(blockDim.x*blockDim.y)*14;
   // if (out[o_id] < in[t_id]) {
   //   out[o_id] = in[t_id];
   //   // printf("tid:%d     %lf -> %lf\n", t_id, out[o_id], in[o_id]);
@@ -19,16 +19,16 @@ __global__ void pool_forward(double* in, double* out) {
 }
 
 void pool_device_forward(double* in, double* out) {
-  dim3 block_size(4,4,1);
+  dim3 block_size(14,14,1);
   dim3 grid_size(2,1,1);
   double *d_in, *d_out;
-  cudaMalloc((double**)&d_in, sizeof(double)*8*8*2);
-  cudaMalloc((double**)&d_out, sizeof(double)*4*4*2);
-  cudaMemcpy(d_in, in, sizeof(double)*8*8*2, cudaMemcpyHostToDevice);
+  cudaMalloc((double**)&d_in, sizeof(double)*28*28*2);
+  cudaMalloc((double**)&d_out, sizeof(double)*14*14*2);
+  cudaMemcpy(d_in, in, sizeof(double)*28*28*2, cudaMemcpyHostToDevice);
 
   pool_forward<<<grid_size, block_size>>>(d_in, d_out);
 
-  cudaMemcpy(out, d_out, sizeof(double)*4*4*2, cudaMemcpyDeviceToHost);
+  cudaMemcpy(out, d_out, sizeof(double)*14*14*2, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
   cudaFree(d_out);
 }
@@ -112,11 +112,11 @@ void test_device (int* x, int* y, int* z) {
 //     dim3 blocks(2, 2, 1);
 //     double *in, *out;
 //     double *d_in, *d_out;
-//     in = (double*)malloc(sizeof(double)*8*8);
+//     in = (double*)malloc(sizeof(double)*28*28);
 //     out = (double*)malloc(sizeof(double)*2*2);
-//     cudaMalloc((double**)&d_in, sizeof(double)*8*8);
+//     cudaMalloc((double**)&d_in, sizeof(double)*28*28);
 //     cudaMalloc((double**)&d_out, sizeof(double)*2*2);
-//     cudaMemcpy(d_in, in, sizeof(double)*8*8, cudaMemcpyHostToDevice);
+//     cudaMemcpy(d_in, in, sizeof(double)*28*28, cudaMemcpyHostToDevice);
 //     cudaMemcpy(d_out, out, sizeof(double)*2*2, cudaMemcpyHostToDevice);
 //
 //     padding<<<grids,blocks>>>(in, out);
