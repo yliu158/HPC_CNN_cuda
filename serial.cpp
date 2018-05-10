@@ -19,6 +19,7 @@
 #include <random>
 #include <iostream>
 #include <iomanip>
+#include <typeinfo>
 
 #include "main.h"
 
@@ -1265,8 +1266,10 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     }
 
     // cuda method
-    printf(typeid(input.begin()));
-    full_device_forward(weight.begin(), input.begin(), output.begin());
+    printf(typeid(weight));
+    printf(typeid(input));
+    printf(typeid(output));
+    // full_device_forward(weight.begin(), input.begin(), output.begin());
 }
 
 
