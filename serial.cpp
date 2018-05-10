@@ -1238,6 +1238,7 @@ void
 FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias,
  const Array<double, N_NEURONS> &dropped, Output &output) {
     // Connect each neuron to everything.
+
     for (size_t i = 0; i < N_NEURONS; i++) {
         double &out(output[0][0][i]);
         out = 0;
@@ -1245,6 +1246,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
             for (size_t in_i = 0; in_i < IN_H; in_i++) {
                 for (size_t in_j = 0; in_j < IN_W; in_j++) {
                     out += weight[i][in_h][in_i][in_j]*input[in_h][in_i][in_j];
+                    printf("N_NEURONS%d IN_D%d IN_H%d IN_W%d\n", N_NEURONS, IN_D, IN_H, IN_W);
                 }
             }
         }
@@ -1262,16 +1264,16 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
             fprintf(stderr, "%d expanded by %f\n", int(i), dropped(i));
         }
         */
-        printf("out: %d", out);
+
         out *= dropped(i);
     }
-    printf("%s\n", "compare host and device");
-    Output output_device;
-    full_device_forward((double*)&weight[0][0][0][0], (double*)&input[0][0][0], (double*)&output_device[0][0][0]);
-    for (int i = 0; i < N_NEURONS; ++i) {
-      printf("host%d  device%d\n", output[0][0][i], output_device[0][0][i]);
-      // assert(output[0][0][i] == output_device[0][0][i]);
-    }
+    // printf("%s\n", "compare host and device");
+    // Output output_device;
+    // full_device_forward((double*)&weight[0][0][0][0], (double*)&input[0][0][0], (double*)&output_device[0][0][0]);
+    // for (int i = 0; i < N_NEURONS; ++i) {
+    //   printf("host%d  device%d\n", output[0][0][i], output_device[0][0][i]);
+    //   // assert(output[0][0][i] == output_device[0][0][i]);
+    // }
     exit(1);
 }
 
