@@ -1238,15 +1238,34 @@ void
 FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias,
  const Array<double, N_NEURONS> &dropped, Output &output) {
     // Connect each neuron to everything.
+    printf("weight\n");
+    for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
+        for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
+            for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
+                printf("%d\n",weight[0][in_h][in_i][in_j]);
 
-    for (size_t i = 0; i < N_NEURONS; i++) {
+            }
+        }
+    }
+    printf("input\n");
+    for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
+        for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
+            for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
+              printf("%d\n",input[in_h][in_i][in_j]);
+            }
+        }
+    }
+    exit(1);
+
+
+    for (size_t i = 0; i < N_NEURONS; i++) {// 64
         double &out(output[0][0][i]);
         out = 0;
-        for (size_t in_h = 0; in_h < IN_D; in_h++) {
-            for (size_t in_i = 0; in_i < IN_H; in_i++) {
-                for (size_t in_j = 0; in_j < IN_W; in_j++) {
+        for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
+            for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
+                for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
                     out += weight[i][in_h][in_i][in_j]*input[in_h][in_i][in_j];
-                    printf("N_NEURONS%d IN_D%d IN_H%d IN_W%d\n", N_NEURONS, IN_D, IN_H, IN_W);
+
                 }
             }
         }
