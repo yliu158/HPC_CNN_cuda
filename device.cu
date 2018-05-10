@@ -1,7 +1,7 @@
 #include "main.h"
 
 __global__ void full_forward(double* weight, double* input, double* output) {
-  
+
 }
 
 void full_device_forward(double * w, double * i, double * o) {
@@ -10,7 +10,7 @@ void full_device_forward(double * w, double * i, double * o) {
   cudaMalloc((double**)&d_w, sizeof(double)*7*7*64*1024);
   cudaMalloc((double**)&d_i, sizeof(double)*7*7*64);
   cudaMalloc((double**)&d_o, sizeof(double)*1024);
-  cudaMemcpy(d_w, w, sizeof()*7*7*64*1024,cudaMemcpyHostToDevice);
+  cudaMemcpy(d_w, w, sizeof(double)*7*7*64*1024,cudaMemcpyHostToDevice);
   cudaMemcpy(d_i, i, sizeof(double)*7*7*64,cudaMemcpyHostToDevice);
   cudaMemcpy(d_o, o, sizeof(double)*1024,cudaMemcpyHostToDevice);
   dim3 grid_size(1024,1,1);
