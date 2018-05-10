@@ -6,7 +6,6 @@ __global__ void pool_forward(double* in, double* out) {
   if (in[t_id] > out[o_id]) {
     out[o_id] = 8;
   }
-  printf("%s\n", );
   printf("%lf %lf\n", in[t_id], out[o_id]);
 }
 
