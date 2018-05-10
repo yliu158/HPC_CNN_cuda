@@ -1264,6 +1264,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
         */
         out *= dropped(i);
     }
+    printf("%s\n", "compare host and device");
     Output output_device;
     full_device_forward((double*)&weight[0][0][0][0], (double*)&input[0][0][0], (double*)&output_device[0][0][0]);
     for (int i = 0; i < N_NEURONS; ++i) {
