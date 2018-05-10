@@ -1,28 +1,40 @@
 #include "main.h"
 
-__global__ void full_forward(double* weight, double* input, double* output) {
-  int threadId = threadIdx.x + blockDim.x*threadIdx.y + blockDim.x*blockDim.y*threadIdx.z;
-  int blockId = blockIdx.x;
-  output[blockId] += weight[threadId+blockId]*input[threadId];
-}
 
-void full_device_forward(double * w, double * i, double * o) {
-  printf("test of cuda forward function.\n");
-  double *d_w, *d_i, *d_o;
-  cudaMalloc((double**)&d_w, sizeof(double)*7*7*64*1024);
-  cudaMalloc((double**)&d_i, sizeof(double)*7*7*64);
-  cudaMalloc((double**)&d_o, sizeof(double)*1024);
-  cudaMemcpy(d_w, w, sizeof(double)*7*7*64*1024,cudaMemcpyHostToDevice);
-  cudaMemcpy(d_i, i, sizeof(double)*7*7*64,cudaMemcpyHostToDevice);
-  cudaMemcpy(d_o, o, sizeof(double)*1024,cudaMemcpyHostToDevice);
-  dim3 grid_size(1024,1,1);
-  dim3 block_size(7,7,64);
-  full_forward<<<grid_size, block_size>>>(d_w, d_i, d_o);
-  cudaMemcpy(o, d_o, sizeof(double)*1024,cudaMemcpyDeviceToHost);
-  cudaFree(d_w);
-  cudaFree(d_i);
-  cudaFree(d_o);
-}
+
+// __global__ void conv_forward(double* weight, double* input, double* output) {
+//
+// }
+//
+// void conv_device_forward(double * w, double * i, double * o) {
+//
+// }
+
+
+
+// __global__ void full_forward(double* weight, double* input, double* output) {
+//   int threadId = threadIdx.x + blockDim.x*threadIdx.y + blockDim.x*blockDim.y*threadIdx.z;
+//   int blockId = blockIdx.x;
+//   output[blockId] += weight[threadId+blockId]*input[threadId];
+// }
+//
+// void full_device_forward(double * w, double * i, double * o) {
+//   printf("test of cuda forward function.\n");
+//   double *d_w, *d_i, *d_o;
+//   cudaMalloc((double**)&d_w, sizeof(double)*7*7*64*1024);
+//   cudaMalloc((double**)&d_i, sizeof(double)*7*7*64);
+//   cudaMalloc((double**)&d_o, sizeof(double)*1024);
+//   cudaMemcpy(d_w, w, sizeof(double)*7*7*64*1024,cudaMemcpyHostToDevice);
+//   cudaMemcpy(d_i, i, sizeof(double)*7*7*64,cudaMemcpyHostToDevice);
+//   cudaMemcpy(d_o, o, sizeof(double)*1024,cudaMemcpyHostToDevice);
+//   dim3 grid_size(1024,1,1);
+//   dim3 block_size(7,7,64);
+//   full_forward<<<grid_size, block_size>>>(d_w, d_i, d_o);
+//   cudaMemcpy(o, d_o, sizeof(double)*1024,cudaMemcpyDeviceToHost);
+//   cudaFree(d_w);
+//   cudaFree(d_i);
+//   cudaFree(d_o);
+// }
 // __global__ void conv_forward() {
 //
 // }
