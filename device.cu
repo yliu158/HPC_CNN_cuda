@@ -2,7 +2,7 @@
 
 __global__ void pool_forward(double* in, double* out) {
   int out_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
-  int in_id = threadIdx.x*2 + (threadIdx.y*2)*(blockDim.x*2) + blockIdx.x*(blockDim.x*blockDim.y)*14;
+  int in_id = threadIdx.x*2 + (threadIdx.y*2)*(blockDim.x*2) + blockIdx.x*(blockDim.x*blockDim.y)*4;
   // if (out[o_id] < in[t_id]) {
   //   out[o_id] = in[t_id];
   //   // printf("tid:%d     %lf -> %lf\n", t_id, out[o_id], in[o_id]);
