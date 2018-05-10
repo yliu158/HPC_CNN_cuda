@@ -1710,9 +1710,9 @@ main() {
     // full_forward_device();
     // run3();
     double *in, *out;
-    in = (double*)malloc(sizeof(double)*8*8*32);
-    out = (double*)malloc(sizeof(double)*4*4*32);
-    for (int i = 0; i < 8*8*32; ++i) {
+    in = (double*)malloc(sizeof(double)*8*8*2);
+    out = (double*)malloc(sizeof(double)*4*4*2);
+    for (int i = 0; i < 8*8*2; ++i) {
       in[i] = (double)(rand()%5+1);
       if (i%8 == 0)printf("\n");
       if (i%(8*8) == 0) printf("\n");
@@ -1722,7 +1722,7 @@ main() {
 
     pool_device_forward(in, out);
 
-    for (int i = 0; i < 4*4*32; ++i) {
+    for (int i = 0; i < 4*4*2; ++i) {
       if (i%4 == 0) printf("\n");
       if (i%(4*4) == 0) printf("\n");
       printf("%lf ", out[i]);

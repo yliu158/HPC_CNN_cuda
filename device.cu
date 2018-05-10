@@ -10,15 +10,15 @@ __global__ void pool_forward(double* in, double* out) {
 
 void pool_device_forward(double* in, double* out) {
   dim3 block_size(8,8,1);
-  dim3 grid_size(32,1,1);
+  dim3 grid_size(2,1,1);
   double *d_in, *d_out;
-  cudaMalloc((double**)&d_in, sizeof(double)*8*8*32);
-  cudaMalloc((double**)&d_out, sizeof(double)*4*4*32);
-  cudaMemcpy(d_in, in, sizeof(double)*8*8*32, cudaMemcpyHostToDevice);
+  cudaMalloc((double**)&d_in, sizeof(double)*8*8*2);
+  cudaMalloc((double**)&d_out, sizeof(double)*4*4*2);
+  cudaMemcpy(d_in, in, sizeof(double)*8*8*2, cudaMemcpyHostToDevice);
 
   pool_forward<<<grid_size, block_size>>>(d_in, d_out);
 
-  cudaMemcpy(out, d_out, sizeof(double)*4*4*32, cudaMemcpyDeviceToHost);
+  cudaMemcpy(out, d_out, sizeof(double)*4*4*2, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
   cudaFree(d_out);
 }
@@ -99,21 +99,21 @@ void test_device (int* x, int* y, int* z) {
 //     // dim3 grids(2,2,1);
 //     // dim3 blocks(7*7*64*1024, 7*7*64*1024, 1);
 //     dim3 grids(1,1,1);
-//     dim3 blocks(32, 32, 1);
+//     dim3 blocks(2, 2, 1);
 //     double *in, *out;
 //     double *d_in, *d_out;
 //     in = (double*)malloc(sizeof(double)*8*8);
-//     out = (double*)malloc(sizeof(double)*32*32);
+//     out = (double*)malloc(sizeof(double)*2*2);
 //     cudaMalloc((double**)&d_in, sizeof(double)*8*8);
-//     cudaMalloc((double**)&d_out, sizeof(double)*32*32);
+//     cudaMalloc((double**)&d_out, sizeof(double)*2*2);
 //     cudaMemcpy(d_in, in, sizeof(double)*8*8, cudaMemcpyHostToDevice);
-//     cudaMemcpy(d_out, out, sizeof(double)*32*32, cudaMemcpyHostToDevice);
+//     cudaMemcpy(d_out, out, sizeof(double)*2*2, cudaMemcpyHostToDevice);
 //
 //     padding<<<grids,blocks>>>(in, out);
 //
 //     __syncthreads();
 //
-//     cudaMemcpy(d_out, out, sizeof(double)*32*32, cudaMemcpyDeviceToHost);
+//     cudaMemcpy(d_out, out, sizeof(double)*2*2, cudaMemcpyDeviceToHost);
 //     free(in); free(out);
 //     cudaFree(d_in); cudaFree(d_out);
 //     // __syncthreads();
