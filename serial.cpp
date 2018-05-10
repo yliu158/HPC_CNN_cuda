@@ -1722,7 +1722,7 @@ main() {
 
     pool_device_forward(in, out);
 
-    for (int i = 0; i < 14*14*32; ++i) {
+    for (int i = 0; i < 14*14; ++i) {
       if (i%14 == 0) printf("\n");
       if (i%(14*14) == 0) printf("\n");
       printf("%lf ", out[i]);
