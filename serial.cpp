@@ -1664,6 +1664,8 @@ run3() {
     }
 }
 
+void test_device (int* x, int* y, int* z);
+
 int
 main() {
 
