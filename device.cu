@@ -5,6 +5,7 @@ __global__ void pool_forward(double* in, double* out) {
   int o_id = threadIdx.x/2 + (threadIdx.y/2)*(blockDim.x/2) + blockIdx.x*gridDim.x/4;
   if (out[o_id] < in[t_id]) {
     out[o_id] = in[t_id];
+    printf("%lf -> %lf\n", out[o_id], in[o_id]);
   }
 }
 
