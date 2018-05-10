@@ -1262,7 +1262,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
             fprintf(stderr, "%d expanded by %f\n", int(i), dropped(i));
         }
         */
-        printf("output: %d", output[i]);
+        printf("output: %d", output[0][0][i]);
         out *= dropped(i);
     }
     printf("%s\n", "compare host and device");
