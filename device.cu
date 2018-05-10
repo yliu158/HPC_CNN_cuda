@@ -6,26 +6,39 @@ __global__ void pool_forward(double* in, double* out) {
   if (in[t_id] > out[o_id]) {
     out[o_id] = 8;
   }
-  printf("%lf %lf\n", in[t_id], out[o_id]);
-}
-
-__global__ void hello() {
-  int t_id = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.y*blockDim.x;
-  printf("Hello %d\n", t_id);
 }
 
 void pool_device_forward(double* in, double* out) {
-  // dim3 block_size(28*28*32);
-  // dim3 grid_size(1,1,1);
-  // double *d_in, *d_out;
-  // cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
-  // cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
-  // cudaMemcpy(d_in, in, sizeof(double)*28*28*32, cudaMemcpyHostToDevice);
-  // pool_forward<<<grid_size, block_size>>>(d_in, d_out);
-  // cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
-  // cudaFree(d_in);
-  // cudaFree(d_out);
-  hello<<<5,5>>>();
+  dim3 block_size(28*28*32);
+  dim3 grid_size(1,1,1);
+  double *d_in, *d_out;
+  cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
+  cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
+  cudaMemcpy(d_in, in, sizeof(double)*28*28*32, cudaMemcpyHostToDevice);
+  pool_forward<<<grid_size, block_size>>>(d_in, d_out);
+  cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
+  cudaFree(d_in);
+  cudaFree(d_out);
+}
+
+__global__ void add(int *x, int *y, int *z) {
+  z[threadIdx.x] = y[threadIdx.x] + x[threadIdx.x];
+}
+
+void test_device (int* x, int* y, int* z) {
+  int* d_x, *d_y, *d_z;
+  cudaMalloc((int**)&d_x, sizeof(int)*16);
+  cudaMalloc((int**)&d_y, sizeof(int)*16);
+  cudaMalloc((int**)&d_z, sizeof(int)*16);
+  cudaMemcpy(d_x, x, sizeof(int)*16, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_y, y, sizeof(int)*16, cudaMemcpyHostToDevice);
+
+  add<<<1,16>>> (d_x, d_y, d_z);
+
+  cudaMemcpy(z, d_z, sizeof(int)*16, cudaMemcpyDeviceToHost);
+  cudaFree(d_x);
+  cudaFree(d_y);
+  cudaFree(d_z);
 }
 
 // __global__ void conv_forward(double* weight, double* input, double* output) {
