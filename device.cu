@@ -3,11 +3,12 @@
 __global__ void pool_forward(double* in, double* out) {
   int t_id = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.y*blockDim.x;
   int o_id = threadIdx.x/2 + threadIdx.y/2*(blockDim.x/2) + threadIdx.z*(blockDim.y/2)*(blockDim.x/2);
-  if (in[t_id] > out[o_id]) {
-    out[o_id] = 8;
-  } else {
-    out[o_id] = 0.1111;
-  }
+  // if (in[t_id] > out[o_id]) {
+  //   out[o_id] = 8;
+  // } else {
+  //
+  // }
+  out[o_id] = 0.1111;
 }
 
 void pool_device_forward(double* in, double* out) {
