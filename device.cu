@@ -23,6 +23,7 @@ void pool_device_forward(double* in, double* out) {
 
 __global__ void add(int *x, int *y, int *z) {
   z[threadIdx.x] = y[threadIdx.x] + x[threadIdx.x];
+  printf("Hello %d\n", threadIdx.x);
 }
 
 void test_device (int* x, int* y, int* z) {
