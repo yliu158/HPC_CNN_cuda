@@ -6,6 +6,7 @@ __global__ void pool_forward(double* in, double* out) {
   if (in[t_id] > out[o_id]) {
     out[o_id] = 8;
   }
+  printf("%lf %lf\n", in[t_id], out[o_id]);
 }
 
 void pool_device_forward(double* in, double* out) {
@@ -14,19 +15,8 @@ void pool_device_forward(double* in, double* out) {
   cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
   cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
   cudaMemcpy(d_in, in, sizeof(double)*28*28*32, cudaMemcpyHostToDevice);
-  for (int i = 0; i < 28*28; ++i) {
-    if (i%28 == 0)printf("\n");
-    // if (i%(28*28) == 0) printf("\n");
-    printf("%lf ", in[i]);
-  }
-  printf("\n");
   pool_forward<<<1, block_size>>>(d_in, d_out);
   cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
-  for (int i = 0; i < 14*14; ++i) {
-    if (i%14 == 0) printf("\n");
-    // if (i%(14*14) == 0) printf("\n");
-    printf("%lf ", out[i]);
-  }
   cudaFree(d_in);
   cudaFree(d_out);
 }
