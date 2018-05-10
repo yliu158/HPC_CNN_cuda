@@ -1706,7 +1706,7 @@ main() {
 
 
     // full_forward_device();
-    run3();
+    // run3();
     double *in, *out;
     in = (double*)malloc(sizeof(double)*28*28);
     out = (double*)malloc(sizeof(double)*14*14);

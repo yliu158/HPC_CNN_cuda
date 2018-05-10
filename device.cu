@@ -1,12 +1,23 @@
 #include "main.h"
 
-__global__ void pool_forward() {
-
+__global__ void pool_forward(double* in, double* out) {
+  int t_id = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.y*blockDim.x;
+  int o_id = threadIdx.x/2 + threadIdx.y/2*(blockDim.x/2) + threadIdx.z*(blockDim.y/2)*(blockDim.x/2);
+  if (in[t_id] > out[o_id]) {
+    out[o_id] += in[t_id];
+  }
 }
 
-void pool_device_forward(double* i, double* o) {
-  dim3 grid_size();
-  
+void pool_device_forward(double* in, double* out) {
+  dim3 block_size(28*28*32);
+  double *d_in, *d_out;
+  cudaMalloc((double*)&d_in, sizeof(double)*28*28*32);
+  cudaMalloc((double*)&d_out, sizeof(double)*14*14*32);
+  cudaMemcpy(d_in, in, cudaMemcpyHostToDevice);
+  pool_forward<<<1, block_size>>>(d_in, d_out);
+  cudaMemcpy(out, d_out, cudaMemcpyDeviceToHost);
+  cudaFree(d_in);
+  cudaFree(d_out);
 }
 
 // __global__ void conv_forward(double* weight, double* input, double* output) {
