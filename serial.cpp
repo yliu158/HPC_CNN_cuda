@@ -1679,7 +1679,7 @@ main() {
 
 
     // full_forward_device();
-    // run3();
+    run3();
 }
 
 
