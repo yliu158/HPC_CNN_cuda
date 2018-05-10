@@ -5,19 +5,20 @@ __global__ void pool_forward(double* in, double* out) {
   int o_id = threadIdx.x/2 + (threadIdx.y/2)*(blockDim.x/2) + blockIdx.x*(blockDim.x*blockDim.y)/4;
   if (out[o_id] < in[t_id]) {
     out[o_id] = in[t_id];
-    printf("tid:%d     %lf -> %lf\n", t_id, out[o_id], in[o_id]);
+    // printf("tid:%d     %lf -> %lf\n", t_id, out[o_id], in[o_id]);
+    printf("(%d,%d) tid:%d -> oid:%d\n",threadIdx.x, threadIdx.y, t_id, o_id );
   }
 }
 
 void pool_device_forward(double* in, double* out) {
   dim3 block_size(8,8,1);
-  // dim3 grid_size(2,1,1);
+  dim3 grid_size(2,1,1);
   double *d_in, *d_out;
   cudaMalloc((double**)&d_in, sizeof(double)*8*8*2);
   cudaMalloc((double**)&d_out, sizeof(double)*4*4*2);
   cudaMemcpy(d_in, in, sizeof(double)*8*8*2, cudaMemcpyHostToDevice);
 
-  pool_forward<<<2, block_size>>>(d_in, d_out);
+  pool_forward<<<grid_size, block_size>>>(d_in, d_out);
 
   cudaMemcpy(out, d_out, sizeof(double)*4*4*2, cudaMemcpyDeviceToHost);
   cudaFree(d_in);

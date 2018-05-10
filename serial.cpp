@@ -1719,6 +1719,7 @@ main() {
       printf("%lf ", in[i]);
       out[i/2] = 0;
     }
+    printf("\n");
 
     pool_device_forward(in, out);
 
