@@ -11,8 +11,8 @@ __global__ void pool_forward(double* in, double* out) {
 void pool_device_forward(double* in, double* out) {
   dim3 block_size(28*28*32);
   double *d_in, *d_out;
-  cudaMalloc((double*)&d_in, sizeof(double)*28*28*32);
-  cudaMalloc((double*)&d_out, sizeof(double)*14*14*32);
+  cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
+  cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
   cudaMemcpy(d_in, in, cudaMemcpyHostToDevice);
   pool_forward<<<1, block_size>>>(d_in, d_out);
   cudaMemcpy(out, d_out, cudaMemcpyDeviceToHost);
