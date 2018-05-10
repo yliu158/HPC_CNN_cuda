@@ -1,17 +1,25 @@
 #include "main.h"
 
 __global__ void pool_forward(double* in, double* out) {
-  int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
-  int o_id = threadIdx.x/2 + (threadIdx.y/2)*(blockDim.x/2) + blockIdx.x*(blockDim.x*blockDim.y)/4;
-  if (out[o_id] < in[t_id]) {
-    out[o_id] = in[t_id];
-    // printf("tid:%d     %lf -> %lf\n", t_id, out[o_id], in[o_id]);
-    printf("(%d,%d) tid:%d -> oid:%d\n",threadIdx.x, threadIdx.y, t_id, o_id );
+  int out_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
+  int in_id = threadIdx.x*2 + (threadIdx.y*2)*(blockDim.x*2) + blockIdx.x*(blockDim.x*blockDim.y)*4;
+  // if (out[o_id] < in[t_id]) {
+  //   out[o_id] = in[t_id];
+  //   // printf("tid:%d     %lf -> %lf\n", t_id, out[o_id], in[o_id]);
+  //   printf("(%d,%d) tid:%d -> oid:%d\n",threadIdx.x, threadIdx.y, t_id, o_id );
+  // }
+  out[out_id] = in[in_id];
+  for (int i = 0; i < 2; ++i) {
+    for (int j = 0; j < 2; ++j) {
+      if (out[out_id] < in[in_id+i+j*blockDim.x*2]) {
+        out[out_id] = in[in_id+i+j*blockDim.x*2];
+      }
+    }
   }
 }
 
 void pool_device_forward(double* in, double* out) {
-  dim3 block_size(8,8,1);
+  dim3 block_size(4,4,1);
   dim3 grid_size(2,1,1);
   double *d_in, *d_out;
   cudaMalloc((double**)&d_in, sizeof(double)*8*8*2);
