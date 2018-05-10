@@ -1,12 +1,9 @@
 #include "main.h"
 
 __global__ void pool_forward(double* in, double* out) {
-  // int t_id = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.y*blockDim.x;
-  // int o_id = threadIdx.x/2 + threadIdx.y/2*(blockDim.x/2) + threadIdx.z*(blockDim.y/2)*(blockDim.x/2);
-  // if (in[t_id] > out[o_id]) {
-  //   out[o_id] = 8;
-  // }
-  printf("Hello %d\n", threadIdx.x);
+  int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*gridDim.x;
+  int o_id = threadIdx.x/2 + threadIdx.y/2*(blockDim.x/2) + blockIdx.x*gridDim.x/4;
+  out[o_id] = in[t_id];
 }
 
 void pool_device_forward(double* in, double* out) {
