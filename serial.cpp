@@ -1727,7 +1727,7 @@ main() {
       if (i%(4*4) == 0) printf("\n");
       printf("%lf ", out[i]);
     }
-
+    printf("\n");
     // int *x, *y, *z;
     // x = (int*)malloc(sizeof(int)*16);
     // y = (int*)malloc(sizeof(int)*16);
