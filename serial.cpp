@@ -1242,18 +1242,21 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
         for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
             for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
-                printf("%d\n",weight[0][in_h][in_i][in_j]);
-
+                printf("%d",weight[0][in_h][in_i][in_j]);
             }
+            printf("\n");
         }
+        printf("\n");
     }
     printf("input\n");
     for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
         for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
             for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
-              printf("%d\n",input[in_h][in_i][in_j]);
+              printf("%d",input[in_h][in_i][in_j]);
             }
+            printf("\n");
         }
+        printf("\n");
     }
     exit(1);
 
