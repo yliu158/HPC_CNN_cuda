@@ -3,7 +3,7 @@
 __global__ void full_forward(double* weight, double* input, double* output) {
   int threadId = threadIdx.x + blockDim.x*threadIdx.y + blockDim.x*blockDim.y*threadIdx.z;
   int blockId = blockIdx.x;
-  output[blockId] = weight[threadId]*input[threadId];
+  output[blockId] += weight[threadId+blockId]*input[threadId];
 }
 
 void full_device_forward(double * w, double * i, double * o) {
