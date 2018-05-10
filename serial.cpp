@@ -1729,9 +1729,9 @@ main() {
     // free(out);
 
     int *x, *y, *z;
-    x = (int)malloc(sizeof(int)*16);
-    y = (int)malloc(sizeof(int)*16);
-    z = (int)malloc(sizeof(int)*16);
+    x = (int*)malloc(sizeof(int)*16);
+    y = (int*)malloc(sizeof(int)*16);
+    z = (int*)malloc(sizeof(int)*16);
     for (int i = 0; i < 16; ++i) {
       x[i] = 1+i;
       y[i] = 2*i;
