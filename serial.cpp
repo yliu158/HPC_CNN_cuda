@@ -1727,7 +1727,6 @@ main() {
     // }
     // free(in);
     // free(out);
-    cudaDeviceReset();
 }
 
 
