@@ -1711,7 +1711,7 @@ main() {
     in = (double*)malloc(sizeof(double)*28*28*32);
     out = (double*)malloc(sizeof(double)*14*14*32);
     for (int i = 0; i < 28*28*32; ++i) {
-      in[i] = (double)(rand()%5);
+      in[i] = (double)(rand()%5+1);
       if (i%28 == 0)printf("\n");
       if (i%(28*28) == 0) printf("\n");
       printf("%lf ", in[i]);
