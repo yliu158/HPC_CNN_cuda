@@ -7,7 +7,7 @@ device.o: device.cu main.h
 	nvcc -arch sm_20 -c device.cu
 
 link:
-	nvcc -arch sm_20 device.o serial.o -o test
+	nvcc device.o serial.o -o test
 
 clean:
 	rm -fr *.o test
