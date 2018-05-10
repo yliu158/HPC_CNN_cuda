@@ -3,12 +3,9 @@
 __global__ void pool_forward(double* in, double* out) {
   int t_id = threadIdx.x + threadIdx.y*blockDim.x + threadIdx.z*blockDim.y*blockDim.x;
   int o_id = threadIdx.x/2 + threadIdx.y/2*(blockDim.x/2) + threadIdx.z*(blockDim.y/2)*(blockDim.x/2);
-  // if (in[t_id] > out[o_id]) {
-  //   out[o_id] = 8;
-  // } else {
-  //
-  // }
-  out[o_id] = 0.1111;
+  if (in[t_id] > out[o_id]) {
+    out[o_id] = 8;
+  }
 }
 
 void pool_device_forward(double* in, double* out) {
@@ -17,8 +14,18 @@ void pool_device_forward(double* in, double* out) {
   cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
   cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
   cudaMemcpy(d_in, in, sizeof(double)*28*28*32, cudaMemcpyHostToDevice);
+  for (int i = 0; i < 28*28; ++i) {
+    if (i%28 == 0)printf("\n");
+    // if (i%(28*28) == 0) printf("\n");
+    printf("%lf ", in[i]);
+  }
   pool_forward<<<1, block_size>>>(d_in, d_out);
   cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
+  for (int i = 0; i < 14*14; ++i) {
+    if (i%14 == 0) printf("\n");
+    // if (i%(14*14) == 0) printf("\n");
+    printf("%lf ", out[i]);
+  }
   cudaFree(d_in);
   cudaFree(d_out);
 }
