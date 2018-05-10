@@ -1266,9 +1266,9 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     }
 
     // cuda method
-    printf(typeid(weight));
-    printf(typeid(input));
-    printf(typeid(output));
+    printf(typeid(weight).name());
+    printf(typeid(input).name());
+    printf(typeid(output).name());
     // full_device_forward(weight.begin(), input.begin(), output.begin());
 }
 
