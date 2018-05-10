@@ -1258,7 +1258,6 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
         }
         printf("\n");
     }
-    exit(1);
 
 
     for (size_t i = 0; i < N_NEURONS; i++) {// 64
@@ -1296,7 +1295,6 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     //   printf("host%d  device%d\n", output[0][0][i], output_device[0][0][i]);
     //   // assert(output[0][0][i] == output_device[0][0][i]);
     // }
-    exit(1);
 }
 
 
