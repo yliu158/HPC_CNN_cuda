@@ -1,6 +1,13 @@
 #include "main.h"
 
+__global__ void pool_forward() {
 
+}
+
+void pool_device_forward(double* i, double* o) {
+  dim3 grid_size();
+  
+}
 
 // __global__ void conv_forward(double* weight, double* input, double* output) {
 //

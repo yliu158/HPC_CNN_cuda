@@ -946,6 +946,8 @@ MaxPoolLayer<IN_DIMS>::check_downstream_derivative(const int label) {
     }
 }
 
+void pool_device_forward(double* i, double* o);
+
 template <typename IN_DIMS>
 void
 MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
@@ -1705,6 +1707,20 @@ main() {
 
     // full_forward_device();
     run3();
+    double *in, *out;
+    in = (double*)malloc(sizeof(double)*28*28);
+    out = (double*)malloc(sizeof(double)*14*14);
+    for (int i = 0; i < 28*28; ++i) {
+      in[i] = rand()%2;
+      out[i/2] = 0;
+    }
+    pool_device_forward(in, out);
+    for (int i = 0; i < 14*14; ++i) {
+      printf("%d ", out[i]);
+      if (i%14 == 0) printf("\n");
+    }
+    free(in);
+    free(out);
 }
 
 
