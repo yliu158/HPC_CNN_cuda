@@ -91,7 +91,7 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
       out[o_id+i*blockDim.x+j] += filter[(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
-      printf("%lf  %lf  %lf\n", out[o_id+i*blockDim.x+j], filter[(i+2)*5+j+2], in[i_id+i*(blockDim.x+4)+j+2]);
+      // printf("%lf  %lf  %lf\n", out[o_id+i*blockDim.x+j], filter[(i+2)*5+j+2], in[i_id+i*(blockDim.x+4)+j+2]);
     }
   }
 }
@@ -106,6 +106,13 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   cudaMemcpy(d_f, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_b, bias, sizeof(double)*fil_d, cudaMemcpyHostToDevice);
 
+
+  for (int i = 0; i < 7; ++i) {
+    for (int j = 0; j < 7; ++j) {
+      printf("%lf ", d_i[i*7+j]);
+    }
+    printf("\n");
+  }
   dim3 block_size(size,size,1);
   dim3 grid_size(img_d,fil_d,1);
   conv_forward_all<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
