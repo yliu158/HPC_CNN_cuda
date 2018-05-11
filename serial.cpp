@@ -1790,6 +1790,47 @@ main() {
       printf("\n");
     }
     printf("\n");
+
+    // double *in, *filter, *bias, *out;
+    // in = (double*)malloc(sizeof(double)*32*32*1);
+    // filter = (double*)malloc(sizeof(double)*5*5*32);
+    // bias = (double*)malloc(sizeof(double)*32);
+    // out = (double*)malloc(sizeof(double)*28*28*1);
+    // for (int i = 0; i < 32; ++i) {
+    //   for (int j = 0; j < 32; ++j) {
+    //     in[i*32+j] = (double)(rand()%2);
+    //     printf("%lf  ", in[i*32+j]);
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
+    // for (int i = 0; i < 32; ++i) {
+    //   for (int j = 0; j < 5; ++j) {
+    //     for (int k = 0; k < 5; ++k) {
+    //       filter[i*5*5+j*5+k] = (double)(rand()%2);
+    //       printf("%lf  ", filter[i*5*5+j*5+k]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
+    // for (int i = 0; i < 32; ++i) {
+    //   bias[i] = (double)(rand()%2);
+    //   printf("%lf  ", bias[i]);
+    // }
+    // printf("\n");
+    conv_forward_device_first(in, filter, bias, out);
+    // for (int i = 0; i < 32; ++i) {
+    //   for (int j = 0; j < 28; ++j) {
+    //     for (int k = 0; k < 28; ++k) {
+    //       printf("%lf  ", out[i*28*28+j*28+k]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
 }
 
 

@@ -77,6 +77,40 @@ void conv_forward_device_first(double* in, double* filter, double* bias, double*
   cudaFree(d_o);
 }
 
+__global__ void conv_forward_test(double* in, double* filter, double* bias, double* out) {
+  int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
+  int i_id = threadIdx.x+1 + threadIdx.y*(blockDim.x+2) + (blockDim.x+2)*(blockDim.y+2)*blockIdx.x;
+  double res = 0;
+  for (int i = -1; i <= 1; ++i) {
+    for (int j = -1; j <= 1; ++j) {
+      res += in[i_id+i*5+j]*filter[blockIdx.x*9+i*3+j];
+    }
+  }
+  out[t_id] = res + bias[blockIdx.x];
+  // printf("tid: %d\n", t_id);
+}
+
+void conv_forward_device_test(double* in, double* filter, double* bias, double* out) {
+  double *d_i, *d_f, *d_b, *d_o;
+  cudaMalloc((double**)&d_i, sizeof(double)*5*5*1);
+  cudaMalloc((double**)&d_f, sizeof(double)*3*3*32);
+  cudaMalloc((double**)&d_b, sizeof(double)*32);
+  cudaMalloc((double**)&d_o, sizeof(double)*3*3*32);
+  cudaMemcpy(d_i, in, sizeof(double)*5*5*1, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_f, filter, sizeof(double)*3*3*32, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_b, bias, sizeof(double)*32, cudaMemcpyHostToDevice);
+
+  dim3 block_size(3,3,1);
+  dim3 grid_size(32,1,1);
+  conv_forward_test<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
+
+  cudaMemcpy(out, d_o, sizeof(double)*3*3*32, cudaMemcpyDeviceToHost);
+  cudaFree(d_i);
+  cudaFree(d_f);
+  cudaFree(d_b);
+  cudaFree(d_o);
+}
+
 
 // __global__ void add(int *x, int *y, int *z) {
 //   z[threadIdx.x] = y[threadIdx.x] + x[threadIdx.x];
