@@ -999,8 +999,18 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
           }
     }
     */
+    Output d_out;
+    pool_forward_device((double*)&input[0][0][0], (double*)&output[0][0][0], IN_H);
+    // pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
+    for (int k = 0; k < 32; ++k) {
+          for (int i = 0; i < 14; ++i) {
+                for (int j = 0; j < 14; ++j)  {
+                  assert(output[k][i][j] == d_out[k][i][j]);
+                }
+          }
+    }
     // pool_forward_device((double*)&input[0][0][0], (double*)&output[0][0][0]);
-    pool_forward_device((double*)&input[0][0][0], (double*)&output[0][0][0], IN_D);
+    // pool_forward_device((double*)&input[0][0][0], (double*)&output[0][0][0], IN_H);
     exit(1);
 }
 

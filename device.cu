@@ -29,12 +29,12 @@ void pool_forward_device(double* in, double* out) {
 }
 
 void pool_forward_device(double* in, double* out, int edge) {
-  dim3 block_size(e,e,1);
+  dim3 block_size(edge,edge,1);
   dim3 grid_size(32,1,1);
   double *d_in, *d_out;
-  cudaMalloc((double**)&d_in, sizeof(double)*(e*2)*(e*2)*32);
-  cudaMalloc((double**)&d_out, sizeof(double)*e*e*32);
-  cudaMemcpy(d_in, in, sizeof(double)*(e*2)*(e*2)*32, cudaMemcpyHostToDevice);
+  cudaMalloc((double**)&d_in, sizeof(double)*(edge*2)*(edge*2)*32);
+  cudaMalloc((double**)&d_out, sizeof(double)*edge*edge*32);
+  cudaMemcpy(d_in, in, sizeof(double)*(edge*2)*(edge*2)*32, cudaMemcpyHostToDevice);
 
   pool_forward<<<grid_size, block_size>>>(d_in, d_out);
 
