@@ -38,7 +38,7 @@ void pool_forward_device(double* in, double* out, int edge) {
 
   pool_forward<<<grid_size, block_size>>>(d_in, d_out);
 
-  cudaMemcpy(out, d_out, sizeof(double)*e*e*32, cudaMemcpyDeviceToHost);
+  cudaMemcpy(out, d_out, sizeof(double)*edge*edge*32, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
   cudaFree(d_out);
 }
