@@ -53,6 +53,7 @@ __global__ void pool_forward_all(double *in, double *out, size_t size_out) {
       }
     }
   }
+  printf("Hello o_id:\n", o_id);
 }
 
 void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d) {
