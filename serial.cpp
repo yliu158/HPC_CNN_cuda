@@ -1825,16 +1825,16 @@ main() {
     // void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) ;
 
     conv_forward_device(in, filter, bias, out,3,1,32);
-    for (int i = 0; i < 32; ++i) {
-      for (int j = 0; j < 3; ++j) {
-        for (int k = 0; k < 3; ++k) {
-          printf("%lf  ", out[i*9+j*3+k]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-    printf("\n");
+    // for (int i = 0; i < 32; ++i) {
+    //   for (int j = 0; j < 3; ++j) {
+    //     for (int k = 0; k < 3; ++k) {
+    //       printf("%lf  ", out[i*9+j*3+k]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
 
     // double *in, *filter, *bias, *out;
     // in = (double*)malloc(sizeof(double)*32*32*1);
