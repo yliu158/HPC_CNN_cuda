@@ -946,9 +946,9 @@ MaxPoolLayer<IN_DIMS>::check_downstream_derivative(const int label) {
     }
 }
 
-void pool_forward_device(double* i, double* o);
+// void pool_forward_device(double* i, double* o);
 
-// void pool_forward_device(double* in, double* out, int edge);
+void pool_forward_device(double* in, double* out, int e);
 
 template <typename IN_DIMS>
 void
