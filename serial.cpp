@@ -1820,7 +1820,7 @@ main() {
       bias[i] = (double)(rand()%2+1);
       printf("%lf  ", bias[i]);
     }
-    // printf("\n");
+    printf("\n");
     // conv_forward_device_test(in, filter, bias, out);
     // void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) ;
 
