@@ -1794,7 +1794,7 @@ main() {
 
     double *in, *filter, *bias, *out;
     in = (double*)malloc(sizeof(double)*7*7*1);
-    filter = (double*)malloc(sizeof(double)*5*5*2);
+    filter = (double*)malloc(sizeof(double)*5*5*1*2);
     bias = (double*)malloc(sizeof(double)*2);
     out = (double*)malloc(sizeof(double)*3*3*2);
     for (int i = 0; i < 7; ++i) {

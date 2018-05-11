@@ -93,7 +93,7 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
       out[o_id] += filter[blockIdx.y*25*gridDim.x+(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
     }
   }
-  out[o_id] = bias[blockIdx.y];
+  out[o_id] += bias[blockIdx.y];
   printf("%lf\n", out[o_id]);
 }
 
@@ -101,7 +101,7 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   double *d_i, *d_f, *d_b, *d_o;
   cudaMalloc((double**)&d_i, sizeof(double)*(size+4)*(size+4)*img_d);
   cudaMalloc((double**)&d_f, sizeof(double)*5*5*img_d*fil_d);
-  cudaMalloc((double**)&d_b, sizeof(double)*(size+4)*fil_d);
+  cudaMalloc((double**)&d_b, sizeof(double)*fil_d);
   cudaMalloc((double**)&d_o, sizeof(double)*size*size*fil_d);
   cudaMemcpy(d_i, in, sizeof(double)*(size+4)*(size+4)*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_f, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
