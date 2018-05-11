@@ -828,19 +828,19 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
         }
     }
 
-    // Output d_out;
-    // conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
-    // for (int i = 0; i < N_FILTERS; ++i) {
-    //   for (int k = 0; k < IN_H; ++k) {
-    //     for (int j = 0; j < IN_W; ++j) {
-    //       assert(output[i][k][j] == d_out[i][k][j]);
-    //       printf("%lf", d_out[i][k][j]);
-    //     }
-    //     printf("\n" );
-    //   }
-    //   printf("\n" );
-    // }
-    // exit(1);
+    Output d_out;
+    conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
+    for (int i = 0; i < N_FILTERS; ++i) {
+      for (int k = 0; k < IN_H; ++k) {
+        for (int j = 0; j < IN_W; ++j) {
+          assert(output[i][k][j] == d_out[i][k][j]);
+          printf("%lf", d_out[i][k][j]);
+        }
+        printf("\n" );
+      }
+      printf("\n" );
+    }
+    exit(1);
 }
 
 /*
@@ -1008,13 +1008,13 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     // prove of correctness
     Output d_out;
     pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], 14, 32);
-    // for (int k = 0; k < 32; ++k) {
-    //       for (int i = 0; i < 14; ++i) {
-    //             for (int j = 0; j < 14; ++j)  {
-    //               assert(output[k][i][j] == d_out[k][i][j]);
-    //             }
-    //       }
-    // }
+    for (int k = 0; k < 32; ++k) {
+          for (int i = 0; i < 14; ++i) {
+                for (int j = 0; j < 14; ++j)  {
+                  assert(output[k][i][j] == d_out[k][i][j]);
+                }
+          }
+    }
     exit(1);
     // if (IN_D == 64) {
     // Output d_out;
