@@ -107,18 +107,17 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   cudaMemcpy(d_f, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_b, bias, sizeof(double)*fil_d, cudaMemcpyHostToDevice);
 
-
-  // for (int i = 0; i < size+4; ++i) {
-  //   for (int j = 0; j < size+4; ++j) {
-  //     printf("%lf ", in[i*(size+4)+j]);
-  //   }
-  //   printf("\n");
-  // }
   dim3 block_size(size,size,1);
   dim3 grid_size(img_d,fil_d,1);
   conv_forward_all<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
 
   cudaMemcpy(out, d_o, sizeof(double)*size*size*(size+4), cudaMemcpyDeviceToHost);
+  for (int i = 0; i < size; ++i) {
+    for (int j = 0; j < size; ++j) {
+      printf("%lf ", out[i*(size)+j]);
+    }
+    printf("\n");
+  }
   cudaFree(d_i);
   cudaFree(d_f);
   cudaFree(d_b);
