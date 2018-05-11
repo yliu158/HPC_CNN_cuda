@@ -88,6 +88,13 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   int z_in = (blockIdx.x+2)*(blockDim.x+4)*(blockDim.y+4);
   int w_in = blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
   int i_id = x_in + y_in + z_in + w_in;
+
+  for (int i = 0; i < size+4; ++i) {
+    for (int j = 0; j < size+4; ++j) {
+      printf("%lf ", in[i*(size+4)+j]);
+    }
+    printf("\n");
+  }
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
       out[o_id+i*blockDim.x+j] += filter[(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
@@ -107,12 +114,12 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   cudaMemcpy(d_b, bias, sizeof(double)*fil_d, cudaMemcpyHostToDevice);
 
 
-  for (int i = 0; i < size+4; ++i) {
-    for (int j = 0; j < size+4; ++j) {
-      printf("%lf ", in[i*(size+4)+j]);
-    }
-    printf("\n");
-  }
+  // for (int i = 0; i < size+4; ++i) {
+  //   for (int j = 0; j < size+4; ++j) {
+  //     printf("%lf ", in[i*(size+4)+j]);
+  //   }
+  //   printf("\n");
+  // }
   dim3 block_size(size,size,1);
   dim3 grid_size(img_d,fil_d,1);
   conv_forward_all<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
