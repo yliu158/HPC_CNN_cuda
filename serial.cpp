@@ -991,15 +991,17 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
 
     Output d_out;
     pool_device_forward((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
-    for (int i = 0; i < 14*14; ++i) {
-      // assert(d_out[i] == output[0][0][i]);
-      if (i%14 == 0) printf("\n");
-      if (i%(14*14) == 0) printf("\n");
-      printf("%lf", d_out[i]);
-    }
-    for (int i = 0; i < 14; ++i) {
-      for (int j = 0; j < 14; ++j) {
-        assert(output[0][i][j] == d_out[i*14+j]);
+    // for (int i = 0; i < 14*14; ++i) {
+    //   // assert(d_out[i] == output[0][0][i]);
+    //   if (i%14 == 0) printf("\n");
+    //   if (i%(14*14) == 0) printf("\n");
+    //   printf("%lf", d_out[i]);
+    // }
+    for (int k = 0; k < 32; ++k) {
+      for (int i = 0; i < 14; ++i) {
+        for (int j = 0; j < 14; ++j) {
+          assert(output[k][i][j] == d_out[k][i][j]);
+        }
       }
     }
     // exit(1);
