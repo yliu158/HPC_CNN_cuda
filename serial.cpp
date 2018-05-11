@@ -1006,16 +1006,16 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     }
 
     // prove of correctness
-    // Output d_out;
-    // pool_forward_device_first((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
-    // for (int k = 0; k < 32; ++k) {
-    //       for (int i = 0; i < 14; ++i) {
-    //             for (int j = 0; j < 14; ++j)  {
-    //               assert(output[k][i][j] == d_out[k][i][j]);
-    //             }
-    //       }
-    // }
-    // exit(1);
+    Output d_out;
+    pool_forward_device_first((double*)&input[0][0][0], (double*)&d_out[0][0][0], 14, 32);
+    for (int k = 0; k < 32; ++k) {
+          for (int i = 0; i < 14; ++i) {
+                for (int j = 0; j < 14; ++j)  {
+                  assert(output[k][i][j] == d_out[k][i][j]);
+                }
+          }
+    }
+    exit(1);
     // if (IN_D == 64) {
     // Output d_out;
     // pool_forward_device_second((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
@@ -1751,7 +1751,7 @@ main() {
 
 
     // full_forward_device();
-    // run3();
+    run3();
     // double *in, *filter, *bias, *out;
     // in = (double*)malloc(sizeof(double)*32*32*1);
     // filter = (double*)malloc(sizeof(double)*5*5*32);
@@ -1845,33 +1845,33 @@ main() {
     // printf("\n");
 
 
-    double *in, *bias, *out;
-    in = (double*)malloc(sizeof(double)*28*28*2);
-    out = (double*)malloc(sizeof(double)*14*14*2);
-
-    for (size_t k = 0; k < 2; k++) {
-      for (size_t i = 0; i < 28; i++) {
-        for (size_t j = 0; j < 28; j++) {
-          in[k*28*28+i*28+j] = (double)(rand()%3+1);
-          printf("%lf\t", in[k*28*28+i*28+j]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-    printf("\n");
-
-    pool_forward_device(in, out, 14, 2);
-    for (size_t k = 0; k < 2; k++) {
-      for (size_t i = 0; i < 14; i++) {
-        for (size_t j = 0; j < 14; j++) {
-          printf("%lf\t", out[k*14*14+i*14+j]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-    printf("\n");
+    // double *in, *bias, *out;
+    // in = (double*)malloc(sizeof(double)*28*28*2);
+    // out = (double*)malloc(sizeof(double)*14*14*2);
+    //
+    // for (size_t k = 0; k < 2; k++) {
+    //   for (size_t i = 0; i < 28; i++) {
+    //     for (size_t j = 0; j < 28; j++) {
+    //       in[k*28*28+i*28+j] = (double)(rand()%3+1);
+    //       printf("%lf\t", in[k*28*28+i*28+j]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
+    //
+    // pool_forward_device(in, out, 14, 2);
+    // for (size_t k = 0; k < 2; k++) {
+    //   for (size_t i = 0; i < 14; i++) {
+    //     for (size_t j = 0; j < 14; j++) {
+    //       printf("%lf\t", out[k*14*14+i*14+j]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
 
 
 
