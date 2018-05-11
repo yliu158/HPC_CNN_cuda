@@ -1865,7 +1865,7 @@ main() {
     for (size_t k = 0; k < 2; k++) {
       for (size_t i = 0; i < 14; i++) {
         for (size_t j = 0; j < 14; j++) {
-          printf("%lf  ", out[k*256+i*14+j]);
+          printf("%lf  ", out[k*14*14+i*14+j]);
         }
         printf("\n");
       }
