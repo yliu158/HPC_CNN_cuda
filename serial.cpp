@@ -1846,14 +1846,14 @@ main() {
 
 
     double *in, *bias, *out;
-    in = (double*)malloc(sizeof(double)*8*8*2);
-    out = (double*)malloc(sizeof(double)*4*4*2);
+    in = (double*)malloc(sizeof(double)*28*28*2);
+    out = (double*)malloc(sizeof(double)*14*14*2);
 
     for (size_t k = 0; k < 2; k++) {
-      for (size_t i = 0; i < 8; i++) {
-        for (size_t j = 0; j < 8; j++) {
-          in[k*64+i*8+j] = (double)(rand()%8+1);
-          printf("%lf  ", in[k*64+i*8+j]);
+      for (size_t i = 0; i < 28; i++) {
+        for (size_t j = 0; j < 28; j++) {
+          in[k*28*28+i*8+j] = (double)(rand()%28+1);
+          printf("%lf  ", in[k*28*28+i*28+j]);
         }
         printf("\n");
       }
@@ -1861,11 +1861,11 @@ main() {
     }
     printf("\n");
 
-    pool_forward_device(in, out, 4, 2);
+    pool_forward_device(in, out, 14, 2);
     for (size_t k = 0; k < 2; k++) {
-      for (size_t i = 0; i < 4; i++) {
-        for (size_t j = 0; j < 4; j++) {
-          printf("%lf  ", out[k*16+i*4+j]);
+      for (size_t i = 0; i < 14; i++) {
+        for (size_t j = 0; j < 14; j++) {
+          printf("%lf  ", out[k*256+i*14+j]);
         }
         printf("\n");
       }
