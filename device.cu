@@ -47,8 +47,8 @@ __global__ void conv_forward(double* in, double* weight, double* out) {
   int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
   int i_id = threadIdx.x+2 + threadIdx.y*(blockDim.x+4) + (blockDim.x+4)*(blockDim.y+4)*blockIdx.x;
   double res = 0;
-  for (size_t i = -2; i <= 2; ++i) {
-    for (size_t j = -2; j <= 2; ++j) {
+  for (int i = -2; i <= 2; ++i) {
+    for (int j = -2; j <= 2; ++j) {
       res += in[i_id+i*32+j]*weight[i_id+i*5+j];
     }
   }
