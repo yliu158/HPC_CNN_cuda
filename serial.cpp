@@ -1715,27 +1715,27 @@ main() {
 
 
     // full_forward_device();
-    // run3();
-    double *in, *out;
-    in = (double*)malloc(sizeof(double)*28*28*32);
-    out = (double*)malloc(sizeof(double)*14*14*32);
-    for (int i = 0; i < 28*28*32; ++i) {
-      in[i] = (double)(rand()%5+1);
-      if (i%28 == 0)printf("\n");
-      if (i%(28*28) == 0) printf("\n");
-      printf("%lf ", in[i]);
-      out[i/2] = 0;
-    }
-    printf("\n");
-
-    pool_device_forward(in, out);
-
-    for (int i = 0; i < 14*14*32; ++i) {
-      if (i%14 == 0) printf("\n");
-      if (i%(14*14) == 0) printf("\n");
-      printf("%lf ", out[i]);
-    }
-    printf("\n");
+    run3();
+    // double *in, *out;
+    // in = (double*)malloc(sizeof(double)*28*28*32);
+    // out = (double*)malloc(sizeof(double)*14*14*32);
+    // for (int i = 0; i < 28*28*32; ++i) {
+    //   in[i] = (double)(rand()%5+1);
+    //   if (i%28 == 0)printf("\n");
+    //   if (i%(28*28) == 0) printf("\n");
+    //   printf("%lf ", in[i]);
+    //   out[i/2] = 0;
+    // }
+    // printf("\n");
+    //
+    // pool_device_forward(in, out);
+    //
+    // for (int i = 0; i < 14*14*32; ++i) {
+    //   if (i%14 == 0) printf("\n");
+    //   if (i%(14*14) == 0) printf("\n");
+    //   printf("%lf ", out[i]);
+    // }
+    // printf("\n");
     // int *x, *y, *z;
     // x = (int*)malloc(sizeof(int)*16);
     // y = (int*)malloc(sizeof(int)*16);
