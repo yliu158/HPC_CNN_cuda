@@ -1800,25 +1800,25 @@ main() {
     for (int i = 0; i < 7; ++i) {
       for (int j = 0; j < 7; ++j) {
         in[i*7+j] = (double)(rand()%2+1);
-        // printf("%lf  ", in[i*7+j]);
+        printf("%lf  ", in[i*7+j]);
       }
-      // printf("\n");
+      printf("\n");
     }
-    // printf("\n");
+    printf("\n");
     for (int i = 0; i < 2; ++i) {
       for (int j = 0; j < 5; ++j) {
         for (int k = 0; k < 5; ++k) {
           filter[i*25+j*5+k] = (double)(rand()%2+1);
-          // printf("%lf  ", filter[i*25+j*5+k]);
+          printf("%lf  ", filter[i*25+j*5+k]);
         }
-        // printf("\n");
+        printf("\n");
       }
-      // printf("\n");
+      printf("\n");
     }
-    // printf("\n");
+    printf("\n");
     for (int i = 0; i < 2; ++i) {
       bias[i] = (double)(rand()%2+1);
-      // printf("%lf  ", bias[i]);
+      printf("%lf  ", bias[i]);
     }
     // printf("\n");
     // conv_forward_device_test(in, filter, bias, out);
