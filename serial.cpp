@@ -831,7 +831,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
     conv_forward_device_first(&in_padded[0][0][0],&d_out[0][0][0]);
     for (int i = 0; i < 32; ++i) {
       for (int k = 0; k < 32; ++k) {
-        for (int j = 0l j < 32; ++j) {
+        for (int j = 0; j < 32; ++j) {
           assert(output[i][k][j] == d_out[i][k][h]);
         }
       }
