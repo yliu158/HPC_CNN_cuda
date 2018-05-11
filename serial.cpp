@@ -985,8 +985,9 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
             }
         }
     }
-
-    // pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
+    Output d_out;
+    pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
+    exit(1);
 }
 
 /*
@@ -1242,26 +1243,26 @@ void
 FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias,
  const Array<double, N_NEURONS> &dropped, Output &output) {
     // Connect each neuron to everything.
-    printf("weight\n");
-    for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
-        for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
-            for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
-                printf("%d",weight[0][in_h][in_i][in_j]);
-            }
-            printf("\n");
-        }
-        printf("\n");
-    }
-    printf("input\n");
-    for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
-        for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
-            for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
-              printf("%d",input[in_h][in_i][in_j]);
-            }
-            printf("\n");
-        }
-        printf("\n");
-    }
+    // printf("weight\n");
+    // for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
+    //     for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
+    //         for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
+    //             printf("%d",weight[0][in_h][in_i][in_j]);
+    //         }
+    //         printf("\n");
+    //     }
+    //     printf("\n");
+    // }
+    // printf("input\n");
+    // for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
+    //     for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
+    //         for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
+    //           printf("%d",input[in_h][in_i][in_j]);
+    //         }
+    //         printf("\n");
+    //     }
+    //     printf("\n");
+    // }
 
 
     for (size_t i = 0; i < N_NEURONS; i++) {// 64
