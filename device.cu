@@ -62,9 +62,9 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
   cudaMalloc((double**)&d_out, sizeof(double)*size_out*size_out);
   cudaMemcpy(d_in, in, sizeof(double)*size_out*2*size_out*2, cudaMemcpyHostToDevice);
 
-  dim3 block_size(4, 4, 1);
-  dim3 grid_size(2, 1, 1);
-  pool_forward_all<<<grid_size, block_size>>>(in, out, size_out);
+  dim3 block_size(size_out, size_out, 1);
+  dim3 grid_size(img_d, 1, 1);
+  pool_forward_all<<<1, 64>>>(in, out, size_out);
 
   cudaMemcpy(in, d_in, sizeof(double)*size_out*size_out, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
