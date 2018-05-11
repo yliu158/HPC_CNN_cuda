@@ -87,14 +87,12 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   int x_in = threadIdx.x+2;// 3
   int y_in = (threadIdx.y+2)*(blockDim.x+4); //21
   int z_in = blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
-  int w_in = blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
-  int i_id = x_in + y_in + z_in + w_in;
-  // printf("out: (%d, %d, %d, %d) in: (%d, %d, %d, %d)\n", x_out, y_out, z_out, w_out, x_in, y_in, z_in, w_in);
-  // for (int i = -2; i <= 2; ++i) {
-  //   for (int j = -2; j <= 2; ++j) {
-  //     out[o_id+i*blockDim.x+j] += filter[(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
-  //   }
-  // }
+  int i_id = x_in + y_in + z_in;
+  for (int i = -2; i <= 2; ++i) {
+    for (int j = -2; j <= 2; ++j) {
+      out[o_id+i*blockDim.x+j] += filter[blockIdx.y*25+(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
+    }
+  }
   printf("value:%lf  i_id:%d\n", in[i_id], i_id);
 }
 

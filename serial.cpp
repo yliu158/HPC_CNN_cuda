@@ -1828,13 +1828,13 @@ main() {
     for (int i = 0; i < 32; ++i) {
       for (int j = 0; j < 3; ++j) {
         for (int k = 0; k < 3; ++k) {
-          // printf("%lf  ", out[i*9+j*3+k]);
+          printf("%lf  ", out[i*9+j*3+k]);
         }
-        // printf("\n");
+        printf("\n");
       }
-      // printf("\n");
+      printf("\n");
     }
-    // printf("\n");
+    printf("\n");
 
     // double *in, *filter, *bias, *out;
     // in = (double*)malloc(sizeof(double)*32*32*1);
