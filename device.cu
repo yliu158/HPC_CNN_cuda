@@ -78,21 +78,21 @@ void conv_forward_device_first(double* in, double* filter, double* bias, double*
 }
 
 __global__ void conv_forward_all(double* in, double* filter, double* bias, double* out) {
+  // gridDim.x:1  blockDim.x:3  blockDim.y:3  gridDim.y:32
   int x_out = threadIdx.x;
   int y_out = threadIdx.y*blockDim.x;
   int z_out = blockIdx.x*blockDim.x*blockDim.y;
   int w_out = blockIdx.y*blockDim.x*blockDim.y*gridDim.x;
   int o_id = x_out + y_out + z_out + w_out;
-  int x_in = threadIdx.x+2;
-  int y_in = (threadIdx.y+2)*(blockDim.x+4);
+  int x_in = threadIdx.x+2;// 3
+  int y_in = (threadIdx.y+2)*(blockDim.x+4); //21
   int z_in = blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
   int w_in = blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
   int i_id = x_in + y_in + z_in + w_in;
+  printf("out: (%d, %d, %d, %d) in: (%d, %d, %d, %d)\n", x_out, y_out, z_out, w_out, x_in, y_in, z_in, w_in);
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
       out[o_id+i*blockDim.x+j] += filter[(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
-      // printf("%lf  %lf  %lf\n", out[o_id+i*blockDim.x+j], filter[(i+2)*5+j+2], in[i_id+i*(blockDim.x+4)+j+2]);
-      printf("gridDim.x:%d  blockDim.x:%d  blockDim.y:%d  gridDim.y:%d\n", gridDim.x, blockDim.x, blockDim.y, gridDim.y);
     }
   }
 }
