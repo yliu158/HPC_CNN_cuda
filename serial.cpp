@@ -987,9 +987,9 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     }
     double* d_out;
     d_out = (double*)malloc(sizeof(double)*14*14*32);
-    pool_device_forward(&input[0][0][0], d_out);
+    pool_device_forward((double*)&input[0][0][0], d_out);
     for (int i = 0; i < 14*14*32; ++i) {
-      assert(d_out[0][0][i] == output[0][0][i]);
+      assert(d_out[i] == output[0][0][i]);
     }
     exit(1);
 }
