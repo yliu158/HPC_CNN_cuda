@@ -946,7 +946,7 @@ MaxPoolLayer<IN_DIMS>::check_downstream_derivative(const int label) {
     }
 }
 
-void pool_device_forward(double* i, double* o);
+void pool_forward_device(double* i, double* o);
 
 template <typename IN_DIMS>
 void
@@ -986,25 +986,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         }
     }
 
-    // double* d_out;
-    // d_out = (double*)malloc(sizeof(double)*14*14*32);
-
-    Output d_out;
-    pool_device_forward((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
-    // for (int i = 0; i < 14*14; ++i) {
-    //   // assert(d_out[i] == output[0][0][i]);
-    //   if (i%14 == 0) printf("\n");
-    //   if (i%(14*14) == 0) printf("\n");
-    //   printf("%lf", d_out[i]);
-    // }
-    for (int k = 0; k < 32; ++k) {
-      for (int i = 0; i < 14; ++i) {
-        for (int j = 0; j < 14; ++j) {
-          assert(output[k][i][j] == d_out[k][i][j]);
-        }
-      }
-    }
-    exit(1);
+    // pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
 }
 
 /*
@@ -1729,40 +1711,6 @@ main() {
 
     // full_forward_device();
     run3();
-    // double *in, *out;
-    // in = (double*)malloc(sizeof(double)*28*28*32);
-    // out = (double*)malloc(sizeof(double)*14*14*32);
-    // for (int i = 0; i < 28*28*32; ++i) {
-    //   in[i] = (double)(rand()%5+1);
-    //   if (i%28 == 0)printf("\n");
-    //   if (i%(28*28) == 0) printf("\n");
-    //   printf("%lf ", in[i]);
-    //   out[i/2] = 0;
-    // }
-    // printf("\n");
-    //
-    // pool_device_forward(in, out);
-    //
-    // for (int i = 0; i < 14*14*32; ++i) {
-    //   if (i%14 == 0) printf("\n");
-    //   if (i%(14*14) == 0) printf("\n");
-    //   printf("%lf ", out[i]);
-    // }
-    // printf("\n");
-    // int *x, *y, *z;
-    // x = (int*)malloc(sizeof(int)*16);
-    // y = (int*)malloc(sizeof(int)*16);
-    // z = (int*)malloc(sizeof(int)*16);
-    // for (int i = 0; i < 16; ++i) {
-    //   x[i] = 1+i;
-    //   y[i] = 2*i;
-    //   z[i] = 0;
-    // }
-    // test_device(x, y, z);
-    // for (int i = 0; i < 16; ++i) {
-    //   printf("%d  ", z[i]);
-    // }
-    // printf("\n");
 }
 
 
