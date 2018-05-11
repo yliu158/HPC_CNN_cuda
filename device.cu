@@ -53,6 +53,7 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
     }
   }
   out[t_id] = res + bias[blockIdx.x];
+  printf("tid: %d\n", t_id);
 }
 
 void conv_forward_device_first(double* in, double* filter, double* bias, double* out) {
