@@ -1001,7 +1001,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     */
     // pool_forward_device((double*)&input[0][0][0], (double*)&output[0][0][0]);
     pool_forward_device((double*)&input[0][0][0], (double*)&output[0][0][0], IN_D);
-    // exit(1);
+    exit(1);
 }
 
 /*
