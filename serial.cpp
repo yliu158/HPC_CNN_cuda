@@ -1008,13 +1008,13 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     // prove of correctness
     Output d_out;
     pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], 14, 32);
-    for (int k = 0; k < 32; ++k) {
-          for (int i = 0; i < 14; ++i) {
-                for (int j = 0; j < 14; ++j)  {
-                  assert(output[k][i][j] == d_out[k][i][j]);
-                }
-          }
-    }
+    // for (int k = 0; k < 32; ++k) {
+    //       for (int i = 0; i < 14; ++i) {
+    //             for (int j = 0; j < 14; ++j)  {
+    //               assert(output[k][i][j] == d_out[k][i][j]);
+    //             }
+    //       }
+    // }
     exit(1);
     // if (IN_D == 64) {
     // Output d_out;
