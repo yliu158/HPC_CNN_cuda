@@ -61,7 +61,7 @@ void conv_forward_device_first(double* in, double* filter, double* out) {
   cudaMalloc((double**)&d_f, sizeof(double)*5*5*32);
   cudaMalloc((double**)&d_o, sizeof(double)*28*28*32);
   cudaMemcpy(d_i, in, sizeof(double)*32*32*1, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_f, weight, sizeof(double)*5*5*32, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_f, filter, sizeof(double)*5*5*32, cudaMemcpyHostToDevice);
 
   dim3 block_size(28,28,1);
   dim3 grid_size(32,1,1);
