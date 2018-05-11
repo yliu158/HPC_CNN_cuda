@@ -1881,12 +1881,6 @@ main() {
 
 
 
-
-
-
-
-
-
     // double *in, *filter, *bias, *out;
     // in = (double*)malloc(sizeof(double)*32*32*1);
     // filter = (double*)malloc(sizeof(double)*5*5*32);
