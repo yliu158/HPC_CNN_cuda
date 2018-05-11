@@ -89,9 +89,9 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   int w_in = blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
   int i_id = x_in + y_in + z_in + w_in;
 
-  for (int i = 0; i < size+4; ++i) {
-    for (int j = 0; j < size+4; ++j) {
-      printf("%lf ", in[i*(size+4)+j]);
+  for (int i = 0; i < 7; ++i) {
+    for (int j = 0; j < 7; ++j) {
+      printf("%lf ", in[i*7+j]);
     }
     printf("\n");
   }
