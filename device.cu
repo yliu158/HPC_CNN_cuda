@@ -49,7 +49,7 @@ __global__ void conv_forward(double* in, double* weight, double* out) {
   double res = 0;
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
-      res += in[i_id+i*32+j]*weight[i_id+i*5+j];
+      res += in[i_id+i*32+j]*weight[blockIdx.x*25+i*5+j];
     }
   }
   out[t_id] = res;
