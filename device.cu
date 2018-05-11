@@ -43,25 +43,25 @@ void pool_forward_device_second(double* in, double* out) {
   cudaFree(d_out);
 }
 
-__global__ void conv_forward(double* in, double* weight, double* out) {
+__global__ void conv_forward(double* in, double* filter, double* out) {
   int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
   int i_id = threadIdx.x+2 + threadIdx.y*(blockDim.x+4) + (blockDim.x+4)*(blockDim.y+4)*blockIdx.x;
   double res = 0;
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
-      res += in[i_id+i*32+j]*weight[blockIdx.x*25+i*5+j];
+      res += in[i_id+i*32+j]*filter[blockIdx.x*25+i*5+j];
     }
   }
   out[t_id] = res;
 }
 
-void conv_forward_device_first(double* in, double* weight, double* out) {
-  double *d_i, *d_w, *d_o;
-  cudaMalloc((double**)&d_i, sizeof(double)*32*32);
-  cudaMalloc((double**)&d_w, sizeof(double)*5*5*32);
+void conv_forward_device_first(double* in, double* filter, double* out) {
+  double *d_i, *d_f, *d_o;
+  cudaMalloc((double**)&d_i, sizeof(double)*32*32*1);
+  cudaMalloc((double**)&d_f, sizeof(double)*5*5*32);
   cudaMalloc((double**)&d_o, sizeof(double)*28*28*32);
-  cudaMemcpy(d_i, in, sizeof(double)*32*32, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_w, weight, sizeof(double)*5*5*32, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_i, in, sizeof(double)*32*32*1, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_f, weight, sizeof(double)*5*5*32, cudaMemcpyHostToDevice);
 
   dim3 block_size(28,28,1);
   dim3 grid_size(32,1,1);
@@ -69,7 +69,7 @@ void conv_forward_device_first(double* in, double* weight, double* out) {
 
   cudaMemcpy(d_o, out, sizeof(double)*28*28*32, cudaMemcpyDeviceToHost);
   cudaFree(d_i);
-  cudaFree(d_w);
+  cudaFree(d_f);
   cudaFree(d_o);
 }
 
