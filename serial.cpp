@@ -1004,7 +1004,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         }
       }
     }
-    // exit(1);
+    exit(1);
 }
 
 /*
