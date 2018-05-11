@@ -1799,7 +1799,7 @@ main() {
     out = (double*)malloc(sizeof(double)*3*3*32);
     for (int i = 0; i < 7; ++i) {
       for (int j = 0; j < 7; ++j) {
-        in[i*7+j] = (double)(rand()%2);
+        in[i*7+j] = (double)(rand()%2+1);
         printf("%lf  ", in[i*7+j]);
       }
       printf("\n");
@@ -1808,7 +1808,7 @@ main() {
     for (int i = 0; i < 32; ++i) {
       for (int j = 0; j < 5; ++j) {
         for (int k = 0; k < 5; ++k) {
-          filter[i*25+j*5+k] = (double)(rand()%2);
+          filter[i*25+j*5+k] = (double)(rand()%2+1);
           printf("%lf  ", filter[i*25+j*5+k]);
         }
         printf("\n");
@@ -1817,7 +1817,7 @@ main() {
     }
     printf("\n");
     for (int i = 0; i < 32; ++i) {
-      bias[i] = (double)(rand()%2);
+      bias[i] = (double)(rand()%2+1);
       printf("%lf  ", bias[i]);
     }
     printf("\n");
