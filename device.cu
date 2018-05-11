@@ -90,10 +90,11 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   int i_id = x_in + y_in + z_in;
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
-      out[o_id+i*blockDim.x+j] += filter[blockIdx.y*25+(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
+      out[o_id+i*blockDim.x+j] += filter[blockIdx.y*25*gridDim.x+(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
+      printf("%lf  %lf  %lf\n", out[o_id+i*blockDim.x+j], filter[blockIdx.y*25*gridDim.x+(i+2)*5+j+2], in[i_id+i*(blockDim.x+4)+j+2]);
     }
   }
-  printf("value:%lf  i_id:%d\n", in[i_id], i_id);
+  // printf("value:%lf  i_id:%d\n", in[i_id], i_id);
 }
 
 void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) {
