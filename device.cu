@@ -1,9 +1,5 @@
 #include "main.h"
 
-void (/* arguments */) {
-  /* code */
-}
-
 __global__ void pool_forward(double* in, double* out) {
   int out_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
   int in_id = threadIdx.x*2 + (threadIdx.y*2)*(blockDim.x*2) + blockIdx.x*(blockDim.x*blockDim.y)*4;
