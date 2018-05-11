@@ -53,7 +53,7 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
     }
   }
   out[t_id] = res + bias[blockIdx.x];
-  printf("tid: %d\n", t_id);
+  // printf("tid: %d\n", t_id);
 }
 
 void conv_forward_device_first(double* in, double* filter, double* bias, double* out) {
@@ -70,7 +70,7 @@ void conv_forward_device_first(double* in, double* filter, double* bias, double*
   dim3 grid_size(32,1,1);
   conv_forward<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
 
-  cudaMemcpy(d_o, out, sizeof(double)*28*28*32, cudaMemcpyDeviceToHost);
+  cudaMemcpy(out, d_o, sizeof(double)*28*28*32, cudaMemcpyDeviceToHost);
   cudaFree(d_i);
   cudaFree(d_f);
   cudaFree(d_b);
