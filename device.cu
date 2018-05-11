@@ -93,7 +93,7 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
       out[o_id] += filter[blockIdx.y*25*gridDim.x+(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
     }
   }
-  out[oid] = bias[blockIdx.y];
+  out[o_id] = bias[blockIdx.y];
 }
 
 void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) {
