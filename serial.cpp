@@ -767,6 +767,8 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::check_downstream_derivative(const int la
     }
 }
 
+void conv_forward_device_first(double* in, double* weight, double* out);
+
 template <typename IN_DIMS, size_t N_FILTERS>
 void
 ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter &filter, const Bias &bias, Output &output) {
@@ -824,6 +826,17 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
             }
         }
     }
+
+    Output d_out;
+    conv_forward_device_first(&in_padded[0][0][0],&d_out[0][0][0]);
+    for (int i = 0; i < 32; ++i) {
+      for (int k = 0; k < 32; ++k) {
+        for (int j = 0l j < 32; ++j) {
+          assert(output[i][k][j] == d_out[i][k][h]);
+        }
+      }
+    }
+    exit(1);
 }
 
 /*
@@ -998,18 +1011,18 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     //       }
     // }
     // exit(1);
-    if (IN_D == 64) {
-      Output d_out;
-      pool_forward_device_second((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
-      for (int k = 0; k < 64; ++k) {
-            for (int i = 0; i < 7; ++i) {
-                  for (int j = 0; j < 7; ++j)  {
-                    assert(output[k][i][j] == d_out[k][i][j]);
-                  }
-            }
-      }
-      exit(1);
-    }
+    // if (IN_D == 64) {
+    // Output d_out;
+    // pool_forward_device_second((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
+    // for (int k = 0; k < 64; ++k) {
+    //       for (int i = 0; i < 7; ++i) {
+    //             for (int j = 0; j < 7; ++j)  {
+    //               assert(output[k][i][j] == d_out[k][i][j]);
+    //             }
+    //       }
+    // }
+    // exit(1);
+    // }
 }
 
 /*
