@@ -111,10 +111,10 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   dim3 grid_size(img_d,fil_d,1);
   conv_forward_all<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
 
-  cudaMemcpy(out, d_o, sizeof(double)*size*size*(size+4), cudaMemcpyDeviceToHost);
+  cudaMemcpy(out, d_o, sizeof(double)*size*size*fil_d, cudaMemcpyDeviceToHost);
   for (int i = 0; i < size; ++i) {
     for (int j = 0; j < size; ++j) {
-      printf("%lf ", out[i*(size)+j]);
+      printf("output: %lf ", out[i*(size)+j]);
     }
     printf("\n");
   }
