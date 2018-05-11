@@ -77,6 +77,45 @@ void conv_forward_device_first(double* in, double* filter, double* bias, double*
   cudaFree(d_o);
 }
 
+__global__ void conv_forward_all(double* in, double* filter, double* bias, double* out) {
+  int x_out = threadIdx.x;
+  int y_out = threadIdx.y*blockDim.x;
+  int z_out = blockIdx.x*blockDim.x*blockDim.y;
+  int w_out = blockIdx.y*blockDim.x*blockDim.y*gridDim.x;
+  int o_id = x_out + y_out + z_out + w_out;
+  int x_in = threadIdx.x+2;
+  int y_in = (threadIdx.y+2)*(blockDim.x+4);
+  int z_in = (blockIdx.x+2)*(blockDim.x+4)*(blockDim.y+4);
+  int w_in = blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
+  int i_id = x_in + y_in + z_in + w_in;
+  for (int i = -2; i <= 2; ++i) {
+    for (int j = -2; j <= 2; ++j) {
+      out[o_id+i*blockDim.x+j] += filter[(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
+    }
+  }
+}
+
+void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) {
+  double *d_i, *d_f, *d_b, *d_o;
+  cudaMalloc((double**)&d_i, sizeof(double)*(size+4)*(size+4)*img_d);
+  cudaMalloc((double**)&d_f, sizeof(double)*5*5*img_d*fil_d);
+  cudaMalloc((double**)&d_b, sizeof(double)*(size+4)*fil_d);
+  cudaMalloc((double**)&d_o, sizeof(double)*size*size*fil_d);
+  cudaMemcpy(d_i, in, sizeof(double)*(size+4)*(size+4)*img_d, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_f, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_b, bias, sizeof(double)*fil_d, cudaMemcpyHostToDevice);
+
+  dim3 block_size(size,size,1);
+  dim3 grid_size(img_d,fil_d,1);
+  conv_forward_all<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
+
+  cudaMemcpy(out, d_o, sizeof(double)*size*size*(size+4), cudaMemcpyDeviceToHost);
+  cudaFree(d_i);
+  cudaFree(d_f);
+  cudaFree(d_b);
+  cudaFree(d_o);
+}
+
 __global__ void conv_forward_test(double* in, double* filter, double* bias, double* out) {
   int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
   int i_id = threadIdx.x+1 + threadIdx.y*(blockDim.x+2) + (blockDim.x+2)*(blockDim.y+2)*blockIdx.x;
