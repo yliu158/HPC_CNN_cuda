@@ -986,11 +986,10 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         }
     }
     for (int i = 0; i < 14; ++i) {
-      if (i%14 == 0) printf("\n");
-      if (i%(14*14) == 0) printf("\n");
       for (int j = 0; j < 14; ++j) {
-        printf("%lf\n", output[0][i][j]);
+        printf("%lf", output[0][i][j]);
       }
+      printf("\n");
     }
     double* d_out;
     d_out = (double*)malloc(sizeof(double)*14*14*32);
