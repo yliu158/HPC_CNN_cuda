@@ -64,9 +64,11 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
 
   for (int i = 0 ; i < size_out*2; ++i) {
     for (size_t j = 0; j < size_out*2; j++) {
-      printf("%lf", in[i*size_out*2+j]);
+      printf("%lf  ", in[i*size_out*2+j]);
     }
+    printf("\n");
   }
+  printf("\n");
   dim3 block_size(size_out, size_out, 1);
   dim3 grid_size(img_d, 1, 1);
   pool_forward_all<<<grid_size, block_size>>>(in, out, size_out);
