@@ -13,7 +13,7 @@ __global__ void pool_forward(double* in, double* out) {
   }
 }
 
-void pool_forward_device(double* in, double* out) {
+void pool_forward_device_first(double* in, double* out) {
   dim3 block_size(14,14,1);
   dim3 grid_size(32,1,1);
   double *d_in, *d_out;
@@ -27,6 +27,22 @@ void pool_forward_device(double* in, double* out) {
   cudaFree(d_in);
   cudaFree(d_out);
 }
+
+void pool_forward_device_second(double* in, double* out) {
+  dim3 block_size(7,7,1);
+  dim3 grid_size(64,1,1);
+  double *d_in, *d_out;
+  cudaMalloc((double**)&d_in, sizeof(double)*14*14*64);
+  cudaMalloc((double**)&d_out, sizeof(double)*7*7*64);
+  cudaMemcpy(d_in, in, sizeof(double)*14*14*64, cudaMemcpyHostToDevice);
+
+  pool_forward<<<grid_size, block_size>>>(d_in, d_out);
+
+  cudaMemcpy(out, d_out, sizeof(double)*7*7*64, cudaMemcpyDeviceToHost);
+  cudaFree(d_in);
+  cudaFree(d_out);
+}
+
 
 // __global__ void add(int *x, int *y, int *z) {
 //   z[threadIdx.x] = y[threadIdx.x] + x[threadIdx.x];
