@@ -1853,7 +1853,7 @@ main() {
       for (size_t i = 0; i < 28; i++) {
         for (size_t j = 0; j < 28; j++) {
           in[k*28*28+i*28+j] = (double)(rand()%28+1);
-          printf("%lf  ", in[k*28*28+i*28+j]);
+          printf("%lf\t", in[k*28*28+i*28+j]);
         }
         printf("\n");
       }
@@ -1865,7 +1865,7 @@ main() {
     for (size_t k = 0; k < 2; k++) {
       for (size_t i = 0; i < 14; i++) {
         for (size_t j = 0; j < 14; j++) {
-          printf("%lf  ", out[k*14*14+i*14+j]);
+          printf("%lf\t", out[k*14*14+i*14+j]);
         }
         printf("\n");
       }
