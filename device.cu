@@ -91,7 +91,8 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
       out[o_id+i*blockDim.x+j] += filter[(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j+2];
-      printf("%lf  %lf  %lf\n", out[o_id+i*blockDim.x+j], filter[(i+2)*5+j+2], in[i_id+i*(blockDim.x+4)+j+2]);
+      // printf("%lf  %lf  %lf\n", out[o_id+i*blockDim.x+j], filter[(i+2)*5+j+2], in[i_id+i*(blockDim.x+4)+j+2]);
+      printf("gridDim.x:%d  blockDim.x:%d  blockDim.y:%d  gridDim.y:%d", gridDim.x, blockDim.x, blockDim.y, gridDim.y);
     }
   }
 }
