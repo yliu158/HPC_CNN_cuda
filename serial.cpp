@@ -827,7 +827,8 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
             }
         }
     }
-
+    printf("in_padded_h: %d, IN_D: %d, N_FILTERS: %d\n", in_padded_h, IN_D, N_FILTERS);
+    exit(1);
     Output d_out;
     conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], in_padded_h, IN_D, N_FILTERS);
     for (int i = 0; i < 32; ++i) {
