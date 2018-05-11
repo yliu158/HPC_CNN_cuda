@@ -1012,6 +1012,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
           for (int i = 0; i < 14; ++i) {
                 for (int j = 0; j < 14; ++j)  {
                   assert(output[k][i][j] == d_out[k][i][j]);
+                  if (output[k][i][j] == d_out[k][i][j]) printf("Right.\n");
                 }
           }
     }
