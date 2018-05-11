@@ -109,7 +109,7 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
 
   for (int i = 0; i < size+4; ++i) {
     for (int j = 0; j < size+4; ++j) {
-      printf("%lf ", d_i[i*(size+4)+j]);
+      printf("%lf ", in[i*(size+4)+j]);
     }
     printf("\n");
   }
