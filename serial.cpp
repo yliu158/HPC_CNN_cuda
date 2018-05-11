@@ -1000,6 +1000,11 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
       if (i%(14*14) == 0) printf("\n");
       printf("%lf", d_out[i]);
     }
+    for (int i = 0; i < 14; ++i) {
+      for (int j = 0; j < 14; ++j) {
+        assert(output[0][i][j] == d_out[i*14+j]);
+      }
+    }
     exit(1);
 }
 
