@@ -1782,18 +1782,20 @@ main() {
       printf("\n");
     }
     printf("\n");
-    for (int i = 0; i < 3; ++i) {
-      for (int j = 0; j < 7; ++j) {
-        for (int k = 0; k < 7; ++k) {
-          filter[i*49+j*7+k] = (double)(rand()%2);
-          printf("%lf  ", filter[i*49+j*7+k]);
+    for (size_t u = 0; u < 3; u++) {
+      for (int i = 0; i < 2; ++i) {
+        for (int j = 0; j < 7; ++j) {
+          for (int k = 0; k < 7; ++k) {
+            filter[i*49+j*7+k] = (double)(rand()%2);
+            printf("%lf  ", filter[i*49+j*7+k]);
+          }
+          printf("\n");
         }
         printf("\n");
       }
       printf("\n");
     }
-    printf("\n");
-
+    
     for (int i = 0; i < 3; ++i) {
       bias[i] = (double)(rand()%2);
       drop[i] = 1.0;
