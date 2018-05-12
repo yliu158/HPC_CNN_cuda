@@ -4,7 +4,7 @@ serial.o: serial.cpp main.h
 	g++ -std=c++17 -c serial.cpp main.h
 
 device.o: device.cu main.h
-	nvcc -c device.cu
+	nvcc -c -v device.cu
 
 link:
 	nvcc device.o serial.o -o test
