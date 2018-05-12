@@ -852,7 +852,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
 
 
 
-    // Output d_out;
+    Output d_out;
     conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
     // for (int i = 0; i < N_FILTERS; ++i) {
     //   for (int k = 0; k < IN_H; ++k) {
