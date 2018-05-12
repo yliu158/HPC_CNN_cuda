@@ -875,10 +875,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
         printf("\n" );
       }
       printf("\n" );
-    }
-    printf("\n" );
 
-    for (size_t i = 0; i < N_FILTERS; i++) {
       for (size_t k = 0; k < IN_H; k++) {
         for (size_t j = 0; j < IN_W; j++) {
           printf("%lf\t", output[i][k][j]);
@@ -886,6 +883,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
         printf("\n" );
       }
       printf("\n" );
+      printf("======================================================\n" );
     }
     exit(1);
 }
