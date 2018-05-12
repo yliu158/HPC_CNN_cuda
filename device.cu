@@ -88,6 +88,7 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
     }
     out[j] = res;
     out[j] += bias[j];
+    if (out[j] < 0) out[j] = 0.0;
     out[j] *= drop[j];
   }
   free(tmp);
