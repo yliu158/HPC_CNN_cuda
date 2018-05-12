@@ -1778,7 +1778,7 @@ main() {
       for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
           in[u*49*i*7+j] = (double)(rand()%2);
-          printf("%lf  ", in[u*49*i*7+j]);
+          // printf("%lf  ", in[u*49*i*7+j]);
         }
         printf("\n");
       }
@@ -1789,7 +1789,7 @@ main() {
         for (int j = 0; j < 7; ++j) {
           for (int k = 0; k < 7; ++k) {
             filter[i*49+j*7+k] = (double)(rand()%2);
-            printf("%lf  ", filter[i*49+j*7+k]);
+            // printf("%lf  ", filter[i*49+j*7+k]);
           }
           printf("\n");
         }
