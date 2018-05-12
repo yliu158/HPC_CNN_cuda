@@ -1773,7 +1773,7 @@ main() {
     filter = (double*)malloc(sizeof(double)*7*7*2*32);
     bias = (double*)malloc(sizeof(double)*32);
     out = (double*)malloc(sizeof(double)*32);
-    drop = (double*)malloc(sizeof(double)*32)
+    drop = (double*)malloc(sizeof(double)*32);
     for (int i = 0; i < 7; ++i) {
       for (int j = 0; j < 7; ++j) {
         in[i*7+j] = (double)(rand()%2);
