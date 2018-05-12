@@ -769,7 +769,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::check_downstream_derivative(const int la
 
 // void conv_forward_device_first(double* in, double* filter, double* bias, double* out);
 void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) ;
-void conv_forward_device_first(double* in, double* filter, double* bias, double* out);
 
 template <typename IN_DIMS, size_t N_FILTERS>
 void
@@ -829,51 +828,13 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
         }
     }
 
-    // for (int i = 0; i < IN_D; ++i) {
-    //   for (int k = 0; k < in_padded_h; ++k) {
-    //     for (int j = 0; j < in_padded_w; ++j) {
-    //       // assert(output[i][k][j] == d_out[i][k][j]);
-    //       printf("%lf ", in_padded[i][k][j]);
-    //     }
-    //     printf("\n" );
-    //   }
-    //   printf("\n" );
-    // }
-    //
-    // for (size_t i = 0; i < N_FILTERS; i++) {
-    //   for (size_t j = 0; j < 5; j++) {
-    //     for (size_t k = 0; k < 5; k++) {
-    //       printf("%lf ", filter[i][0][j][k]);
-    //     }
-    //     printf("\n" );
-    //   }
-    //   printf("\n" );
-    // }
-
-
-
     Output d_out;
     conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
-    // for (int i = 0; i < N_FILTERS; ++i) {
-    //   for (int k = 0; k < IN_H; ++k) {
-    //     for (int j = 0; j < IN_W; ++j) {
-    //       assert(output[i][k][j] == d_out[i][k][j]);
-    //       // printf("%lf ", d_out[i][k][j]);
-    //     }
-    //     // printf("\n" );
-    //   }
-    //   // printf("\n" );
-    // }
-    // // printf("\n" );
 
     for (int i = 0; i < N_FILTERS; ++i) {
       for (int k = 0; k < IN_H; ++k) {
         for (int j = 0; j < IN_W; ++j) {
-          // assert(output[i][k][j] == d_out[i][k][j]);
-          if (output[i][k][j] != d_out[i][k][j]) {
-            printf("\n\n%lf  %lf\n", output[i][k][j], d_out[i][k][j]);
-            break;
-          }
+          // assert(output[i][k][j] == d_out[i][k][j]); Precision different
           printf("%lf ", d_out[i][k][j]);
         }
         printf("\n" );
