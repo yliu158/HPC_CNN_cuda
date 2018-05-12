@@ -829,54 +829,54 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
         }
     }
 
-    for (int i = 0; i < IN_D; ++i) {
-      for (int k = 0; k < in_padded_h; ++k) {
-        for (int j = 0; j < in_padded_w; ++j) {
-          // assert(output[i][k][j] == d_out[i][k][j]);
-          printf("%lf ", in_padded[i][k][j]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-    }
+    // for (int i = 0; i < IN_D; ++i) {
+    //   for (int k = 0; k < in_padded_h; ++k) {
+    //     for (int j = 0; j < in_padded_w; ++j) {
+    //       // assert(output[i][k][j] == d_out[i][k][j]);
+    //       printf("%lf ", in_padded[i][k][j]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    // }
+    //
+    // for (size_t i = 0; i < N_FILTERS; i++) {
+    //   for (size_t j = 0; j < 5; j++) {
+    //     for (size_t k = 0; k < 5; k++) {
+    //       printf("%lf ", filter[i][0][j][k]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    // }
 
-    for (size_t i = 0; i < N_FILTERS; i++) {
-      for (size_t j = 0; j < 5; j++) {
-        for (size_t k = 0; k < 5; k++) {
-          printf("%lf ", filter[i][0][j][k]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-    }
 
 
-
-    Output d_out;
-    conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
-    for (int i = 0; i < N_FILTERS; ++i) {
-      for (int k = 0; k < IN_H; ++k) {
-        for (int j = 0; j < IN_W; ++j) {
-          assert(output[i][k][j] == d_out[i][k][j]);
-          printf("%lf ", d_out[i][k][j]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-    }
-    printf("\n" );
-
-    for (int i = 0; i < N_FILTERS; ++i) {
-      for (int k = 0; k < IN_H; ++k) {
-        for (int j = 0; j < IN_W; ++j) {
-          // assert(output[i][k][j] == d_out[i][k][j]);
-          printf("%lf ", output[i][k][j]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-    }
-    printf("\n" );
+    // Output d_out;
+    // conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
+    // for (int i = 0; i < N_FILTERS; ++i) {
+    //   for (int k = 0; k < IN_H; ++k) {
+    //     for (int j = 0; j < IN_W; ++j) {
+    //       assert(output[i][k][j] == d_out[i][k][j]);
+    //       printf("%lf ", d_out[i][k][j]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    // }
+    // printf("\n" );
+    //
+    // for (int i = 0; i < N_FILTERS; ++i) {
+    //   for (int k = 0; k < IN_H; ++k) {
+    //     for (int j = 0; j < IN_W; ++j) {
+    //       // assert(output[i][k][j] == d_out[i][k][j]);
+    //       printf("%lf ", output[i][k][j]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    // }
+    // printf("\n" );
 
     // for (size_t i = 0; i < N_FILTERS; i++) {
     //   for (size_t k = 0; k < IN_H; k++) {
