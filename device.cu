@@ -33,9 +33,10 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
   // gridDim.x:1  blockDim.x:3  blockDim.y:3  gridDim.y:32
   int x_out = threadIdx.x;
   int y_out = threadIdx.y*blockDim.x;
-  int z_out = blockIdx.x*blockDim.x*blockDim.y;
-  int w_out = blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
-  int o_id = x_out + y_out + z_out + w_out;
+  // int z_out = blockIdx.x*blockDim.x*blockDim.y;
+  // int w_out = blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
+  int w_out = blockIdx.y*blockDim.x*blockDim.y;
+  int o_id = x_out + y_out + w_out;
   int x_in = threadIdx.x+2;// 3
   int y_in = (threadIdx.y+2)*(blockDim.x+4); //21
   int z_in = blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
@@ -43,11 +44,10 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
   for (int i = 0; i < 5; ++i) {
     for (int j = 0; j < 5; ++j) {
       out[o_id] += filter[blockIdx.y*25*gridDim.x+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
-      // printf("threadIdx.x%d  threadIdx.y%d  blockIdx.x%d   blockIdx.y%d\nfilter (%d,%d)  id:%d\n in_id %d\n\n", threadIdx.x, threadIdx.y, blockIdx.x, blockIdx.y, i, j, blockIdx.y*25*gridDim.x+(i+2)*5+j+2, i_id+i*(blockDim.x+4)+j);
     }
   }
   out[o_id] += bias[blockIdx.y];
-  printf("block: %d\n", blockIdx.y*25*gridDim.x);
+  // printf("block: %d\n", blockIdx.y*25*gridDim.x);
   // printf("%lf\n", out[o_id]);
 }
 
