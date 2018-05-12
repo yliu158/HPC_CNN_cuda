@@ -830,8 +830,8 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
     }
 
     for (int i = 0; i < IN_D; ++i) {
-      for (int k = 0; k < IN_H; ++k) {
-        for (int j = 0; j < IN_W; ++j) {
+      for (int k = 0; k < in_padded_h; ++k) {
+        for (int j = 0; j < in_padded_w; ++j) {
           // assert(output[i][k][j] == d_out[i][k][j]);
           printf("%lf  ", in_padded[i][k][j]);
         }
