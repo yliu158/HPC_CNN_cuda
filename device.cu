@@ -33,17 +33,16 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
   // gridDim.x:1  blockDim.x:3  blockDim.y:3  gridDim.y:32
   int x_out = threadIdx.x;
   int y_out = threadIdx.y*blockDim.x;
-  // int z_out = blockIdx.x*blockDim.x*blockDim.y;
-  // int w_out = blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
   int w_out = blockIdx.y*blockDim.x*blockDim.y;
   int o_id = x_out + y_out + w_out;
   int x_in = threadIdx.x+2;// 3
   int y_in = (threadIdx.y+2)*(blockDim.x+4); //21
   int z_in = blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
   int i_id = x_in + y_in + z_in -(blockDim.x+4)*2-2;
+  int f_id = blockIdx.y*gridDim.x*25+blockIdx.x*25;
   for (int i = 0; i < 5; ++i) {
     for (int j = 0; j < 5; ++j) {
-      out[o_id] += filter[blockIdx.y*25*gridDim.x+blockIdx.x*25+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
+      out[o_id] += filter[f_id+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
     }
   }
   out[o_id] += bias[blockIdx.y];
