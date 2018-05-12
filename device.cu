@@ -67,12 +67,14 @@ __global__ void full_forward_conv(double * in, double * out, double * weight) {
   int o_id = blockIdx.y;
   int w_id = i_id + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
   out[o_id] += in[i_id]*weight[w_id];
+  printf("hELLO\n" );
 }
 
 __global__ void full_forward_bias_drop(double * out, double * bias, double * drop){
   out[threadIdx.x] += bias[threadIdx.x];
   // if (out[threadIdx.x] < 0) out[threadIdx.x] = 0.0;
   out[threadIdx.x] *= drop[threadIdx.x];
+  printf("bIAS\n" );
 }
 
 void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro) {
