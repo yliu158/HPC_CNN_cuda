@@ -92,7 +92,7 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   full_forward_conv<<<grid_size,block_size>>>(d_in, d_out, d_weight);
   full_forward_bias_drop<<<1,n_nro>>>(d_out, d_bias, d_drop);
 
-  cudaMemcpy(out, d_out, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
+  cudaMemcpy(out, d_out, sizeof(double)*n_nro, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
   cudaFree(d_out);
   cudaFree(d_weight);
