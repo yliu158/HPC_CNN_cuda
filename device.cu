@@ -88,8 +88,25 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
       for (size_t j = 0; j < size; j++) {
         printf("%lf  ", in[u*size*size+i*size+j]);
       }
+      printf("\n");
     }
+    printf("\n");
   }
+  printf("\n\n\n");
+
+  for (size_t k = 0; k < n_nro; k++) {
+    for (size_t u = 0; u < img_d; u++) {
+      for (size_t i = 0; i < size; i++) {
+        for (size_t j = 0; j < size; j++) {
+          printf("%lf  ", weight[k*size*size*img_d+u*size*size+i*size+j]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+    printf("\n");
+  }
+  printf("\n");
   cudaMemcpy(d_in, in, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_weight, weight, sizeof(double)*size*size*img_d*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_bias, bias, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
