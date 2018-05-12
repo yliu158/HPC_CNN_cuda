@@ -1773,6 +1773,7 @@ main() {
     filter = (double*)malloc(sizeof(double)*7*7*2*32);
     bias = (double*)malloc(sizeof(double)*32);
     out = (double*)malloc(sizeof(double)*32);
+    drop = (double*)malloc(sizeof(double)*32)
     for (int i = 0; i < 7; ++i) {
       for (int j = 0; j < 7; ++j) {
         in[i*7+j] = (double)(rand()%2);
@@ -1795,18 +1796,19 @@ main() {
 
     for (int i = 0; i < 32; ++i) {
       bias[i] = (double)(rand()%2);
+      drop[i] = 1.0;
       printf("%lf  ", bias[i]);
     }
     printf("\n");
-    full_forward_device(in, filter, bias, out, 7, 2, 32);
+    full_forward_device(in, out, filter, bias, drop, 7, 2, 32);
     for (int i = 0; i < 32; ++i) {
-      for (int j = 0; j < 28; ++j) {
-        for (int k = 0; k < 28; ++k) {
-          printf("%lf  ", out[i*28*28+j*28+k]);
-        }
-        printf("\n");
-      }
-      printf("\n");
+      // for (int j = 0; j < 28; ++j) {
+      //   for (int k = 0; k < 28; ++k) {
+          printf("%lf  ", out[i]);
+      //   }
+      //   printf("\n");
+      // }
+      // printf("\n");
     }
     printf("\n");
 }
