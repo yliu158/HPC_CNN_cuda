@@ -1323,39 +1323,9 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     }
     //=======================================================================
 
-    // for (size_t u = 0; u < N_NEURONS; u++) {
-    //
-    //   for (size_t i = 0; i < IN_D; i++) {
-    //     for (size_t j = 0; j < IN_H; j++) {
-    //       for (size_t k = 0; k < IN_W; k++) {
-    //         printf("%lf  ", weight[u][i][j][k]);
-    //       }
-    //       printf("\n");
-    //     }
-    //     printf("\n");
-    //     for (size_t j = 0; j < IN_H; j++) {
-    //       for (size_t k = 0; k < IN_W; k++) {
-    //         printf("%lf  ", input[i][j][k]);
-    //       }
-    //       printf("\n");
-    //     }
-    //     printf("\n");
-    //
-    //   }
-    //   printf("\n\n\n");
-    // }
-    // printf("\n");
 
-
-
-    Output d_out;
-    full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0], IN_H, IN_D, N_NEURONS);
-    for (size_t i = 0; i < N_NEURONS; i++) {
-      printf("%lf  %lf   ", d_out[0][0][i], output[0][0][i]);
-      if (d_out[0][0][i] != output[0][0][i]) printf("wrong\n");
-      else printf("right\n");
-    }
-    exit(1);
+    // Output d_out;
+    // full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0], IN_H, IN_D, N_NEURONS);
 
 }
 
