@@ -1778,32 +1778,32 @@ main() {
       for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
           in[u*49+i*7+j] = (double)(rand()%2+1);
-          // printf("%lf  ", in[u*49+i*7+j]);
+          printf("%lf  ", in[u*49+i*7+j]);
         }
-        // printf("\n");
+        printf("\n");
       }
-      // printf("\n");
+      printf("\n");
     }
     for (size_t u = 0; u < 3; u++) {
       for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 7; ++j) {
           for (int k = 0; k < 7; ++k) {
             filter[u*49*2+i*49+j*7+k] = (double)(rand()%2+1);
-            // printf("%lf  ", filter[i*49+j*7+k]);
+            printf("%lf  ", filter[i*49+j*7+k]);
           }
-          // printf("\n");
+          printf("\n");
         }
-        // printf("\n");
+        printf("\n");
       }
-      // printf("\n");
+      printf("\n");
     }
 
     for (int i = 0; i < 3; ++i) {
       bias[i] = (double)(rand()%2+1);
       drop[i] = 1.0;
-      // printf("%lf  ", bias[i]);
+      printf("%lf  ", bias[i]);
     }
-    // printf("\n");
+    printf("\n");
     full_forward_device(in, out, filter, bias, drop, 7, 2, 3);
     for (int i = 0; i < 3; ++i) {
       // for (int j = 0; j < 28; ++j) {

@@ -95,7 +95,6 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
     res = 0;
     for (size_t i = 0; i < size*size*img_d; i++) {
       res += tmp[j*size*size*img_d+i];
-      // printf("%lf\n", tmp[j*size*size*img_d+i]);
     }
     out[j] = res;
   }
