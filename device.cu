@@ -1,48 +1,5 @@
 #include "main.h"
 
-// __global__ void pool_forward(double* in, double* out) {
-//   int out_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
-//   int in_id = threadIdx.x*2 + (threadIdx.y*2)*(blockDim.x*2) + blockIdx.x*(blockDim.x*blockDim.y)*4;
-//   out[out_id] = in[in_id];
-//   for (int i = 0; i < 2; ++i) {
-//     for (int j = 0; j < 2; ++j) {
-//       if (out[out_id] < in[in_id+i+j*blockDim.x*2]) {
-//         out[out_id] = in[in_id+i+j*blockDim.x*2];
-//       }
-//     }
-//   }
-// }
-
-// void pool_forward_device_first(double* in, double* out) {
-//   dim3 block_size(14,14,1);
-//   dim3 grid_size(32,1,1);
-//   double *d_in, *d_out;
-//   cudaMalloc((double**)&d_in, sizeof(double)*28*28*32);
-//   cudaMalloc((double**)&d_out, sizeof(double)*14*14*32);
-//   cudaMemcpy(d_in, in, sizeof(double)*28*28*32, cudaMemcpyHostToDevice);
-//
-//   pool_forward<<<grid_size, block_size>>>(d_in, d_out);
-//
-//   cudaMemcpy(out, d_out, sizeof(double)*14*14*32, cudaMemcpyDeviceToHost);
-//   cudaFree(d_in);
-//   cudaFree(d_out);
-// }
-//
-// void pool_forward_device_second(double* in, double* out) {
-//   dim3 block_size(7,7,1);
-//   dim3 grid_size(64,1,1);
-//   double *d_in, *d_out;
-//   cudaMalloc((double**)&d_in, sizeof(double)*14*14*64);
-//   cudaMalloc((double**)&d_out, sizeof(double)*7*7*64);
-//   cudaMemcpy(d_in, in, sizeof(double)*14*14*64, cudaMemcpyHostToDevice);
-//
-//   pool_forward<<<grid_size, block_size>>>(d_in, d_out);
-//
-//   cudaMemcpy(out, d_out, sizeof(double)*7*7*64, cudaMemcpyDeviceToHost);
-//   cudaFree(d_in);
-//   cudaFree(d_out);
-// }
-
 __global__ void pool_forward(double *in, double *out, size_t size_out) {
   int o_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
   int i_id = threadIdx.x*2 + threadIdx.y*2*blockDim.x*2 + blockIdx.x*blockDim.x*2*blockDim.y*2;
