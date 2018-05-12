@@ -95,9 +95,9 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
     res = 0;
     for (size_t i = 0; i < size*size*img_d; i++) {
       res += tmp[j*size*size*img_d+i];
-      printf("%lf\n", tmp[j*size*size*img_d+i]);
+      // printf("%lf\n", tmp[j*size*size*img_d+i]);
     }
-    out[n_nro] = res;
+    out[j] = res;
   }
   // full_forward_bias_drop<<<1,n_nro>>>(d_out, d_bias, d_drop);
   free(tmp);
