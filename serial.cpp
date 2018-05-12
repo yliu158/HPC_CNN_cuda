@@ -806,30 +806,30 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
 
     // Serial version begin
     //=======================================================================
-    for (size_t g = 0; g < N_FILTERS; g++) {
-        for (size_t i = 0; i < OUT_H; i++) {
-            for (size_t j = 0; j < OUT_W; j++) {
-                double &out(output[g][i][j]);
-                out = 0;
-                for (size_t in_h = 0; in_h < IN_D; in_h++) {
-                    for (size_t f_i = 0; f_i < FILTER_H; f_i++) {
-                        for (size_t f_j = 0; f_j < FILTER_W; f_j++) {
-                            /**
-                            fprintf(stderr, "Added to DP: %f*%f\n",
-                             double(filter(g, in_h, f_i, f_j)),
-                             double(in_padded(in_h, i + f_i, j + f_j)));
-                            */
-                            out += filter(g, in_h, f_i, f_j)*in_padded(in_h, i + f_i, j + f_j);
-                        }
-                    }
-                }
-                // fprintf(stderr, "Bias to DP: %f\n", (double) bias[g]);
-                out += bias[g];
-                // ReLU
-                out = std::max(0.0, out);
-            }
-        }
-    }
+    // for (size_t g = 0; g < N_FILTERS; g++) {
+    //     for (size_t i = 0; i < OUT_H; i++) {
+    //         for (size_t j = 0; j < OUT_W; j++) {
+    //             double &out(output[g][i][j]);
+    //             out = 0;
+    //             for (size_t in_h = 0; in_h < IN_D; in_h++) {
+    //                 for (size_t f_i = 0; f_i < FILTER_H; f_i++) {
+    //                     for (size_t f_j = 0; f_j < FILTER_W; f_j++) {
+    //                         /**
+    //                         fprintf(stderr, "Added to DP: %f*%f\n",
+    //                          double(filter(g, in_h, f_i, f_j)),
+    //                          double(in_padded(in_h, i + f_i, j + f_j)));
+    //                         */
+    //                         out += filter(g, in_h, f_i, f_j)*in_padded(in_h, i + f_i, j + f_j);
+    //                     }
+    //                 }
+    //             }
+    //             // fprintf(stderr, "Bias to DP: %f\n", (double) bias[g]);
+    //             out += bias[g];
+    //             // ReLU
+    //             out = std::max(0.0, out);
+    //         }
+    //     }
+    // }
     //=======================================================================
     // Serial End
 
@@ -838,26 +838,26 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
     Output d_out;
     conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
 
-    for (int i = 0; i < N_FILTERS; ++i) {
-      for (int k = 0; k < IN_H; ++k) {
-        for (int j = 0; j < IN_W; ++j) {
-          // assert(output[i][k][j] == d_out[i][k][j]); Precision different
-          printf("%lf ", d_out[i][k][j]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-
-      for (size_t k = 0; k < IN_H; k++) {
-        for (size_t j = 0; j < IN_W; j++) {
-          printf("%lf ", output[i][k][j]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-      printf("======================================================\n" );
-    }
-    exit(1);
+    // for (int i = 0; i < N_FILTERS; ++i) {
+    //   for (int k = 0; k < IN_H; ++k) {
+    //     for (int j = 0; j < IN_W; ++j) {
+    //       // assert(output[i][k][j] == d_out[i][k][j]); Precision different
+    //       printf("%lf ", d_out[i][k][j]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    //
+    //   for (size_t k = 0; k < IN_H; k++) {
+    //     for (size_t j = 0; j < IN_W; j++) {
+    //       printf("%lf ", output[i][k][j]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    //   printf("======================================================\n" );
+    // }
+    // exit(1);
 
 
 
