@@ -40,7 +40,7 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
     }
   }
   out[o_id] += bias[blockIdx.y];
-  out[o_id] = std::max(0.0, out);
+  if (out[o_id] < 0) out[o_id] = 0.0;
 }
 
 // __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
