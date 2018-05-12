@@ -68,23 +68,13 @@ __global__ void full_forward_conv(double * in, double * out, double * weight) {
   out[w_id] = in[i_id]*weight[w_id];
 }
 
-__global__ void full_forward_bias_drop(double * out, double * bias, double * drop){
-  out[threadIdx.x] += bias[threadIdx.x];
-  if (out[threadIdx.x] < 0) out[threadIdx.x] = 0.0;
-  out[threadIdx.x] *= drop[threadIdx.x];
-}
-
 void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro) {
-  double *d_in, *d_out, *d_weight, *d_bias, *d_drop;
+  double *d_in, *d_out, *d_weight;
   cudaMalloc((double**)&d_in, sizeof(double)*size*size*img_d);
   cudaMalloc((double**)&d_out, sizeof(double)*size*size*img_d*n_nro);
   cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d*n_nro);
-  cudaMalloc((double**)&d_bias, sizeof(double)*n_nro);
-  cudaMalloc((double**)&d_drop, sizeof(double)*n_nro);
   cudaMemcpy(d_in, in, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_weight, weight, sizeof(double)*size*size*img_d*n_nro, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_bias, bias, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_drop, drop, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
   dim3 block_size(size, size, 1);
   dim3 grid_size(img_d, n_nro, 1);
   full_forward_conv<<<grid_size,block_size>>>(d_in, d_out, d_weight);
@@ -97,16 +87,11 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
       res += tmp[j*size*size*img_d+i];
     }
     out[j] = res;
+    out[j] += bias[j];
+    out[j] *= drop[j];
   }
-  double *d_res;
-  cudaMalloc((double**)&d_res, sizeof(double)*n_nro);
-  cudaMemcpy(d_res, tmp, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
-  full_forward_bias_drop<<<1,n_nro>>>(d_res, d_bias, d_drop);
   free(tmp);
   cudaFree(d_in);
   cudaFree(d_out);
   cudaFree(d_weight);
-  cudaFree(d_bias);
-  cudaFree(d_drop);
-  cudaFree(d_res);
 }
