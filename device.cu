@@ -31,39 +31,39 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
 
 
 
-// __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
-//   int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
-//   int i_id = threadIdx.x+2 + threadIdx.y*(blockDim.x+4) + (blockDim.x+4)*(blockDim.y+4)*blockIdx.x;
-//   double res = 0;
-//   for (int i = -2; i <= 2; ++i) {
-//     for (int j = -2; j <= 2; ++j) {
-//       res += in[i_id+i*32+j]*filter[blockIdx.x*25+i*5+j];
-//     }
-//   }
-//   out[t_id] = res + bias[blockIdx.x];
-//   // printf("tid: %d\n", t_id);
-// }
-//
-// void conv_forward_device_first(double* in, double* filter, double* bias, double* out) {
-//   double *d_i, *d_f, *d_b, *d_o;
-//   cudaMalloc((double**)&d_i, sizeof(double)*32*32*1);
-//   cudaMalloc((double**)&d_f, sizeof(double)*5*5*32);
-//   cudaMalloc((double**)&d_b, sizeof(double)*32);
-//   cudaMalloc((double**)&d_o, sizeof(double)*28*28*32);
-//   cudaMemcpy(d_i, in, sizeof(double)*32*32*1, cudaMemcpyHostToDevice);
-//   cudaMemcpy(d_f, filter, sizeof(double)*5*5*32, cudaMemcpyHostToDevice);
-//   cudaMemcpy(d_b, bias, sizeof(double)*32, cudaMemcpyHostToDevice);
-//
-//   dim3 block_size(28,28,1);
-//   dim3 grid_size(32,1,1);
-//   conv_forward<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
-//
-//   cudaMemcpy(out, d_o, sizeof(double)*28*28*32, cudaMemcpyDeviceToHost);
-//   cudaFree(d_i);
-//   cudaFree(d_f);
-//   cudaFree(d_b);
-//   cudaFree(d_o);
-// }
+__global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
+  int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
+  int i_id = threadIdx.x+2 + threadIdx.y*(blockDim.x+4) + (blockDim.x+4)*(blockDim.y+4)*blockIdx.x;
+  double res = 0;
+  for (int i = -2; i <= 2; ++i) {
+    for (int j = -2; j <= 2; ++j) {
+      res += in[i_id+i*32+j]*filter[blockIdx.x*25+i*5+j];
+    }
+  }
+  out[t_id] = res + bias[blockIdx.x];
+  // printf("tid: %d\n", t_id);
+}
+
+void conv_forward_device_first(double* in, double* filter, double* bias, double* out) {
+  double *d_i, *d_f, *d_b, *d_o;
+  cudaMalloc((double**)&d_i, sizeof(double)*32*32*1);
+  cudaMalloc((double**)&d_f, sizeof(double)*5*5*32);
+  cudaMalloc((double**)&d_b, sizeof(double)*32);
+  cudaMalloc((double**)&d_o, sizeof(double)*28*28*32);
+  cudaMemcpy(d_i, in, sizeof(double)*32*32*1, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_f, filter, sizeof(double)*5*5*32, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_b, bias, sizeof(double)*32, cudaMemcpyHostToDevice);
+
+  dim3 block_size(28,28,1);
+  dim3 grid_size(32,1,1);
+  conv_forward<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
+
+  cudaMemcpy(out, d_o, sizeof(double)*28*28*32, cudaMemcpyDeviceToHost);
+  cudaFree(d_i);
+  cudaFree(d_f);
+  cudaFree(d_b);
+  cudaFree(d_o);
+}
 
 __global__ void conv_forward_all(double* in, double* filter, double* bias, double* out) {
   // gridDim.x:1  blockDim.x:3  blockDim.y:3  gridDim.y:32
