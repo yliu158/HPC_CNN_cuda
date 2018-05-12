@@ -1778,7 +1778,7 @@ main() {
       for (int i = 0; i < 7; ++i) {
         for (int j = 0; j < 7; ++j) {
           in[u*49*i*7+j] = (double)(rand()%2+1);
-          // printf("%lf  ", in[u*49*i*7+j]);
+          printf("%lf  ", in[u*49*i*7+j]);
         }
         printf("\n");
       }
