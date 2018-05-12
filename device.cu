@@ -62,7 +62,6 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   cudaFree(d_o);
 }
 
-
 __global__ void full_forward_conv(double * in, double * out, double * weight) {
   int i_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
   int o_id = blockIdx.y;
