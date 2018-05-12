@@ -1339,10 +1339,10 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
           }
           printf("\n");
         }
-        printf("=========================\n");
+        printf("\n");
 
       }
-      printf("=======================********************=======================\n");
+      printf("\n\n\n");
     }
     printf("\n");
 
