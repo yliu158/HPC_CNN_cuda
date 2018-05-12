@@ -1323,28 +1323,28 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     }
     //=======================================================================
 
-    for (size_t u = 0; u < N_NEURONS; u++) {
-
-      for (size_t i = 0; i < IN_D; i++) {
-        for (size_t j = 0; j < IN_H; j++) {
-          for (size_t k = 0; k < IN_W; k++) {
-            printf("%lf  ", weight[u][i][j][k]);
-          }
-          printf("\n");
-        }
-        printf("\n");
-        for (size_t j = 0; j < IN_H; j++) {
-          for (size_t k = 0; k < IN_W; k++) {
-            printf("%lf  ", input[i][j][k]);
-          }
-          printf("\n");
-        }
-        printf("\n");
-
-      }
-      printf("\n\n\n");
-    }
-    printf("\n");
+    // for (size_t u = 0; u < N_NEURONS; u++) {
+    //
+    //   for (size_t i = 0; i < IN_D; i++) {
+    //     for (size_t j = 0; j < IN_H; j++) {
+    //       for (size_t k = 0; k < IN_W; k++) {
+    //         printf("%lf  ", weight[u][i][j][k]);
+    //       }
+    //       printf("\n");
+    //     }
+    //     printf("\n");
+    //     for (size_t j = 0; j < IN_H; j++) {
+    //       for (size_t k = 0; k < IN_W; k++) {
+    //         printf("%lf  ", input[i][j][k]);
+    //       }
+    //       printf("\n");
+    //     }
+    //     printf("\n");
+    //
+    //   }
+    //   printf("\n\n\n");
+    // }
+    // printf("\n");
 
 
 
@@ -1767,54 +1767,54 @@ main() {
     }
 
 
-    // run3();
-    double *in, *filter, *bias, *out, *drop;
-    in = (double*)malloc(sizeof(double)*7*7*2);
-    filter = (double*)malloc(sizeof(double)*7*7*2*3);
-    bias = (double*)malloc(sizeof(double)*3);
-    out = (double*)malloc(sizeof(double)*3);
-    drop = (double*)malloc(sizeof(double)*3);
-    for (size_t u = 0; u < 2; u++) {
-      for (int i = 0; i < 7; ++i) {
-        for (int j = 0; j < 7; ++j) {
-          in[u*49+i*7+j] = (double)(rand()%2+1);
-          printf("%lf  ", in[u*49+i*7+j]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-    for (size_t u = 0; u < 3; u++) {
-      for (int i = 0; i < 2; ++i) {
-        for (int j = 0; j < 7; ++j) {
-          for (int k = 0; k < 7; ++k) {
-            filter[u*49*2+i*49+j*7+k] = (double)(rand()%2+1);
-            printf("%lf  ", filter[u*49*2+i*49+j*7+k]);
-          }
-          printf("\n");
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-
-    for (int i = 0; i < 3; ++i) {
-      bias[i] = (double)(rand()%2+1);
-      drop[i] = 1.0;
-      printf("%lf  ", bias[i]);
-    }
-    printf("\n");
-    full_forward_device(in, out, filter, bias, drop, 7, 2, 3);
-    for (int i = 0; i < 3; ++i) {
-      // for (int j = 0; j < 28; ++j) {
-      //   for (int k = 0; k < 28; ++k) {
-          printf("%lf  ", out[i]);
-      //   }
-      //   printf("\n");
-      // }
-      // printf("\n");
-    }
-    printf("\n");
+    run3();
+    // double *in, *filter, *bias, *out, *drop;
+    // in = (double*)malloc(sizeof(double)*7*7*2);
+    // filter = (double*)malloc(sizeof(double)*7*7*2*3);
+    // bias = (double*)malloc(sizeof(double)*3);
+    // out = (double*)malloc(sizeof(double)*3);
+    // drop = (double*)malloc(sizeof(double)*3);
+    // for (size_t u = 0; u < 2; u++) {
+    //   for (int i = 0; i < 7; ++i) {
+    //     for (int j = 0; j < 7; ++j) {
+    //       in[u*49+i*7+j] = (double)(rand()%2+1);
+    //       printf("%lf  ", in[u*49+i*7+j]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // for (size_t u = 0; u < 3; u++) {
+    //   for (int i = 0; i < 2; ++i) {
+    //     for (int j = 0; j < 7; ++j) {
+    //       for (int k = 0; k < 7; ++k) {
+    //         filter[u*49*2+i*49+j*7+k] = (double)(rand()%2+1);
+    //         printf("%lf  ", filter[u*49*2+i*49+j*7+k]);
+    //       }
+    //       printf("\n");
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    //
+    // for (int i = 0; i < 3; ++i) {
+    //   bias[i] = (double)(rand()%2+1);
+    //   drop[i] = 1.0;
+    //   printf("%lf  ", bias[i]);
+    // }
+    // printf("\n");
+    // full_forward_device(in, out, filter, bias, drop, 7, 2, 3);
+    // for (int i = 0; i < 3; ++i) {
+    //   // for (int j = 0; j < 28; ++j) {
+    //   //   for (int k = 0; k < 28; ++k) {
+    //       printf("%lf  ", out[i]);
+    //   //   }
+    //   //   printf("\n");
+    //   // }
+    //   // printf("\n");
+    // }
+    // printf("\n");
 }
 
 
