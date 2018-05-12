@@ -1285,17 +1285,20 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::check_downstream_derivative(const int l
     }
 }
 
-void full_forward_device(double * w, double * i, double * o);
+void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro);
 
 template <typename IN_DIMS, size_t N_NEURONS>
 void
 FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias,
  const Array<double, N_NEURONS> &dropped, Output &output) {
 
-    for (size_t i = 0; i < N_NEURONS; i++) {// 64
+   printf("N_NEURONS: %d   IN_D: %d\n", N_NEURONS, IN_D);
+   exit(1);
+
+    for (size_t i = 0; i < N_NEURONS; i++) {
         double &out(output[0][0][i]);
         out = 0;
-        for (size_t in_h = 0; in_h < IN_D; in_h++) { //32
+        for (size_t in_h = 0; in_h < IN_D; in_h++) {
             for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
                 for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
                     out += weight[i][in_h][in_i][in_j]*input[in_h][in_i][in_j];

@@ -67,6 +67,12 @@ __global__ void full_forward() {
 
 }
 
-void full_forward_device(double * w, double * i, double * o) {
+void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro) {
+  double *d_in, *d_out, *d_weight, *d_bias, *d_drop;
+  cudaMalloc((double**)&d_in, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_out, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_bias, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_drop, sizeof(double)*size*size*img_d);
 
 }
