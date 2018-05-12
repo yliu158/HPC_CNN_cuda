@@ -997,8 +997,8 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
 
 
     //=======================================================================
-    Set all indices to maximum values to trigger range check failures during backprop if any were not set
-    correctly.
+    // Set all indices to maximum values to trigger range check failures during backprop if any were not set
+    // correctly.
     m_max_index_i = std::numeric_limits<size_t>::max();
     m_max_index_j = std::numeric_limits<size_t>::max();
 
