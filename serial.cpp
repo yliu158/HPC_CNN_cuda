@@ -1324,8 +1324,8 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     //=======================================================================
 
     for (size_t u = 0; u < N_NEURONS; u++) {
-      for (size_t i = 0; i < IN_D; i++) {
 
+      for (size_t i = 0; i < IN_D; i++) {
         for (size_t j = 0; j < IN_H; j++) {
           for (size_t k = 0; k < IN_W; k++) {
             printf("%lf  ", weight[u][i][j][k]);
@@ -1339,10 +1339,10 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
           }
           printf("\n");
         }
-        printf("=======================================================================\n");
-        
+        printf("=========================\n");
+
       }
-      printf("\n");
+      printf("=======================********************=======================\n");
     }
     printf("\n");
 
