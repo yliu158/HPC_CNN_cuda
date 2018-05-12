@@ -963,8 +963,6 @@ MaxPoolLayer<IN_DIMS>::check_downstream_derivative(const int label) {
     }
 }
 
-void pool_forward_device_first(double* i, double* o);
-void pool_forward_device_second(double* in, double* out);
 void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d);
 
 template <typename IN_DIMS>
@@ -1006,29 +1004,17 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     }
 
     // prove of correctness
-    Output d_out;
-    pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], 14, 32);
-    for (int k = 0; k < 32; ++k) {
-          for (int i = 0; i < 14; ++i) {
-                for (int j = 0; j < 14; ++j)  {
-                  assert(output[k][i][j] == d_out[k][i][j]);
-                  if (output[k][i][j] == d_out[k][i][j]) printf("Right.\n");
-                }
-          }
-    }
-    exit(1);
-    // if (IN_D == 64) {
     // Output d_out;
-    // pool_forward_device_second((double*)&input[0][0][0], (double*)&d_out[0][0][0]);
-    // for (int k = 0; k < 64; ++k) {
-    //       for (int i = 0; i < 7; ++i) {
-    //             for (int j = 0; j < 7; ++j)  {
+    // pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], 14, 32);
+    // for (int k = 0; k < 32; ++k) {
+    //       for (int i = 0; i < 14; ++i) {
+    //             for (int j = 0; j < 14; ++j)  {
     //               assert(output[k][i][j] == d_out[k][i][j]);
+    //               if (output[k][i][j] == d_out[k][i][j]) printf("Right.\n");
     //             }
     //       }
     // }
     // exit(1);
-    // }
 }
 
 /*
