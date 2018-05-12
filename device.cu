@@ -81,7 +81,7 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   cudaMalloc((double**)&d_out, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d*n_nro);
   cudaMalloc((double**)&d_bias, sizeof(double)*n_nro);
-  cudaMalloc((double**)&d_drop, sizeof(double)*n_nro;
+  cudaMalloc((double**)&d_drop, sizeof(double)*n_nro);
   cudaMemcpy(d_in, in, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_weight, weight, sizeof(double)*size*size*img_d*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_bias, bias, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
@@ -89,7 +89,7 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
 
   dim3 block_size(size, size, 1);
   dim3 grid_size(img_d, n_nro, 1);
-  full_forward<<<grid_size,block_size>>>(d_in, d_out, d_weight);
+  full_forward_conv<<<grid_size,block_size>>>(d_in, d_out, d_weight);
   full_forward_bias_drop<<<1,n_nro>>>(d_out, d_bias, d_drop);
 
   cudaMemcpy(out, d_out, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
