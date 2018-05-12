@@ -1767,49 +1767,48 @@ main() {
     }
 
 
-    // full_forward_device();
-    run3();
-    // double *in, *filter, *bias, *out, *drop;
-    // in = (double*)malloc(sizeof(double)*7*7*1);
-    // filter = (double*)malloc(sizeof(double)*7*7*32);
-    // bias = (double*)malloc(sizeof(double)*32);
-    // out = (double*)malloc(sizeof(double)*32);
-    // for (int i = 0; i < 7; ++i) {
-    //   for (int j = 0; j < 7; ++j) {
-    //     in[i*7+j] = (double)(rand()%2);
-    //     printf("%lf  ", in[i*7+j]);
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 7; ++j) {
-    //     for (int k = 0; k < 7; ++k) {
-    //       filter[i*49+j*7+k] = (double)(rand()%2);
-    //       printf("%lf  ", filter[i*49+j*7+k]);
-    //     }
-    //     printf("\n");
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
-    //
-    // for (int i = 0; i < 32; ++i) {
-    //   bias[i] = (double)(rand()%2);
-    //   printf("%lf  ", bias[i]);
-    // }
-    // printf("\n");
-    // conv_forward_device_first(in, filter, bias, out);
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 28; ++j) {
-    //     for (int k = 0; k < 28; ++k) {
-    //       printf("%lf  ", out[i*28*28+j*28+k]);
-    //     }
-    //     printf("\n");
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
+    // run3();
+    double *in, *filter, *bias, *out, *drop;
+    in = (double*)malloc(sizeof(double)*7*7*2);
+    filter = (double*)malloc(sizeof(double)*7*7*2*32);
+    bias = (double*)malloc(sizeof(double)*32);
+    out = (double*)malloc(sizeof(double)*32);
+    for (int i = 0; i < 7; ++i) {
+      for (int j = 0; j < 7; ++j) {
+        in[i*7+j] = (double)(rand()%2);
+        printf("%lf  ", in[i*7+j]);
+      }
+      printf("\n");
+    }
+    printf("\n");
+    for (int i = 0; i < 32; ++i) {
+      for (int j = 0; j < 7; ++j) {
+        for (int k = 0; k < 7; ++k) {
+          filter[i*49+j*7+k] = (double)(rand()%2);
+          printf("%lf  ", filter[i*49+j*7+k]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+    printf("\n");
+
+    for (int i = 0; i < 32; ++i) {
+      bias[i] = (double)(rand()%2);
+      printf("%lf  ", bias[i]);
+    }
+    printf("\n");
+    full_forward_device(in, filter, bias, out, 7, 2, 32);
+    for (int i = 0; i < 32; ++i) {
+      for (int j = 0; j < 28; ++j) {
+        for (int k = 0; k < 28; ++k) {
+          printf("%lf  ", out[i*28*28+j*28+k]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+    printf("\n");
 }
 
 
