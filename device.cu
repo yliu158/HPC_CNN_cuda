@@ -83,6 +83,13 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d*n_nro);
   cudaMalloc((double**)&d_bias, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_drop, sizeof(double)*n_nro);
+  for (size_t u = 0; u < img_d; u++) {
+    for (size_t i = 0; i < size; i++) {
+      for (size_t j = 0; j < size; j++) {
+        printf("%lf  ", in[u*size*size+i*size+j]);
+      }
+    }
+  }
   cudaMemcpy(d_in, in, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_weight, weight, sizeof(double)*size*size*img_d*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_bias, bias, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
