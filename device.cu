@@ -29,7 +29,7 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
   cudaFree(d_out);
 }
 
-__global__ void conv_forward_all(double* in, double* filter, double* bias, double* out) {
+__global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
   // gridDim.x:1  blockDim.x:3  blockDim.y:3  gridDim.y:32
   int x_out = threadIdx.x;
   int y_out = threadIdx.y*blockDim.x;
@@ -39,7 +39,7 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   int x_in = threadIdx.x+2;// 3
   int y_in = (threadIdx.y+2)*(blockDim.x+4); //21
   int z_in = blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
-  int i_id = x_in + y_in + z_in -(threadIdx.x+4)*2-2;
+  int i_id = x_in + y_in + z_in -(blockDim.x+4)*2-2;
   for (int i = 0; i < 5; ++i) {
     for (int j = 0; j < 5; ++j) {
       out[o_id] += filter[blockIdx.y*25*gridDim.x+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
@@ -62,7 +62,7 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   cudaMemcpy(d_b, bias, sizeof(double)*fil_d, cudaMemcpyHostToDevice);
   dim3 block_size(size,size,1);
   dim3 grid_size(img_d,fil_d,1);
-  conv_forward_all<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
+  conv_forward<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
   cudaMemcpy(out, d_o, sizeof(double)*size*size*fil_d, cudaMemcpyDeviceToHost);
   cudaFree(d_i);
   cudaFree(d_f);
