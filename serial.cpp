@@ -803,6 +803,9 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
         }
     }
 
+
+    // Serial version begin
+    //=======================================================================
     for (size_t g = 0; g < N_FILTERS; g++) {
         for (size_t i = 0; i < OUT_H; i++) {
             for (size_t j = 0; j < OUT_W; j++) {
@@ -811,7 +814,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
                 for (size_t in_h = 0; in_h < IN_D; in_h++) {
                     for (size_t f_i = 0; f_i < FILTER_H; f_i++) {
                         for (size_t f_j = 0; f_j < FILTER_W; f_j++) {
-                            /*
+                            /**
                             fprintf(stderr, "Added to DP: %f*%f\n",
                              double(filter(g, in_h, f_i, f_j)),
                              double(in_padded(in_h, i + f_i, j + f_j)));
@@ -827,36 +830,33 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
             }
         }
     }
+    //=======================================================================
+    // Serial End
 
 
 
+    // Output d_out;
+    // conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
 
-
-
-
-
-    Output d_out;
-    conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
-
-    for (int i = 0; i < N_FILTERS; ++i) {
-      for (int k = 0; k < IN_H; ++k) {
-        for (int j = 0; j < IN_W; ++j) {
-          // assert(output[i][k][j] == d_out[i][k][j]); Precision different
-          printf("%lf ", d_out[i][k][j]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-
-      for (size_t k = 0; k < IN_H; k++) {
-        for (size_t j = 0; j < IN_W; j++) {
-          printf("%lf ", output[i][k][j]);
-        }
-        printf("\n" );
-      }
-      printf("\n" );
-      printf("======================================================\n" );
-    }
+    // for (int i = 0; i < N_FILTERS; ++i) {
+    //   for (int k = 0; k < IN_H; ++k) {
+    //     for (int j = 0; j < IN_W; ++j) {
+    //       // assert(output[i][k][j] == d_out[i][k][j]); Precision different
+    //       printf("%lf ", d_out[i][k][j]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    //
+    //   for (size_t k = 0; k < IN_H; k++) {
+    //     for (size_t j = 0; j < IN_W; j++) {
+    //       printf("%lf ", output[i][k][j]);
+    //     }
+    //     printf("\n" );
+    //   }
+    //   printf("\n" );
+    //   printf("======================================================\n" );
+    // }
     // exit(1);
 
 
@@ -1292,6 +1292,7 @@ void
 FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array<Input, N_NEURONS> &weight, const Array<double, N_NEURONS> &bias,
  const Array<double, N_NEURONS> &dropped, Output &output) {
 
+    //=======================================================================
     for (size_t i = 0; i < N_NEURONS; i++) {
         double &out(output[0][0][i]);
         out = 0;
@@ -1320,13 +1321,16 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
 
         out *= dropped(i);
     }
-    // printf("%s\n", "compare host and device");
-    // Output output_device;
-    // full_device_forward((double*)&weight[0][0][0][0], (double*)&input[0][0][0], (double*)&output_device[0][0][0]);
-    // for (int i = 0; i < N_NEURONS; ++i) {
-    //   printf("host%d  device%d\n", output[0][0][i], output_device[0][0][i]);
-    //   // assert(output[0][0][i] == output_device[0][0][i]);
-    // }
+    //=======================================================================
+
+    Output d_out;
+    full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0]);
+    for (size_t i = 0; i < N_NEURONS; i++) {
+      printf("%lf  %lf\n", d_out[0][0][i], output[0][0][i]);
+      if (d_out[0][0][i] != output[0][0][i]) printf("wrong\n");
+      else printf("right\n");
+    }
+
 }
 
 
@@ -1737,151 +1741,49 @@ main() {
     }
 
 
-    // full_forward_device();
+    full_forward_device();
     run3();
-    // double *in, *filter, *bias, *out;
-    // in = (double*)malloc(sizeof(double)*32*32*1);
-    // filter = (double*)malloc(sizeof(double)*5*5*32);
-    // bias = (double*)malloc(sizeof(double)*32);
-    // out = (double*)malloc(sizeof(double)*28*28*1);
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 32; ++j) {
-    //     in[i*32+j] = (double)(rand()%2);
-    //     printf("%lf  ", in[i*32+j]);
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 5; ++j) {
-    //     for (int k = 0; k < 5; ++k) {
-    //       filter[i*5*5+j*5+k] = (double)(rand()%2);
-    //       printf("%lf  ", filter[i*5*5+j*5+k]);
-    //     }
-    //     printf("\n");
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
-    // for (int i = 0; i < 32; ++i) {
-    //   bias[i] = (double)(rand()%2);
-    //   printf("%lf  ", bias[i]);
-    // }
-    // printf("\n");
-    // conv_forward_device_first(in, filter, bias, out);
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 28; ++j) {
-    //     for (int k = 0; k < 28; ++k) {
-    //       printf("%lf  ", out[i*28*28+j*28+k]);
-    //     }
-    //     printf("\n");
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
+    double *in, *filter, *bias, *out, *drop;
+    in = (double*)malloc(sizeof(double)*7*7*1);
+    filter = (double*)malloc(sizeof(double)*7*7*32);
+    bias = (double*)malloc(sizeof(double)*32);
+    out = (double*)malloc(sizeof(double)*32);
+    for (int i = 0; i < 7; ++i) {
+      for (int j = 0; j < 7; ++j) {
+        in[i*7+j] = (double)(rand()%2);
+        printf("%lf  ", in[i*7+j]);
+      }
+      printf("\n");
+    }
+    printf("\n");
+    for (int i = 0; i < 32; ++i) {
+      for (int j = 0; j < 7; ++j) {
+        for (int k = 0; k < 7; ++k) {
+          filter[i*49+j*7+k] = (double)(rand()%2);
+          printf("%lf  ", filter[i*49+j*7+k]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+    printf("\n");
 
-
-
-
-
-
-
-
-        // double *in, *filter, *bias, *out;
-        // in = (double*)malloc(sizeof(double)*7*7*1);
-        // filter = (double*)malloc(sizeof(double)*5*5*2);
-        // bias = (double*)malloc(sizeof(double)*2);
-        // out = (double*)malloc(sizeof(double)*3*3*2);
-        // for (int i = 0; i < 7; ++i) {
-        //   for (int j = 0; j < 7; ++j) {
-        //     in[i*7+j] = (double)(rand()%2+1);
-        //     printf("%lf  ", in[i*7+j]);
-        //   }
-        //   printf("\n");
-        // }
-        // printf("\n");
-        // for (int i = 0; i < 2; ++i) {
-        //   for (int j = 0; j < 5; ++j) {
-        //     for (int k = 0; k < 5; ++k) {
-        //       filter[i*25+j*5+k] = (double)(rand()%2+1);
-        //       printf("%lf  ", filter[i*25+j*5+k]);
-        //     }
-        //     printf("\n");
-        //   }
-        //   printf("\n");
-        // }
-        // printf("\n");
-        // for (int i = 0; i < 2; ++i) {
-        //   bias[i] = (double)(rand()%2+1);
-        //   printf("%lf  ", bias[i]);
-        // }
-        // printf("\n");
-        // // conv_forward_device_test(in, filter, bias, out);
-        // // void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) ;
-        //
-        // conv_forward_device(in, filter, bias, out,3,1,2);
-        // for (int i = 0; i < 2; ++i) {
-        //   for (int j = 0; j < 3; ++j) {
-        //     for (int k = 0; k < 3; ++k) {
-        //       printf("%lf  ", out[i*3*3+j*3+k]);
-        //     }
-        //     printf("\n");
-        //   }
-        //   printf("\n");
-        // }
-        // printf("\n");
-        //
-
-
-
-
-
-
-
-    // double *in, *filter, *bias, *out;
-    // in = (double*)malloc(sizeof(double)*32*32*1);
-    // filter = (double*)malloc(sizeof(double)*5*5*32);
-    // bias = (double*)malloc(sizeof(double)*32);
-    // out = (double*)malloc(sizeof(double)*28*28*1);
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 32; ++j) {
-    //     in[i*32+j] = (double)(rand()%2);
-    //     printf("%lf  ", in[i*32+j]);
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 5; ++j) {
-    //     for (int k = 0; k < 5; ++k) {
-    //       filter[i*5*5+j*5+k] = (double)(rand()%2);
-    //       printf("%lf  ", filter[i*5*5+j*5+k]);
-    //     }
-    //     printf("\n");
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
-    // for (int i = 0; i < 32; ++i) {
-    //   bias[i] = (double)(rand()%2);
-    //   printf("%lf  ", bias[i]);
-    // }
-    // printf("\n");
-
-
-    // conv_forward_device_first(in, filter, bias, out);
-
-
-    // for (int i = 0; i < 32; ++i) {
-    //   for (int j = 0; j < 28; ++j) {
-    //     for (int k = 0; k < 28; ++k) {
-    //       printf("%lf  ", out[i*28*28+j*28+k]);
-    //     }
-    //     printf("\n");
-    //   }
-    //   printf("\n");
-    // }
-    // printf("\n");
+    for (int i = 0; i < 32; ++i) {
+      bias[i] = (double)(rand()%2);
+      printf("%lf  ", bias[i]);
+    }
+    printf("\n");
+    conv_forward_device_first(in, filter, bias, out);
+    for (int i = 0; i < 32; ++i) {
+      for (int j = 0; j < 28; ++j) {
+        for (int k = 0; k < 28; ++k) {
+          printf("%lf  ", out[i*28*28+j*28+k]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+    printf("\n");
 }
 
 

@@ -63,16 +63,39 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
 }
 
 
-// __global__ void full_forward() {
-//
-// }
-//
-// void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro) {
-//   double *d_in, *d_out, *d_weight, *d_bias, *d_drop;
-//   cudaMalloc((double**)&d_in, sizeof(double)*size*size*img_d);
-//   cudaMalloc((double**)&d_out, sizeof(double)*size*size*img_d);
-//   cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d);
-//   cudaMalloc((double**)&d_bias, sizeof(double)*size*size*img_d);
-//   cudaMalloc((double**)&d_drop, sizeof(double)*size*size*img_d);
-//
-// }
+__global__ void full_forward_conv(double * in, double * out, double * weight) {
+  int i_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
+  int o_id = blockIdx.y;
+  int w_id = i_id + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
+  out[o_id] += in[i_id]*weight[w_id];
+}
+
+__global__ void full_forward_bias_drop(double * out, double * bias, double * drop){
+  out[threadIdx.x] += bias[threadIdx.x];
+  out[threadIdx.x] *= drop[threadIdx.x];
+}
+
+void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro) {
+  double *d_in, *d_out, *d_weight, *d_bias, *d_drop;
+  cudaMalloc((double**)&d_in, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_out, sizeof(double)*n_nro);
+  cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d*n_nro);
+  cudaMalloc((double**)&d_bias, sizeof(double)*n_nro);
+  cudaMalloc((double**)&d_drop, sizeof(double)*n_nro;
+  cudaMemcpy(d_in, in, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_weight, weight, sizeof(double)*size*size*img_d*n_nro, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_bias, bias, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_drop, drop, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
+
+  dim3 block_size(size, size, 1);
+  dim3 grid_size(img_d, n_nro, 1);
+  full_forward<<<grid_size,block_size>>>(d_in, d_out, d_weight);
+  full_forward_bias_drop<<<1,n_nro>>>(d_out, d_bias, d_drop);
+
+  cudaMemcpy(out, d_out, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
+  cudaFree(d_in);
+  cudaFree(d_out);
+  cudaFree(d_weight);
+  cudaFree(d_bias);
+  cudaFree(d_drop);
+}
