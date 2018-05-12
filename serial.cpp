@@ -1029,19 +1029,19 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     //=======================================================================
 
     // prove of correctness
-    Input d_in;
-    Output d_out;
-    pool_forward_device((double*)&d_in[0][0][0], (double*)&d_out[0][0][0], IN_H, IN_D);
-
-    for (int k = 0; k < IN_D; ++k) {
-          for (int i = 0; i < IN_H; ++i) {
-                for (int j = 0; j < IN_W; ++j)  {
-                  assert(output[k][i][j] == d_out[k][i][j]);
-                  if (output[k][i][j] == d_out[k][i][j]) printf("Right.\n");
-                }
-          }
-    }
-    exit(1);
+    // Input d_in;
+    // Output d_out;
+    // pool_forward_device((double*)&d_in[0][0][0], (double*)&d_out[0][0][0], IN_H, IN_D);
+    //
+    // for (int k = 0; k < IN_D; ++k) {
+    //       for (int i = 0; i < IN_H; ++i) {
+    //             for (int j = 0; j < IN_W; ++j)  {
+    //               assert(output[k][i][j] == d_out[k][i][j]);
+    //               if (output[k][i][j] == d_out[k][i][j]) printf("Right.\n");
+    //             }
+    //       }
+    // }
+    // exit(1);
 }
 
 /*
@@ -1298,39 +1298,39 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
  const Array<double, N_NEURONS> &dropped, Output &output) {
 
     //=======================================================================
-    for (size_t i = 0; i < N_NEURONS; i++) {
-        double &out(output[0][0][i]);
-        out = 0;
-        for (size_t in_h = 0; in_h < IN_D; in_h++) {
-            for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
-                for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
-                    out += weight[i][in_h][in_i][in_j]*input[in_h][in_i][in_j];
-
-                }
-            }
-        }
-        out += bias(i);
-        if (m_relu) {
-            out = std::max(0.0, out);
-        }
-        // Value is 0 if dropped, or 1/dropout-rate if not dropped, so as to maintain constant overall
-        // expected value.
-        assert(dropped(i) == 0 || dropped(i) >= 1);
-        /*
-        if (dropped(i) == 0) {
-            fprintf(stderr, "%d dropped\n", int(i));
-        } else if (dropped(i) > 1) {
-            fprintf(stderr, "%d expanded by %f\n", int(i), dropped(i));
-        }
-        */
-
-        out *= dropped(i);
-    }
+    // for (size_t i = 0; i < N_NEURONS; i++) {
+    //     double &out(output[0][0][i]);
+    //     out = 0;
+    //     for (size_t in_h = 0; in_h < IN_D; in_h++) {
+    //         for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
+    //             for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
+    //                 out += weight[i][in_h][in_i][in_j]*input[in_h][in_i][in_j];
+    //
+    //             }
+    //         }
+    //     }
+    //     out += bias(i);
+    //     if (m_relu) {
+    //         out = std::max(0.0, out);
+    //     }
+    //     // Value is 0 if dropped, or 1/dropout-rate if not dropped, so as to maintain constant overall
+    //     // expected value.
+    //     assert(dropped(i) == 0 || dropped(i) >= 1);
+    //     /*
+    //     if (dropped(i) == 0) {
+    //         fprintf(stderr, "%d dropped\n", int(i));
+    //     } else if (dropped(i) > 1) {
+    //         fprintf(stderr, "%d expanded by %f\n", int(i), dropped(i));
+    //     }
+    //     */
+    //
+    //     out *= dropped(i);
+    // }
     //=======================================================================
 
 
-    // Output d_out;
-    // full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0], IN_H, IN_D, N_NEURONS);
+    Output d_out;
+    full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0], IN_H, IN_D, N_NEURONS);
 
 }
 
