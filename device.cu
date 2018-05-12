@@ -33,7 +33,7 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
 __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
   int i_id = (threadIdx.x+2)+(threadIdx.y+2)*(blockDim.x+4)+blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
   int o_id = threadIdx.x+threadIdx.y*blockDim.x+blockIdx.y*blockDim.x*blockDim.y;
-  int f_id = 12+blockIdx.x*25+blockIdx.y*25*blockDim.x;
+  int f_id = 12+blockIdx.x*25+blockIdx.y*25*gridDim.x;
   for (int i = -2; i < 3; i++) {
     for (int j = -2; j < 3; j++) {
       out[o_id] += in[i_id+i*(blockDim.x+4)+j]*filter[f_id+i*5+j];
@@ -42,28 +42,6 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
   out[o_id] += bias[blockIdx.y];
   if (out[o_id] < 0) out[o_id] = 0.0;
 }
-
-// __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
-//   // gridDim.x:1  blockDim.x:3  blockDim.y:3  gridDim.y:32
-//   int x_out = threadIdx.x;
-//   int y_out = threadIdx.y*blockDim.x;
-//   int w_out = blockIdx.y*blockDim.x*blockDim.y;
-//   int o_id = x_out + y_out + w_out;
-//   int x_in = threadIdx.x+2;// 3
-//   int y_in = (threadIdx.y+2)*(blockDim.x+4); //21
-//   int z_in = blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
-//   int i_id = x_in + y_in + z_in -(blockDim.x+4)*2-2;
-//   int f_id = blockIdx.y*gridDim.x*25+blockIdx.x*25;
-//   for (int i = 0; i < 5; ++i) {
-//     for (int j = 0; j < 5; ++j) {
-//       out[o_id] += filter[f_id+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
-//     }
-//   }
-//   out[o_id] += bias[blockIdx.y];
-//   // printf("block: %d\n", blockIdx.y*25*gridDim.x);
-//   // printf("%lf\n", out[o_id]);
-// }
-
 
 
 void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) {
