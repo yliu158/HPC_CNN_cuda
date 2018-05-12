@@ -47,7 +47,7 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
     }
   }
   out[o_id] += bias[blockIdx.y];
-  printf("%lf\n", blockIdx.y*25*gridDim.x+i*5+j);
+  printf("%lf\n", blockIdx.y*25*gridDim.x);
   // printf("%lf\n", out[o_id]);
 }
 
