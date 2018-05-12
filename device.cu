@@ -83,6 +83,7 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d*n_nro);
   cudaMalloc((double**)&d_bias, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_drop, sizeof(double)*n_nro);
+  printf("input in device\n");
   for (size_t u = 0; u < img_d; u++) {
     for (size_t i = 0; i < size; i++) {
       for (size_t j = 0; j < size; j++) {
@@ -93,7 +94,7 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
     printf("\n");
   }
   printf("\n\n\n");
-
+  printf("weight in device\n");
   for (size_t k = 0; k < n_nro; k++) {
     for (size_t u = 0; u < img_d; u++) {
       for (size_t i = 0; i < size; i++) {
