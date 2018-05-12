@@ -67,7 +67,7 @@ __global__ void full_forward_conv(double * in, double * out, double * weight) {
   int o_id = blockIdx.y;
   int w_id = i_id + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
   out[o_id] += in[i_id]*weight[w_id];
-  printf("%lf   %lf\n", in[i_id], weight[w_id]);
+  printf("%d\n", o_id);
 }
 
 __global__ void full_forward_bias_drop(double * out, double * bias, double * drop){
