@@ -1,8 +1,8 @@
 #include "main.h"
 
 __global__ void pool_forward(double *in, double *out) {
-  int o_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
-  int i_id = threadIdx.x*2 + threadIdx.y*2*blockDim.x*2 + blockIdx.x*blockDim.x*2*blockDim.y*2;
+  // int o_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
+  // int i_id = threadIdx.x*2 + threadIdx.y*2*blockDim.x*2 + blockIdx.x*blockDim.x*2*blockDim.y*2;
   // for (size_t i = 0; i < 2; i++) {
   //   for (size_t j = 0; j < 2; j++) {
   //     if (out[o_id] < in[i_id+i*2*size_out+j]) {
