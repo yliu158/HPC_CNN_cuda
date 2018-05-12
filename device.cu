@@ -61,3 +61,12 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   cudaFree(d_b);
   cudaFree(d_o);
 }
+
+
+__global__ void full_forward() {
+
+}
+
+void full_forward_device(double * w, double * i, double * o) {
+
+}
