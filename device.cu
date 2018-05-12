@@ -72,7 +72,7 @@ __global__ void full_forward_conv(double * in, double * out, double * weight) {
 __global__ void full_forward_bias_drop(double * out, double * bias, double * drop){
   out[threadIdx.x] += bias[threadIdx.x];
   // if (out[threadIdx.x] < 0) out[threadIdx.x] = 0.0;
-  out[threadIdx.x] *= drop[threadIdx.x];
+  // out[threadIdx.x] *= drop[threadIdx.x];
 }
 
 void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro) {
