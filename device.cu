@@ -43,7 +43,7 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
   int i_id = x_in + y_in + z_in -(blockDim.x+4)*2-2;
   for (int i = 0; i < 5; ++i) {
     for (int j = 0; j < 5; ++j) {
-      out[o_id] += filter[blockIdx.y*25*gridDim.x+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
+      out[o_id] += filter[blockIdx.y*25*gridDim.x+blockIdx.x*25+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
     }
   }
   out[o_id] += bias[blockIdx.y];
