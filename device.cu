@@ -77,7 +77,7 @@ __global__ void full_forward_bias_drop(double * out, double * bias, double * dro
 void full_forward_device(double * in, double * out, double * weight, double* bias, double* drop, size_t size, size_t img_d, size_t n_nro) {
   double *d_in, *d_out, *d_weight, *d_bias, *d_drop;
   cudaMalloc((double**)&d_in, sizeof(double)*size*size*img_d);
-  cudaMalloc((double**)&d_out, sizeof(double)*n_nro);
+  // cudaMalloc((double**)&d_out, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d*n_nro);
   cudaMalloc((double**)&d_bias, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_drop, sizeof(double)*n_nro);
@@ -90,16 +90,17 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   dim3 block_size(size, size, 1);
   dim3 grid_size(img_d, n_nro, 1);
   full_forward_conv<<<grid_size,block_size>>>(d_in, d_outlist, d_weight);
-  // double res = 0;
-  // for (size_t j = 0; j < n_nro; j++) {
-  //   res = 0;
-  //   for (size_t i = 0; i < size*size*img_d; i++) {
-  //     res += d_outlist[j*size*size*img_d+i];
-  //   }
-  //   d_out[n_nro] = res;
-  // }
+  double res = 0;
+  for (size_t j = 0; j < n_nro; j++) {
+    res = 0;
+    for (size_t i = 0; i < size*size*img_d; i++) {
+      // res += d_outlist[j*size*size*img_d+i];
+      printf("%lf\n", d_outlist[j*size*size*img_d+i]);
+    }
+    out[n_nro] = res;
+  }
   // full_forward_bias_drop<<<1,n_nro>>>(d_out, d_bias, d_drop);
-  cudaMemcpy(out, d_out, sizeof(double)*n_nro, cudaMemcpyDeviceToHost);
+  // cudaMemcpy(out, d_out, sizeof(double)*n_nro, cudaMemcpyDeviceToHost);
   cudaFree(d_in);
   cudaFree(d_out);
   cudaFree(d_weight);
