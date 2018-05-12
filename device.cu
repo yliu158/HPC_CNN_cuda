@@ -29,42 +29,6 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
   cudaFree(d_out);
 }
 
-
-
-__global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
-  int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
-  int i_id = threadIdx.x+2 + threadIdx.y*(blockDim.x+4) + (blockDim.x+4)*(blockDim.y+4)*blockIdx.x;
-  double res = 0;
-  for (int i = -2; i <= 2; ++i) {
-    for (int j = -2; j <= 2; ++j) {
-      res += in[i_id+i*32+j]*filter[blockIdx.x*25+i*5+j];
-    }
-  }
-  out[t_id] = res + bias[blockIdx.x];
-  // printf("tid: %d\n", t_id);
-}
-
-void conv_forward_device_first(double* in, double* filter, double* bias, double* out) {
-  double *d_i, *d_f, *d_b, *d_o;
-  cudaMalloc((double**)&d_i, sizeof(double)*32*32*1);
-  cudaMalloc((double**)&d_f, sizeof(double)*5*5*32);
-  cudaMalloc((double**)&d_b, sizeof(double)*32);
-  cudaMalloc((double**)&d_o, sizeof(double)*28*28*32);
-  cudaMemcpy(d_i, in, sizeof(double)*32*32*1, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_f, filter, sizeof(double)*5*5*32, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_b, bias, sizeof(double)*32, cudaMemcpyHostToDevice);
-
-  dim3 block_size(28,28,1);
-  dim3 grid_size(32,1,1);
-  conv_forward<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
-
-  cudaMemcpy(out, d_o, sizeof(double)*28*28*32, cudaMemcpyDeviceToHost);
-  cudaFree(d_i);
-  cudaFree(d_f);
-  cudaFree(d_b);
-  cudaFree(d_o);
-}
-
 __global__ void conv_forward_all(double* in, double* filter, double* bias, double* out) {
   // gridDim.x:1  blockDim.x:3  blockDim.y:3  gridDim.y:32
   int x_out = threadIdx.x;
@@ -75,10 +39,10 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   int x_in = threadIdx.x+2;// 3
   int y_in = (threadIdx.y+2)*(blockDim.x+4); //21
   int z_in = blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
-  int i_id = x_in + y_in + z_in;
-  for (int i = -2; i <= 2; ++i) {
-    for (int j = -2; j <= 2; ++j) {
-      out[o_id] += filter[blockIdx.y*25*gridDim.x+(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j];
+  int i_id = x_in + y_in + z_in -(threadIdx.x+4)*2-2;
+  for (int i = 0; i < 5; ++i) {
+    for (int j = 0; j < 5; ++j) {
+      out[o_id] += filter[blockIdx.y*25*gridDim.x+i*5+j] * in[i_id+i*(blockDim.x+4)+j];
       // printf("threadIdx.x%d  threadIdx.y%d  blockIdx.x%d   blockIdx.y%d\nfilter (%d,%d)  id:%d\n in_id %d\n\n", threadIdx.x, threadIdx.y, blockIdx.x, blockIdx.y, i, j, blockIdx.y*25*gridDim.x+(i+2)*5+j+2, i_id+i*(blockDim.x+4)+j);
     }
   }
@@ -104,60 +68,3 @@ void conv_forward_device(double* in, double* filter, double* bias, double* out, 
   cudaFree(d_b);
   cudaFree(d_o);
 }
-
-
-// __global__ void conv_forward_test(double* in, double* filter, double* bias, double* out) {
-//   int t_id = threadIdx.x + threadIdx.y*blockDim.x + blockDim.x*blockDim.y*blockIdx.x;
-//   int i_id = threadIdx.x+1 + threadIdx.y*(blockDim.x+2) + (blockDim.x+2)*(blockDim.y+2)*blockIdx.x;
-//   double res = 0;
-//   for (int i = -1; i <= 1; ++i) {
-//     for (int j = -1; j <= 1; ++j) {
-//       res += in[i_id+i*5+j]*filter[blockIdx.x*9+i*3+j];
-//     }
-//   }
-//   out[t_id] = res + bias[blockIdx.x];
-//   // printf("tid: %d\n", t_id);
-// }
-//
-// void conv_forward_device_test(double* in, double* filter, double* bias, double* out) {
-//   double *d_i, *d_f, *d_b, *d_o;
-//   cudaMalloc((double**)&d_i, sizeof(double)*5*5*1);
-//   cudaMalloc((double**)&d_f, sizeof(double)*3*3*32);
-//   cudaMalloc((double**)&d_b, sizeof(double)*32);
-//   cudaMalloc((double**)&d_o, sizeof(double)*3*3*32);
-//   cudaMemcpy(d_i, in, sizeof(double)*5*5*1, cudaMemcpyHostToDevice);
-//   cudaMemcpy(d_f, filter, sizeof(double)*3*3*32, cudaMemcpyHostToDevice);
-//   cudaMemcpy(d_b, bias, sizeof(double)*32, cudaMemcpyHostToDevice);
-//
-//   dim3 block_size(3,3,1);
-//   dim3 grid_size(32,1,1);
-//   conv_forward_test<<<grid_size, block_size>>>(d_i, d_f, d_b, d_o);
-//
-//   cudaMemcpy(out, d_o, sizeof(double)*3*3*32, cudaMemcpyDeviceToHost);
-//   cudaFree(d_i);
-//   cudaFree(d_f);
-//   cudaFree(d_b);
-//   cudaFree(d_o);
-// }
-
-
-// __global__ void add(int *x, int *y, int *z) {
-//   z[threadIdx.x] = y[threadIdx.x] + x[threadIdx.x];
-//   printf("Hello %d\n", threadIdx.x);
-// }
-//
-// void test_device (int* x, int* y, int* z) {
-//   int* d_x, *d_y, *d_z;
-//   cudaMalloc((int**)&d_x, sizeof(int)*16);
-//   cudaMalloc((int**)&d_y, sizeof(int)*16);
-//   cudaMalloc((int**)&d_z, sizeof(int)*16);
-//   cudaMemcpy(d_x, x, sizeof(int)*16, cudaMemcpyHostToDevice);
-//   cudaMemcpy(d_y, y, sizeof(int)*16, cudaMemcpyHostToDevice);
-//
-//   add<<<1,16>>> (d_x, d_y, d_z);
-//
-//   cudaMemcpy(z, d_z, sizeof(int)*16, cudaMemcpyDeviceToHost);
-//   cudaFree(d_x);
-//   cudaFree(d_y);
-//   cudaFree(d_z);
-// }
