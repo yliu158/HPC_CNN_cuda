@@ -79,6 +79,7 @@ __global__ void conv_forward_all(double* in, double* filter, double* bias, doubl
   for (int i = -2; i <= 2; ++i) {
     for (int j = -2; j <= 2; ++j) {
       out[o_id] += filter[blockIdx.y*25*gridDim.x+(i+2)*5+j+2] * in[i_id+i*(blockDim.x+4)+j];
+      printf("o_id: %d \n", o_id, filter[blockIdx.y*25*gridDim.x(i+2)]);
     }
   }
   out[o_id] += bias[blockIdx.y];
