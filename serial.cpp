@@ -1324,7 +1324,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
     //=======================================================================
 
     Output d_out;
-    full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0]);
+    full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0], IN_H, IN_D, N_NEURONS);
     for (size_t i = 0; i < N_NEURONS; i++) {
       printf("%lf  %lf\n", d_out[0][0][i], output[0][0][i]);
       if (d_out[0][0][i] != output[0][0][i]) printf("wrong\n");
