@@ -98,11 +98,15 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
     }
     out[j] = res;
   }
-  // full_forward_bias_drop<<<1,n_nro>>>(d_out, d_bias, d_drop);
+  double *d_res;
+  cudaMalloc((double**)&d_res, sizeof(double)*n_nro);
+  cudaMemcpy(d_res, tmp, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
+  full_forward_bias_drop<<<1,n_nro>>>(d_res, d_bias, d_drop);
   free(tmp);
   cudaFree(d_in);
   cudaFree(d_out);
   cudaFree(d_weight);
   cudaFree(d_bias);
   cudaFree(d_drop);
+  cudaFree(d_res);
 }
