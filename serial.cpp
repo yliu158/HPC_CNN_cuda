@@ -828,19 +828,19 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
         }
     }
 
-    // Output d_out;
-    // conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
-    // for (int i = 0; i < N_FILTERS; ++i) {
-    //   for (int k = 0; k < IN_H; ++k) {
-    //     for (int j = 0; j < IN_W; ++j) {
-    //       assert(output[i][k][j] == d_out[i][k][j]);
-    //       printf("%lf", d_out[i][k][j]);
-    //     }
-    //     printf("\n" );
-    //   }
-    //   printf("\n" );
-    // }
-    // exit(1);
+    Output d_out;
+    conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
+    for (int i = 0; i < N_FILTERS; ++i) {
+      for (int k = 0; k < IN_H; ++k) {
+        for (int j = 0; j < IN_W; ++j) {
+          assert(output[i][k][j] == d_out[i][k][j]);
+          printf("%lf", d_out[i][k][j]);
+        }
+        printf("\n" );
+      }
+      printf("\n" );
+    }
+    exit(1);
 }
 
 /*
@@ -1738,7 +1738,7 @@ main() {
 
 
     // full_forward_device();
-    // run3();
+    run3();
     // double *in, *filter, *bias, *out;
     // in = (double*)malloc(sizeof(double)*32*32*1);
     // filter = (double*)malloc(sizeof(double)*5*5*32);
@@ -1787,49 +1787,49 @@ main() {
 
 
 
-    double *in, *filter, *bias, *out;
-    in = (double*)malloc(sizeof(double)*7*7*1);
-    filter = (double*)malloc(sizeof(double)*5*5*2);
-    bias = (double*)malloc(sizeof(double)*2);
-    out = (double*)malloc(sizeof(double)*3*3*2);
-    for (int i = 0; i < 7; ++i) {
-      for (int j = 0; j < 7; ++j) {
-        in[i*7+j] = (double)(rand()%2+1);
-        printf("%lf  ", in[i*7+j]);
-      }
-      printf("\n");
-    }
-    printf("\n");
-    for (int i = 0; i < 2; ++i) {
-      for (int j = 0; j < 5; ++j) {
-        for (int k = 0; k < 5; ++k) {
-          filter[i*25+j*5+k] = (double)(rand()%2+1);
-          printf("%lf  ", filter[i*25+j*5+k]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-    printf("\n");
-    for (int i = 0; i < 2; ++i) {
-      bias[i] = (double)(rand()%2+1);
-      printf("%lf  ", bias[i]);
-    }
-    printf("\n");
-    // conv_forward_device_test(in, filter, bias, out);
-    // void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) ;
-
-    conv_forward_device(in, filter, bias, out,3,1,2);
-    for (int i = 0; i < 2; ++i) {
-      for (int j = 0; j < 3; ++j) {
-        for (int k = 0; k < 3; ++k) {
-          printf("%lf  ", out[i*9+j*3+k]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-    printf("\n");
+    // double *in, *filter, *bias, *out;
+    // in = (double*)malloc(sizeof(double)*7*7*1);
+    // filter = (double*)malloc(sizeof(double)*5*5*2);
+    // bias = (double*)malloc(sizeof(double)*2);
+    // out = (double*)malloc(sizeof(double)*3*3*2);
+    // for (int i = 0; i < 7; ++i) {
+    //   for (int j = 0; j < 7; ++j) {
+    //     in[i*7+j] = (double)(rand()%2+1);
+    //     printf("%lf  ", in[i*7+j]);
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
+    // for (int i = 0; i < 2; ++i) {
+    //   for (int j = 0; j < 5; ++j) {
+    //     for (int k = 0; k < 5; ++k) {
+    //       filter[i*25+j*5+k] = (double)(rand()%2+1);
+    //       printf("%lf  ", filter[i*25+j*5+k]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
+    // for (int i = 0; i < 2; ++i) {
+    //   bias[i] = (double)(rand()%2+1);
+    //   printf("%lf  ", bias[i]);
+    // }
+    // printf("\n");
+    // // conv_forward_device_test(in, filter, bias, out);
+    // // void conv_forward_device(double* in, double* filter, double* bias, double* out, size_t size, size_t img_d, size_t fil_d) ;
+    //
+    // conv_forward_device(in, filter, bias, out,3,1,2);
+    // for (int i = 0; i < 2; ++i) {
+    //   for (int j = 0; j < 3; ++j) {
+    //     for (int k = 0; k < 3; ++k) {
+    //       printf("%lf  ", out[i*9+j*3+k]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    // printf("\n");
 
 
 
