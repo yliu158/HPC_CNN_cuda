@@ -806,30 +806,30 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
 
     // Serial version begin
     //=======================================================================
-    // for (size_t g = 0; g < N_FILTERS; g++) {
-    //     for (size_t i = 0; i < OUT_H; i++) {
-    //         for (size_t j = 0; j < OUT_W; j++) {
-    //             double &out(output[g][i][j]);
-    //             out = 0;
-    //             for (size_t in_h = 0; in_h < IN_D; in_h++) {
-    //                 for (size_t f_i = 0; f_i < FILTER_H; f_i++) {
-    //                     for (size_t f_j = 0; f_j < FILTER_W; f_j++) {
-    //                         /**
-    //                         fprintf(stderr, "Added to DP: %f*%f\n",
-    //                          double(filter(g, in_h, f_i, f_j)),
-    //                          double(in_padded(in_h, i + f_i, j + f_j)));
-    //                         */
-    //                         out += filter(g, in_h, f_i, f_j)*in_padded(in_h, i + f_i, j + f_j);
-    //                     }
-    //                 }
-    //             }
-    //             // fprintf(stderr, "Bias to DP: %f\n", (double) bias[g]);
-    //             out += bias[g];
-    //             // ReLU
-    //             out = std::max(0.0, out);
-    //         }
-    //     }
-    // }
+    for (size_t g = 0; g < N_FILTERS; g++) {
+        for (size_t i = 0; i < OUT_H; i++) {
+            for (size_t j = 0; j < OUT_W; j++) {
+                double &out(output[g][i][j]);
+                out = 0;
+                for (size_t in_h = 0; in_h < IN_D; in_h++) {
+                    for (size_t f_i = 0; f_i < FILTER_H; f_i++) {
+                        for (size_t f_j = 0; f_j < FILTER_W; f_j++) {
+                            /**
+                            fprintf(stderr, "Added to DP: %f*%f\n",
+                             double(filter(g, in_h, f_i, f_j)),
+                             double(in_padded(in_h, i + f_i, j + f_j)));
+                            */
+                            out += filter(g, in_h, f_i, f_j)*in_padded(in_h, i + f_i, j + f_j);
+                        }
+                    }
+                }
+                // fprintf(stderr, "Bias to DP: %f\n", (double) bias[g]);
+                out += bias[g];
+                // ReLU
+                out = std::max(0.0, out);
+            }
+        }
+    }
     //=======================================================================
     // Serial End
 
@@ -838,26 +838,26 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::forward(const Input &input, const Filter
     Output d_out;
     conv_forward_device((double*)&in_padded[0][0][0], (double*)&filter[0][0][0][0], (double*)&bias[0],(double*)&d_out[0][0][0], IN_H, IN_D, N_FILTERS);
 
-    // for (int i = 0; i < N_FILTERS; ++i) {
-    //   for (int k = 0; k < IN_H; ++k) {
-    //     for (int j = 0; j < IN_W; ++j) {
-    //       // assert(output[i][k][j] == d_out[i][k][j]); Precision different
-    //       printf("%lf ", d_out[i][k][j]);
-    //     }
-    //     printf("\n" );
-    //   }
-    //   printf("\n" );
-    //
-    //   for (size_t k = 0; k < IN_H; k++) {
-    //     for (size_t j = 0; j < IN_W; j++) {
-    //       printf("%lf ", output[i][k][j]);
-    //     }
-    //     printf("\n" );
-    //   }
-    //   printf("\n" );
-    //   printf("======================================================\n" );
-    // }
-    // exit(1);
+    for (int i = 0; i < N_FILTERS; ++i) {
+      for (int k = 0; k < IN_H; ++k) {
+        for (int j = 0; j < IN_W; ++j) {
+          // assert(output[i][k][j] == d_out[i][k][j]); Precision different
+          printf("%lf ", d_out[i][k][j]);
+        }
+        printf("\n" );
+      }
+      printf("\n" );
+
+      for (size_t k = 0; k < IN_H; k++) {
+        for (size_t j = 0; j < IN_W; j++) {
+          printf("%lf ", output[i][k][j]);
+        }
+        printf("\n" );
+      }
+      printf("\n" );
+      printf("======================================================\n" );
+    }
+    exit(1);
 
 
 
@@ -997,50 +997,50 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
 
 
     //=======================================================================
-    // Set all indices to maximum values to trigger range check failures during backprop if any were not set
-    // correctly.
-    // m_max_index_i = std::numeric_limits<size_t>::max();
-    // m_max_index_j = std::numeric_limits<size_t>::max();
-    //
-    // // Iterate over each depth matrix independently.
-    // for (size_t in_h = 0; in_h < IN_D; in_h++) {
-    //     for (size_t in_i = 0; in_i < IN_H; in_i += 2) {
-    //         for (size_t in_j = 0; in_j < IN_W; in_j += 2) {
-    //             double max = input(in_h, in_i, in_j);
-    //             size_t max_i = in_i, max_j = in_j;
-    //             // In theory could skip element (0, 0), but probably not much, if any,
-    //             // performance gain.
-    //             for (int i = 0; i < 2; i++) {
-    //                 for (int j = 0; j < 2; j++) {
-    //                     const double &in(input(in_h, in_i + i, in_j + j));
-    //                     if (in > max) {
-    //                         max = in;
-    //                         max_i = in_i + i;
-    //                         max_j = in_j + j;
-    //                     }
-    //                 }
-    //             }
-    //             output(in_h, in_i/2, in_j/2) = max;
-    //             m_max_index_i(in_h, in_i/2, in_j/2) = max_i;
-    //             m_max_index_j(in_h, in_i/2, in_j/2) = max_j;
-    //         }
-    //     }
-    // }
+    Set all indices to maximum values to trigger range check failures during backprop if any were not set
+    correctly.
+    m_max_index_i = std::numeric_limits<size_t>::max();
+    m_max_index_j = std::numeric_limits<size_t>::max();
+
+    // Iterate over each depth matrix independently.
+    for (size_t in_h = 0; in_h < IN_D; in_h++) {
+        for (size_t in_i = 0; in_i < IN_H; in_i += 2) {
+            for (size_t in_j = 0; in_j < IN_W; in_j += 2) {
+                double max = input(in_h, in_i, in_j);
+                size_t max_i = in_i, max_j = in_j;
+                // In theory could skip element (0, 0), but probably not much, if any,
+                // performance gain.
+                for (int i = 0; i < 2; i++) {
+                    for (int j = 0; j < 2; j++) {
+                        const double &in(input(in_h, in_i + i, in_j + j));
+                        if (in > max) {
+                            max = in;
+                            max_i = in_i + i;
+                            max_j = in_j + j;
+                        }
+                    }
+                }
+                output(in_h, in_i/2, in_j/2) = max;
+                m_max_index_i(in_h, in_i/2, in_j/2) = max_i;
+                m_max_index_j(in_h, in_i/2, in_j/2) = max_j;
+            }
+        }
+    }
     //=======================================================================
 
     // prove of correctness
-    Output d_out;
-    pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], IN_H, IN_D);
-
-    for (int k = 0; k < 32; ++k) {
-          for (int i = 0; i < 14; ++i) {
-                for (int j = 0; j < 14; ++j)  {
-                  assert(output[k][i][j] == d_out[k][i][j]);
-                  if (output[k][i][j] == d_out[k][i][j]) printf("Right.\n");
-                }
-          }
-    }
-    exit(1);
+    // Output d_out;
+    // pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], IN_H, IN_D);
+    //
+    // for (int k = 0; k < 32; ++k) {
+    //       for (int i = 0; i < 14; ++i) {
+    //             for (int j = 0; j < 14; ++j)  {
+    //               assert(output[k][i][j] == d_out[k][i][j]);
+    //               if (output[k][i][j] == d_out[k][i][j]) printf("Right.\n");
+    //             }
+    //       }
+    // }
+    // exit(1);
 }
 
 /*
@@ -1297,39 +1297,39 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::forward(const Input &input, const Array
  const Array<double, N_NEURONS> &dropped, Output &output) {
 
     //=======================================================================
-    // for (size_t i = 0; i < N_NEURONS; i++) {
-    //     double &out(output[0][0][i]);
-    //     out = 0;
-    //     for (size_t in_h = 0; in_h < IN_D; in_h++) {
-    //         for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
-    //             for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
-    //                 out += weight[i][in_h][in_i][in_j]*input[in_h][in_i][in_j];
-    //
-    //             }
-    //         }
-    //     }
-    //     out += bias(i);
-    //     if (m_relu) {
-    //         out = std::max(0.0, out);
-    //     }
-    //     // Value is 0 if dropped, or 1/dropout-rate if not dropped, so as to maintain constant overall
-    //     // expected value.
-    //     assert(dropped(i) == 0 || dropped(i) >= 1);
-    //     /*
-    //     if (dropped(i) == 0) {
-    //         fprintf(stderr, "%d dropped\n", int(i));
-    //     } else if (dropped(i) > 1) {
-    //         fprintf(stderr, "%d expanded by %f\n", int(i), dropped(i));
-    //     }
-    //     */
-    //
-    //     out *= dropped(i);
-    // }
+    for (size_t i = 0; i < N_NEURONS; i++) {
+        double &out(output[0][0][i]);
+        out = 0;
+        for (size_t in_h = 0; in_h < IN_D; in_h++) {
+            for (size_t in_i = 0; in_i < IN_H; in_i++) { //7
+                for (size_t in_j = 0; in_j < IN_W; in_j++) { //7
+                    out += weight[i][in_h][in_i][in_j]*input[in_h][in_i][in_j];
+
+                }
+            }
+        }
+        out += bias(i);
+        if (m_relu) {
+            out = std::max(0.0, out);
+        }
+        // Value is 0 if dropped, or 1/dropout-rate if not dropped, so as to maintain constant overall
+        // expected value.
+        assert(dropped(i) == 0 || dropped(i) >= 1);
+        /*
+        if (dropped(i) == 0) {
+            fprintf(stderr, "%d dropped\n", int(i));
+        } else if (dropped(i) > 1) {
+            fprintf(stderr, "%d expanded by %f\n", int(i), dropped(i));
+        }
+        */
+
+        out *= dropped(i);
+    }
     //=======================================================================
 
 
-    Output d_out;
-    full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0], IN_H, IN_D, N_NEURONS);
+    // Output d_out;
+    // full_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], (double*)&weight[0][0][0][0],(double*)&bias[0],(double*)&dropped[0], IN_H, IN_D, N_NEURONS);
 
 }
 
