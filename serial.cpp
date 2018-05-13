@@ -1034,7 +1034,8 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         for (size_t in_i = 0; in_i < IN_H; in_i ++) {
             for (size_t in_j = 0; in_j < IN_W; in_j ++) {
               d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W] = input(in_h, in_i, in_j);
-              printf("%lf ", d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W]);
+              // printf("%lf ", d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W]);
+              printf("%lf ", input[in_h, in_i, in_j]);
             }
             printf("\n");
         }
@@ -1042,7 +1043,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     }
     printf("\n");
     Output d_out;
-    pool_forward_device((double*)&input[0][0][0], (double*)&d_out[0][0][0], IN_H, IN_D);
+    pool_forward_device((double*)&d_in[0], (double*)&d_out[0][0][0], IN_H, IN_D);
     for (int k = 0; k < IN_D; ++k) {
           for (int i = 0; i < IN_H; ++i) {
                 for (int j = 0; j < IN_W; ++j)  {
