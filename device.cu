@@ -59,7 +59,7 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
   int u_id = threadIdx.x+2 + (threadIdx.y+2)*(blockDim.x+4)+ blockIdx.x*(blockDim.x+4)*(blockDim.y+4)+blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
   for (size_t i = 0; i < 5; i++) {
     for (size_t j = 0; j < 5; j++) {
-      down_deriv[d_id] += filter[fid+i*5+j]*up_deriv[u_id];
+      down_deriv[d_id] += filter[f_id+i*5+j]*up_deriv[u_id];
     }
   }
 }
@@ -96,7 +96,7 @@ void conv_backprop_device(double* input, double* output, double* down_deriv, dou
   cudaFree(d_filter);
 }
 
-__global__ void conv_forward(double* in, double* filter, double* bias, double* out, size_t img_d, size_t fil_d) {
+__global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
   int i_id = (threadIdx.x+2)+(threadIdx.y+2)*(blockDim.x+4)+blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
   int o_id = threadIdx.x+threadIdx.y*blockDim.x+blockIdx.y*blockDim.x*blockDim.y;
   int f_id = 12+blockIdx.x*25+blockIdx.y*25*gridDim.x;
