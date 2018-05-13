@@ -1029,11 +1029,11 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
     //=======================================================================
 
     // prove of correctness
-    double* d_in = (double)malloc(sizeof(double)*IN_D*IN_H*IN_W);
+    double* d_in = (double*)malloc(sizeof(double)*IN_D*IN_H*IN_W);
     for (size_t in_h = 0; in_h < IN_D; in_h++) {
         for (size_t in_i = 0; in_i < IN_H; in_i ++) {
             for (size_t in_j = 0; in_j < IN_W; in_j ++) {
-              d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W] = input(inh, in_i, in_j);
+              d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W] = input(in_h, in_i, in_j);
               printf("%lf ", d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W]);
             }
             printf("\n");
