@@ -1029,6 +1029,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         }
         printf("\n");
     }
+    exit(1);
     //=======================================================================
 
     // prove of correctness
