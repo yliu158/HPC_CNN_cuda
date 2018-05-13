@@ -27,13 +27,29 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
   cudaFree(d_out);
 }
 
-void pool_backprob_device(double *down_deriv, double *up_deriv,int *max_i, int *max_j, size_t size, size_t img_d) {
+__global__ void pool_backprob(double *down_deriv, double *up_deriv, int *max_i , int *max_j) {
+  int id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
+  int down_id = max_j[id] + max_i[id]*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
+  down_deriv[down_id] = up_deriv[id];
+}
+
+void pool_backprob_device(double *down_deriv, double *up_deriv, int *max_i, int *max_j, size_t size, size_t img_d) {
   double *d_down_deriv, *d_up_deriv, *d_max_i, *d_max_j;
   cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*img_d);
   cudaMalloc((double**)&d_max_i, sizeof(size_t)*size*size*img_d);
   cudaMalloc((double**)&d_max_j, sizeof(size_t)*size*size*img_d);
-
+  cudaMemcpy(d_up_deriv, up_deriv,sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_max_i, max_i, sizeof(size_t)*size*size*img_d, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_max_j, max_j, sizeof(size_t)*size*size*img_d, cudaMemcpyHostToDevice);
+  dim3 block_size(size, size,1);
+  dim3 grid_size(img_d, 1,1,);
+  pool_backprob<<<grid_size, block_size>>>(d_down_deriv, d_up_deriv, d_max_i, d_max_j);
+  cudaMemcpy(down_deriv, d_down_deriv,sizeof(double)*size*size*img_d, cudaMemcpyDeviceToHost);
+  cudaFree(d_down_deriv);
+  cudaFree(d_up_deriv));
+  cudaFree(d_max_i);
+  cudaFree(d_max_j);
 }
 
 

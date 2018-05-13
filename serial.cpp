@@ -933,6 +933,8 @@ class MaxPoolLayer : public HasInputLayer<IN_DIMS>,
         Array<size_t, OUT_D, OUT_H, OUT_W> m_max_index_i, m_max_index_j;
 };
 
+void pool_backprob_device(double *down_deriv, double *up_deriv,int *max_i, int *max_j, size_t size, size_t img_d);
+
 template <typename IN_DIMS>
 void
 MaxPoolLayer<IN_DIMS>::backprop(const Output &upstream_deriv, const double mb_size) {
@@ -948,6 +950,16 @@ MaxPoolLayer<IN_DIMS>::backprop(const Output &upstream_deriv, const double mb_si
         }
     }
 
+    double* d_down_deriv = (double*)malloc(sizeof(double)*OUT_D*OUT_H*OUT_W);
+    pool_backprob_device(double*)&d_down_deriv[0][0][0],(double*)&upstream_deriv[0][0][0],(size_t*)&m_max_index_i[0][0][0], (size_t*)&m_max_index_j[0][0][0], OUT_H, OUT_D);
+    for (size_t out_h = 0; out_h < OUT_D; out_h++) {
+        for (size_t out_i = 0; out_i < OUT_H; out_i++) {
+            for (size_t out_j = 0; out_j < OUT_W; out_j++) {
+                 if (d_down_deriv(out_h, out_i, out_j) == this->downstream_deriv(out_h, out_i, out_j)) printf("Right\n");
+            }
+        }
+    }
+    exit(1);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
 
@@ -1025,9 +1037,9 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
                 m_max_index_i(in_h, in_i/2, in_j/2) = max_i;
                 m_max_index_j(in_h, in_i/2, in_j/2) = max_j;
             }
-            printf("\n");
+            // printf("\n");
         }
-        printf("\n");
+        // printf("\n");
     }
     //=======================================================================
 
