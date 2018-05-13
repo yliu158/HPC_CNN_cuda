@@ -58,16 +58,17 @@ __global__ void conv_backprop() {
 }
 
 
-void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter) {
-  double *d_input, *d_output, *d_down_deriv, *d_up_deriv, *d_filter_deriv, *d_filter;
-  cudaMalloc((double**)&d_input, sizeof(double)*size*size*img_d);
-  cudaMalloc((double**)&d_output, sizeof(double)*size*size*img_d);
-  cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
-  cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*img_d);
-  cudaMalloc((double**)&d_filter_deriv, sizeof(double)*size*size*img_d);
-  cudaMalloc((double**)&d_filter, sizeof(double)*size*size*img_d);
-  
-}
+// void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter) {
+//   double *d_input, *d_output, *d_down_deriv, *d_up_deriv, *d_filter_deriv, *d_filter;
+//   cudaMalloc((double**)&d_input, sizeof(double)*size*size*img_d);
+//   cudaMalloc((double**)&d_output, sizeof(double)*size*size*img_d);
+//   cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
+//   cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*img_d);
+//   cudaMalloc((double**)&d_filter_deriv, sizeof(double)*size*size*img_d);
+//   cudaMalloc((double**)&d_filter, sizeof(double)*size*size*img_d);
+//
+//
+// }
 
 __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
   int i_id = (threadIdx.x+2)+(threadIdx.y+2)*(blockDim.x+4)+blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
