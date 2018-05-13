@@ -48,7 +48,7 @@ void pool_backprob_device(double *down_deriv, double *up_deriv, int *max_i, int 
   pool_backprob<<<grid_size, block_size>>>(d_down_deriv, d_up_deriv, d_max_i, d_max_j);
   cudaMemcpy(down_deriv, d_down_deriv,sizeof(double)*size*size*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv);
-  cudaFree(d_up_deriv));
+  cudaFree(d_up_deriv);
   cudaFree(d_max_i);
   cudaFree(d_max_j);
 }
