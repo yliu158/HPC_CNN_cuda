@@ -951,7 +951,7 @@ MaxPoolLayer<IN_DIMS>::backprop(const Output &upstream_deriv, const double mb_si
     }
 
     double* d_down_deriv = (double*)malloc(sizeof(double)*OUT_D*OUT_H*OUT_W);
-    pool_backprob_device(double*)&d_down_deriv[0][0][0],(double*)&upstream_deriv[0][0][0],(size_t*)&m_max_index_i[0][0][0], (size_t*)&m_max_index_j[0][0][0], OUT_H, OUT_D);
+    pool_backprob_device(d_down_deriv,(double*)&upstream_deriv[0][0][0],(size_t*)&m_max_index_i[0][0][0], (size_t*)&m_max_index_j[0][0][0], OUT_H, OUT_D);
     for (size_t out_h = 0; out_h < OUT_D; out_h++) {
         for (size_t out_i = 0; out_i < OUT_H; out_i++) {
             for (size_t out_j = 0; out_j < OUT_W; out_j++) {
