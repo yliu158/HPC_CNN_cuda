@@ -1007,7 +1007,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         for (size_t in_i = 0; in_i < IN_H; in_i += 2) {
             for (size_t in_j = 0; in_j < IN_W; in_j += 2) {
                 double max = input(in_h, in_i, in_j);
-                printf("%lf ", input[in_h][in_i][in_j]);
+                // printf("%lf ", input[in_h][in_i][in_j]);
                 size_t max_i = in_i, max_j = in_j;
                 // In theory could skip element (0, 0), but probably not much, if any,
                 // performance gain.
@@ -1029,35 +1029,34 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         }
         printf("\n");
     }
-    exit(1);
     //=======================================================================
 
     // prove of correctness
-    // double* d_in = (double*)malloc(sizeof(double)*IN_D*IN_H*IN_W);
-    // for (size_t in_h = 0; in_h < IN_D; in_h++) {
-    //     for (size_t in_i = 0; in_i < IN_H; in_i ++) {
-    //         for (size_t in_j = 0; in_j < IN_W; in_j ++) {
-    //           d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W] = input(in_h, in_i, in_j);
-    //           printf("%lf ", input[in_h, in_i, in_j]);
-    //         }
-    //         printf("\n");
-    //     }
-    //     printf("\n");
-    // }
-    // printf("\n");
-    // Output d_out;
-    // pool_forward_device((double*)&d_in[0], (double*)&d_out[0][0][0], IN_H, IN_D);
-    // for (int k = 0; k < IN_D; ++k) {
-    //       for (int i = 0; i < IN_H; ++i) {
-    //             for (int j = 0; j < IN_W; ++j)  {
-    //               // assert(output[k][i][j] == d_out[k][i][j]);
-    //               if (output[k][i][j] == d_out[k][i][j]) printf("Right.  ");
-    //             }
-    //             printf("\n");
-    //       }
-    //       printf("\n");
-    // }
-    // exit(1);
+    double* d_in = (double*)malloc(sizeof(double)*IN_D*IN_H*IN_W);
+    for (size_t in_h = 0; in_h < IN_D; in_h++) {
+        for (size_t in_i = 0; in_i < IN_H; in_i ++) {
+            for (size_t in_j = 0; in_j < IN_W; in_j ++) {
+              d_in[in_j+in_i*IN_W+in_h*IN_H*IN_W] = input(in_h, in_i, in_j);
+              // printf("%lf ", input[in_h, in_i, in_j]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
+    printf("\n");
+    Output d_out;
+    pool_forward_device((double*)&d_in[0], (double*)&d_out[0][0][0], IN_H, IN_D);
+    for (int k = 0; k < IN_D/2; ++k) {
+          for (int i = 0; i < IN_H/2; ++i) {
+                for (int j = 0; j < IN_W/2; ++j)  {
+                  // assert(output[k][i][j] == d_out[k][i][j]);
+                  if (output[k][i][j] == d_out[k][i][j]) printf("Right.  ");
+                }
+                printf("\n");
+          }
+          printf("\n");
+    }
+    exit(1);
 }
 
 /*
