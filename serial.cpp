@@ -1007,7 +1007,7 @@ MaxPoolLayer<IN_DIMS>::forward(const Input &input, Output &output) {
         for (size_t in_i = 0; in_i < IN_H; in_i += 2) {
             for (size_t in_j = 0; in_j < IN_W; in_j += 2) {
                 double max = input(in_h, in_i, in_j);
-                printf("%lf ", input[in_h][in_i][in_j]);
+                // printf("%lf ", input[in_h][in_i][in_j]);
                 size_t max_i = in_i, max_j = in_j;
                 // In theory could skip element (0, 0), but probably not much, if any,
                 // performance gain.

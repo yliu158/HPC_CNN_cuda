@@ -27,6 +27,15 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
   cudaFree(d_out);
 }
 
+void pool_backprob_device(double *down_deriv, double *up_deriv,int *max_i, int *max_j, size_t size, size_t img_d) {
+  double *d_down_deriv, *d_up_deriv, *d_max_i, *d_max_j;
+  cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_max_i, sizeof(size_t)*size*size*img_d);
+  cudaMalloc((double**)&d_max_j, sizeof(size_t)*size*size*img_d);
+
+}
+
 
 __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
   int i_id = (threadIdx.x+2)+(threadIdx.y+2)*(blockDim.x+4)+blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
@@ -94,4 +103,12 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   cudaFree(d_in);
   cudaFree(d_out);
   cudaFree(d_weight);
+}
+
+__global__ void full_backprob() {
+
+}
+
+void full_backprob_device() {
+
 }
