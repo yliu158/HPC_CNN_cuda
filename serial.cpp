@@ -476,6 +476,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
             // never need the derivative.  We also know that that part of the input cannot contribute to the
             // weight derivative, because the weight derivative is zero for that part (by the product rule for
             // computing derivatives).
+            printf("PADDING%d\n", PADDING); exit(1);
             const size_t f_beg_i = std::max(0LL, -ll_t(out_i) + PADDING);
             const size_t f_beg_j = std::max(0LL, -ll_t(out_j) + PADDING);
             const size_t f_end_i = std::min(ll_t(FILTER_H), ll_t(OUT_H) + PADDING - ll_t(out_i));
@@ -933,7 +934,7 @@ class MaxPoolLayer : public HasInputLayer<IN_DIMS>,
         Array<size_t, OUT_D, OUT_H, OUT_W> m_max_index_i, m_max_index_j;
 };
 
-void pool_backprob_device(double *down_deriv, double *up_deriv,int *max_i, int *max_j, size_t size, size_t img_d);
+void pool_backprop_device(double *down_deriv, double *up_deriv,int *max_i, int *max_j, size_t size, size_t img_d);
 
 template <typename IN_DIMS>
 void
@@ -941,25 +942,29 @@ MaxPoolLayer<IN_DIMS>::backprop(const Output &upstream_deriv, const double mb_si
 
     this->downstream_deriv = 0;
 
-    for (size_t out_h = 0; out_h < OUT_D; out_h++) {
-        for (size_t out_i = 0; out_i < OUT_H; out_i++) {
-            for (size_t out_j = 0; out_j < OUT_W; out_j++) {
-                this->downstream_deriv(out_h, m_max_index_i(out_h, out_i, out_j), m_max_index_j(out_h, out_i, out_j))
-                 = upstream_deriv(out_h, out_i, out_j);
-            }
-        }
-    }
+    //=======================================================================
+    // for (size_t out_h = 0; out_h < OUT_D; out_h++) {
+    //     for (size_t out_i = 0; out_i < OUT_H; out_i++) {
+    //         for (size_t out_j = 0; out_j < OUT_W; out_j++) {
+    //             this->downstream_deriv(out_h, m_max_index_i(out_h, out_i, out_j), m_max_index_j(out_h, out_i, out_j))
+    //              = upstream_deriv(out_h, out_i, out_j);
+    //         }
+    //     }
+    // }
+    //=======================================================================
 
-    double* d_down_deriv = (double*)malloc(sizeof(double)*OUT_D*OUT_H*OUT_W);
-    pool_backprob_device(d_down_deriv,(double*)&upstream_deriv[0][0][0],(int*)&m_max_index_i[0][0][0], (int*)&m_max_index_j[0][0][0], OUT_H, OUT_D);
-    for (size_t out_h = 0; out_h < OUT_D; out_h++) {
-        for (size_t out_i = 0; out_i < OUT_H; out_i++) {
-            for (size_t out_j = 0; out_j < OUT_W; out_j++) {
-                 if (d_down_deriv[out_h*OUT_H*OUT_W+out_i*OUT_W+out_j] == this->downstream_deriv(out_h, out_i, out_j)) printf("Right\n");
-            }
-        }
-    }
-    exit(1);
+    pool_backprop_device((double*)&this->downstream_deriv,(double*)&upstream_deriv[0][0][0],(int*)&m_max_index_i[0][0][0], (int*)&m_max_index_j[0][0][0], OUT_H, OUT_D);
+
+    // double* d_down_deriv = (double*)malloc(sizeof(double)*OUT_D*OUT_H*OUT_W);
+    // pool_backprop_device(d_down_deriv,(double*)&upstream_deriv[0][0][0],(int*)&m_max_index_i[0][0][0], (int*)&m_max_index_j[0][0][0], OUT_H, OUT_D);
+    // for (size_t out_h = 0; out_h < OUT_D; out_h++) {
+    //     for (size_t out_i = 0; out_i < OUT_H; out_i++) {
+    //         for (size_t out_j = 0; out_j < OUT_W; out_j++) {
+    //              if (d_down_deriv[out_h*OUT_H*OUT_W+out_i*OUT_W+out_j] == this->downstream_deriv(out_h, out_i, out_j)) printf("Right\n");
+    //         }
+    //     }
+    // }
+    // exit(1);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
 

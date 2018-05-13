@@ -27,13 +27,13 @@ void pool_forward_device(double* in, double* out, size_t size_out, size_t img_d)
   cudaFree(d_out);
 }
 
-__global__ void pool_backprob(double *down_deriv, double *up_deriv, int *max_i , int *max_j) {
+__global__ void pool_backprop(double *down_deriv, double *up_deriv, int *max_i , int *max_j) {
   int id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
   int down_id = max_j[id] + max_i[id]*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
   down_deriv[down_id] = up_deriv[id];
 }
 
-void pool_backprob_device(double *down_deriv, double *up_deriv, int *max_i, int *max_j, size_t size, size_t img_d) {
+void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int *max_j, size_t size, size_t img_d) {
   double *d_down_deriv, *d_up_deriv;
   int *d_max_i, *d_max_j;
   cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
@@ -45,7 +45,7 @@ void pool_backprob_device(double *down_deriv, double *up_deriv, int *max_i, int 
   cudaMemcpy(d_max_j, max_j, sizeof(size_t)*size*size*img_d, cudaMemcpyHostToDevice);
   dim3 block_size(size,size,1);
   dim3 grid_size(img_d,1,1);
-  pool_backprob<<<grid_size, block_size>>>(d_down_deriv, d_up_deriv, d_max_i, d_max_j);
+  pool_backprop<<<grid_size, block_size>>>(d_down_deriv, d_up_deriv, d_max_i, d_max_j);
   cudaMemcpy(down_deriv, d_down_deriv,sizeof(double)*size*size*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv);
   cudaFree(d_up_deriv);
@@ -53,6 +53,21 @@ void pool_backprob_device(double *down_deriv, double *up_deriv, int *max_i, int 
   cudaFree(d_max_j);
 }
 
+__global__ void conv_backprop() {
+
+}
+
+
+void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter) {
+  double *d_input, *d_output, *d_down_deriv, *d_up_deriv, *d_filter_deriv, *d_filter;
+  cudaMalloc((double**)&d_input, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_output, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_filter_deriv, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_filter, sizeof(double)*size*size*img_d);
+  
+}
 
 __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
   int i_id = (threadIdx.x+2)+(threadIdx.y+2)*(blockDim.x+4)+blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
@@ -122,10 +137,10 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   cudaFree(d_weight);
 }
 
-__global__ void full_backprob() {
+__global__ void full_backprop() {
 
 }
 
-void full_backprob_device() {
+void full_backprop_device() {
 
 }
