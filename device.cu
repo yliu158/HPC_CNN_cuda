@@ -65,7 +65,7 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
 }
 
 
-void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter, double* bias_deriv) {
+void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter, double* bias_deriv, size_t size, size_t img_d, size_t fil_d) {
   double *d_input, *d_output, *d_down_deriv, *d_up_deriv, *d_filter_deriv, *d_filter, *d_bias_deriv;
   cudaMalloc((double**)&d_input, sizeof(double)*(size+4)*(size+4)*img_d);
   cudaMalloc((double**)&d_output, sizeof(double)*size*size*fil_d);
@@ -84,7 +84,7 @@ void conv_backprop_device(double* input, double* output, double* down_deriv, dou
 
   dim3 block_size_d(size, size, 1);
   dim3 grid_size_d(img_d, fil_d, 1);
-  conv_backprop<<<grid_size_d, block_size_d>>>();
+  // conv_backprop_down_deriv<<<grid_size_d, block_size_d>>>();
 
   // cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d, cudaMemcpyDeviceToHost);
 
