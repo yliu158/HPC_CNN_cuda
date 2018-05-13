@@ -460,7 +460,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
 
     // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
     // be done sliding over the input, but I think it would be significantly harder.
-    printf("OUT_H:%d OUT_W:%d\n", OUT_H, OUT_W); exit(1);
     auto &input(this->previous_layer->output);
     for (size_t out_i = 0; out_i < OUT_H; out_i++) {
         for (size_t out_j = 0; out_j < OUT_W; out_j++) {
