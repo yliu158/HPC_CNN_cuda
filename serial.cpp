@@ -460,6 +460,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
 
     // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
     // be done sliding over the input, but I think it would be significantly harder.
+    printf("OUT_H:%d OUT_W:%d\n", OUT_H, OUT_W); exit(1);
     auto &input(this->previous_layer->output);
     for (size_t out_i = 0; out_i < OUT_H; out_i++) {
         for (size_t out_j = 0; out_j < OUT_W; out_j++) {
@@ -476,7 +477,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
             // never need the derivative.  We also know that that part of the input cannot contribute to the
             // weight derivative, because the weight derivative is zero for that part (by the product rule for
             // computing derivatives).
-            printf("PADDING%d\n", PADDING); exit(1);
             const size_t f_beg_i = std::max(0LL, -ll_t(out_i) + PADDING);
             const size_t f_beg_j = std::max(0LL, -ll_t(out_j) + PADDING);
             const size_t f_end_i = std::min(ll_t(FILTER_H), ll_t(OUT_H) + PADDING - ll_t(out_i));
@@ -504,8 +504,16 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
                                 // depth index of the filter.
                                 const size_t in_i = out_i + f_i - PADDING;
                                 const size_t in_j = out_j + f_j - PADDING;
-                                this->downstream_deriv(f_h, in_i, in_j) +=
-                                 m_filter(f_g, f_h, f_i, f_j)*upstream_deriv(f_g, out_i, out_j);
+
+
+
+
+                                this->downstream_deriv(f_h, in_i, in_j) += m_filter(f_g, f_h, f_i, f_j)*upstream_deriv(f_g, out_i, out_j);
+
+
+
+
+
                                 /*
                                 fprintf(stderr, "layer %s, filter_deriv(%zu, %zu, %zu, %zu) added %f\n",
                                  m_name.c_str(), f_g, f_h, f_i, f_j,
