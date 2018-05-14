@@ -539,7 +539,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     for (size_t i = 0; i < N_FILTERS; i++) {
       for (size_t u = 0; u < IN_D; u++) {
         for (size_t j = 0; j < 5; j++) {
-          for (size_t k = 0; k < 5 k++) {
+          for (size_t k = 0; k < 5; k++) {
             printf("%lf  ", m_filter[i][u][j][k]);
           }
           printf("\n");
