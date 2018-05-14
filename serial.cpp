@@ -460,6 +460,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
 
     this->downstream_deriv = 0;
 
+    //=======================================================================
     // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
     // be done sliding over the input, but I think it would be significantly harder.
     auto &input(this->previous_layer->output);
@@ -506,22 +507,13 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
                                 const size_t in_i = out_i + f_i - PADDING;
                                 const size_t in_j = out_j + f_j - PADDING;
 
-
-
-
                                 this->downstream_deriv(f_h, in_i, in_j) += m_filter(f_g, f_h, f_i, f_j)*upstream_deriv(f_g, out_i, out_j);
-
-
-
-
-
                                 /*
                                 fprintf(stderr, "layer %s, filter_deriv(%zu, %zu, %zu, %zu) added %f\n",
                                  m_name.c_str(), f_g, f_h, f_i, f_j,
                                  input(f_h, in_i, in_j)*upstream_deriv(f_g, out_i, out_j)/mb_size);
                                 */
-                                m_filter_deriv(f_g, f_h, f_i, f_j) +=
-                                 input(f_h, in_i, in_j)*upstream_deriv(f_g, out_i, out_j)/mb_size;
+                                m_filter_deriv(f_g, f_h, f_i, f_j) += input(f_h, in_i, in_j)*upstream_deriv(f_g, out_i, out_j)/mb_size;
                             }
                         }
                     }
@@ -530,10 +522,37 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
             }
         }
     }
+    //=======================================================================
 
 
-    // void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter,
-    // double* bias_deriv, size_t size, size_t img_d, size_t fil_d) {
+    for (size_t i = 0; i < N_FILTERS; i++) {
+      for (size_t j = 0; j < OUT_H; j++) {
+        for (size_t k = 0; k < OUT_W; k++) {
+          printf("%lf  ", upstream_deriv[i][j][k]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+    printf("==============================================================================================================\n", );
+
+    for (size_t i = 0; i < N_FILTERS; i++) {
+      for (size_t u = 0; u < IN_D; u++) {
+        for (size_t j = 0; j < OUT_H; j++) {
+          for (size_t k = 0; k < OUT_W; k++) {
+            printf("%lf  ", m_filter[i][u][j][k]);
+          }
+          printf("\n");
+        }
+        printf("\n\n");
+      }
+      printf("\n\n\n");
+    }
+
+
+
+
+    double* bias_deriv, size_t size, size_t img_d, size_t fil_d) {
     double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*N_FILTERS);
     conv_backprop_device((double*)&input[0][0][0], (double*)&this->output[0][0][0], d_down_deriv,
     (double*)&upstream_deriv[0][0][0], (double*)&m_filter_deriv[0][0][0], (double*)&m_filter[0][0][0], (double*)&m_bias_deriv[0],
