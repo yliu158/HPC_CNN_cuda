@@ -567,7 +567,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
       //     printf("%lf ", d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
       //   }
       //   printf("   mine\n");
-      // }
+      }
       // printf("=============================================================================\n");
     }
     // printf("\n");
