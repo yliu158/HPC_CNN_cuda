@@ -534,7 +534,8 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
 
     // void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter,
     // double* bias_deriv, size_t size, size_t img_d, size_t fil_d) {
-    conv_backprop_device((double*)&input[0][0][0], (double*)&output[0][0][0], (double*)&downstream_deriv[0][0][0],
+    double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*N_FILTERS);
+    conv_backprop_device((double*)&input[0][0][0], (double*)&this->output[0][0][0], d_down_deriv,
     (double*)&upstream_deriv[0][0][0], (double*)&m_filter_deriv[0][0][0], (double*)&m_filter[0][0][0], (double*)&m_bias_deriv[0],
     IN_H, IN_D, N_FILTERS);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
