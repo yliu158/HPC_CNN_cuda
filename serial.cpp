@@ -551,9 +551,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     // exit(1);
 
 
-    // double* d_up_deriv = (double*)malloc(sizeof(double)*OUT_H*OUT_W*IN_D);
-
-
     double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
     conv_backprop_device((double*)&input[0][0][0], (double*)&this->output[0][0][0], d_down_deriv,
     (double*)&upstream_deriv[0][0][0], (double*)&m_filter_deriv[0][0][0], (double*)&m_filter[0][0][0], (double*)&m_bias_deriv[0],
@@ -561,19 +558,19 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     for (size_t i = 0; i < N_FILTERS; i++) {
       for (size_t j = 0; j < IN_H; j++) {
         for (size_t k = 0; k < IN_W; k++) {
-          // assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
-          printf("%lf ", this->downstream_deriv[i][j][k]);
+          assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+          // printf("%lf ", this->downstream_deriv[i][j][k]);
         }
-        printf("\n");
-        for (size_t k = 0; k < IN_W; k++) {
-          // assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
-          printf("%lf ", d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
-        }
-        printf("   mine\n");
-      }
-      printf("=============================================================================\n");
+        // printf("\n");
+      //   for (size_t k = 0; k < IN_W; k++) {
+      //     // assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+      //     printf("%lf ", d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+      //   }
+      //   printf("   mine\n");
+      // }
+      // printf("=============================================================================\n");
     }
-    printf("\n");
+    // printf("\n");
     exit(1);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
