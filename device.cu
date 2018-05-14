@@ -76,12 +76,12 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   }
 }
 
-__global__ void conv_backprop_filter_deriv(double* filter_deriv, double* input, double* upstream_deriv) {
+__global__ void conv_backprop_filter_deriv(double* filter_deriv, double* input, double* upstream_deriv, double* output) {
   int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
   if (output[u_id] <= 0) return;
-  int f_id = blockIdx.x*5*5+ blockIdx.y*gridDim.x*5*5;
-  int i_id = threadIdx.x+2 + (threadIdx.y+2)*(blockDim.x+4)+ blockIdx.x*(blockDim.x+4)*(blockDim.y+4)+blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
-  
+  // int f_id = blockIdx.x*5*5+ blockIdx.y*gridDim.x*5*5;
+  // int i_id = threadIdx.x+2 + (threadIdx.y+2)*(blockDim.x+4)+ blockIdx.x*(blockDim.x+4)*(blockDim.y+4)+blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
+  //
 }
 
 void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter, double* bias_deriv, size_t size, size_t img_d, size_t fil_d) {
