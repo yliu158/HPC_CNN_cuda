@@ -54,14 +54,25 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 }
 
 __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, double* up_deriv, double* output) {
-  int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
-  if (output[u_id] <= 0) return;
-  int f_id = blockIdx.x*5*5+ blockIdx.y*gridDim.x*5*5;
-  int d_id = threadIdx.x+2 + (threadIdx.y+2)*(blockDim.x+4)+ blockIdx.x*(blockDim.x+4)*(blockDim.y+4)+blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
-  for (int i = 0; i < 5; i++) {
-    for (int j = 0; j < 5; j++) {
-      if (threadIdx.x+2>=i && threadIdx.y+2>=j && threadIdx.x < blockDim.x-3+i && threadIdx.y< blockDim.y-3+j) {
-        down_deriv[d_id] += filter[f_id+i*5+j]*up_deriv[u_id];
+  // int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.y*blockDim.x*blockDim.y;
+  // if (output[u_id] <= 0) return;
+  // int f_id = blockIdx.x*5*5 + blockIdx.y*gridDim.x*5*5;
+  // int d_id = threadIdx.x+2 + (threadIdx.y+2)*(blockDim.x+4)+ blockIdx.x*(blockDim.x+4)*(blockDim.y+4)+blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
+  // for (int i = 0; i < 5; i++) {
+  //   for (int j = 0; j < 5; j++) {
+  //     if (threadIdx.x+2>=i && threadIdx.y+2>=j && threadIdx.x < blockDim.x-3+i && threadIdx.y< blockDim.y-3+j) {
+  //       down_deriv[d_id] += filter[f_id+i*5+j]*up_deriv[u_id];
+  //     }
+  //   }
+  // }
+
+  int d_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockDim.y*gridDim.x*blockDim.x*blockDim.y;
+  int f_id = blockIdx.x*25 + blockIdx.y*gridDim.x*25;
+  int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.y*(blockDim.x-4)*(blockDim.y-4);
+  for (size_t i = 0; i < 5; i++) {
+    for (size_t j = 0; j < 5; j++) {
+      if (threadIdx.x >= i && threadIdx.y >= j && threadIdx.x-i+5 < blockDim.x && threadIdx.y-j+5 < blockDim.y) {
+        down_deriv[d_id] += up_deriv[u_id-(blockDim.x-4)*i-j] * filters[f_id+i*5+j];
       }
     }
   }
@@ -77,7 +88,7 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
 }
 
 __global__ void conv_backprop_filter_deriv(double* filter_deriv, double* input, double* upstream_deriv, double* output) {
-  int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
+  // int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
   if (output[u_id] <= 0) return;
   // int f_id = blockIdx.x*5*5+ blockIdx.y*gridDim.x*5*5;
   // int i_id = threadIdx.x+2 + (threadIdx.y+2)*(blockDim.x+4)+ blockIdx.x*(blockDim.x+4)*(blockDim.y+4)+blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
@@ -104,7 +115,7 @@ void conv_backprop_device(double* input, double* output, double* down_deriv, dou
   cudaMemcpy(d_filter, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_bias_deriv, bias_deriv, sizeof(double)*fil_d, cudaMemcpyHostToDevice);
 
-  dim3 block_size_d(size, size, 1);
+  dim3 block_size_d(size+4, size+4, 1);
   dim3 grid_size_d(img_d, fil_d, 1);
   conv_backprop_down_deriv<<<grid_size_d, block_size_d>>>(d_down_deriv_tmp, d_filter, d_up_deriv, d_output);
   conv_backprop_down_deriv_sum<<<img_d, block_size_d>>>(d_down_deriv_tmp, down_deriv, fil_d);
