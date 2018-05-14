@@ -531,7 +531,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
         }
         printf("\n");
       }
-      printf("\n");
+      printf("\ndownstream_deriv:");
     }
     exit(1);
 
