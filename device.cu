@@ -72,7 +72,7 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
   for (size_t i = 0; i < 5; i++) {
     for (size_t j = 0; j < 5; j++) {
       if (threadIdx.x >= i && threadIdx.y >= j && threadIdx.x-i+5 < blockDim.x && threadIdx.y-j+5 < blockDim.y) {
-        down_deriv[d_id] += up_deriv[u_id-(blockDim.x-4)*i-j] * filters[f_id+i*5+j];
+        down_deriv[d_id] += up_deriv[u_id-(blockDim.x-4)*i-j] * filter[f_id+i*5+j];
       }
     }
   }
@@ -89,7 +89,7 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
 
 __global__ void conv_backprop_filter_deriv(double* filter_deriv, double* input, double* upstream_deriv, double* output) {
   // int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
-  if (output[u_id] <= 0) return;
+  // if (output[u_id] <= 0) return;
   // int f_id = blockIdx.x*5*5+ blockIdx.y*gridDim.x*5*5;
   // int i_id = threadIdx.x+2 + (threadIdx.y+2)*(blockDim.x+4)+ blockIdx.x*(blockDim.x+4)*(blockDim.y+4)+blockIdx.y*gridDim.x*(blockDim.x+4)*(blockDim.y+4);
   //
