@@ -534,7 +534,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
       }
       printf("\n");
     }
-    printf("==============================================================================================================\n", );
+    printf("==============================================================================================================\n");
 
     for (size_t i = 0; i < N_FILTERS; i++) {
       for (size_t u = 0; u < IN_D; u++) {
@@ -552,7 +552,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
 
 
 
-    double* bias_deriv, size_t size, size_t img_d, size_t fil_d) {
     double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*N_FILTERS);
     conv_backprop_device((double*)&input[0][0][0], (double*)&this->output[0][0][0], d_down_deriv,
     (double*)&upstream_deriv[0][0][0], (double*)&m_filter_deriv[0][0][0], (double*)&m_filter[0][0][0], (double*)&m_bias_deriv[0],
