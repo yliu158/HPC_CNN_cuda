@@ -61,7 +61,7 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
   for (int i = 0; i < 5; i++) {
     for (int j = 0; j < 5; j++) {
       if (threadIdx.x+2>=i && threadIdx.y+2>=j && threadIdx.x < blockDim.x-3+i && threadIdx.y< blockDim.y-3+j) {
-        down_deriv[d_id] += filter[f_id+i*5+j]*up_deriv[u_id+i*5+j];
+        down_deriv[d_id] += filter[f_id+i*5+j]*up_deriv[u_id];
       }
     }
   }
