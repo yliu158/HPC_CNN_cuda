@@ -567,6 +567,8 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
         }
       }
     }
+
+    // so far d_down_deriv has many wired long 
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
 

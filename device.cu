@@ -66,12 +66,12 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
   //   }
   // }
 
-  int d_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockDim.y*gridDim.x*blockDim.x*blockDim.y;
-  int f_id = blockIdx.x*25 + blockIdx.y*gridDim.x*25;
-  int u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.y*(blockDim.x-4)*(blockDim.y-4);
+  size_t d_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockDim.y*gridDim.x*blockDim.x*blockDim.y;
+  size_t f_id = blockIdx.x*25 + blockIdx.y*gridDim.x*25;
+  size_t u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.y*(blockDim.x-4)*(blockDim.y-4);
   for (size_t i = 0; i < 5; i++) {
     for (size_t j = 0; j < 5; j++) {
-      if (threadIdx.x >= i && threadIdx.y >= j && threadIdx.x-i+5 < blockDim.x && threadIdx.y-j+5 < blockDim.y) {
+      if (threadIdx.x >= i && threadIdx.y >= j && threadIdx.x-i+4 < blockDim.x && threadIdx.y-j+4 < blockDim.y) {
         down_deriv[d_id] += up_deriv[u_id-(blockDim.x-4)*i-j] * filter[f_id+i*5+j];
       }
     }
