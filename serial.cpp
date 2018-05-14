@@ -461,70 +461,70 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     this->downstream_deriv = 0;
 
     //=======================================================================
-    // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
-    // be done sliding over the input, but I think it would be significantly harder.
-    auto &input(this->previous_layer->output);
-    for (size_t out_i = 0; out_i < OUT_H; out_i++) {
-        for (size_t out_j = 0; out_j < OUT_W; out_j++) {
-
-            // We do another "convolution", but instead of computing the dot product, we compute the
-            // derivatives.  We do this by essentially iterating over each pair of elements that would have been
-            // multipled together for the dot product, but instead of computing the dot product, we add the
-            // appropriate amount into the input and weight derivatives, using the product rule for computing
-            // derivatives.
-
-            // Compute the part of the filter that covers up actual input, not the padding.  We do not need to
-            // go over the part that covers the padding.  While that part of the input does actually have a
-            // derivative, because if it changed, it would in theory change the loss, we can't change it, so we
-            // never need the derivative.  We also know that that part of the input cannot contribute to the
-            // weight derivative, because the weight derivative is zero for that part (by the product rule for
-            // computing derivatives).
-            const size_t f_beg_i = std::max(0LL, -ll_t(out_i) + PADDING);
-            const size_t f_beg_j = std::max(0LL, -ll_t(out_j) + PADDING);
-            const size_t f_end_i = std::min(ll_t(FILTER_H), ll_t(OUT_H) + PADDING - ll_t(out_i));
-            const size_t f_end_j = std::min(ll_t(FILTER_W), ll_t(OUT_W) + PADDING - ll_t(out_j));
-            /*
-            fprintf(stderr, "Filter index ranges: out(%zu, %zu), i(%zu, %zu], j(%zu, %zu]\n",
-             out_i, out_j,
-             f_beg_i, f_end_i,
-             f_beg_j, f_end_j
-            );
-            */
-            assert(f_beg_i < FILTER_H);
-            assert(f_beg_j < FILTER_W);
-            assert(f_end_i <= FILTER_H);
-            assert(f_end_j <= FILTER_W);
-            // Note we iterate over the filters, and over the entire input depth.
-            for (size_t f_g = 0; f_g < N_FILTERS; f_g++) {
-                // Since it is going through a ReLU, if the output is not greater than 0, then the
-                // downstream and weight derivative is 0.
-                if (this->output(f_g, out_i, out_j) > 0) {
-                    for (size_t f_h = 0; f_h < IN_D; f_h++) {
-                        for (size_t f_i = f_beg_i; f_i < f_end_i; f_i++) {
-                            for (size_t f_j = f_beg_j; f_j < f_end_j; f_j++) {
-                                // Note that the output layer depth index is the index of the filter, not the
-                                // depth index of the filter.
-                                const size_t in_i = out_i + f_i - PADDING;
-                                const size_t in_j = out_j + f_j - PADDING;
-
-                                this->downstream_deriv(f_h, in_i, in_j) += m_filter(f_g, f_h, f_i, f_j)*upstream_deriv(f_g, out_i, out_j);
-                                if (m_filter(f_g, f_h, f_i, f_j)*upstream_deriv(f_g, out_i, out_j) != 0) {
-                                  printf("%lf %lf\n", m_filter(f_g, f_h, f_i, f_j), upstream_deriv(f_g, out_i, out_j) != 0);
-                                }
-                                /*
-                                fprintf(stderr, "layer %s, filter_deriv(%zu, %zu, %zu, %zu) added %f\n",
-                                 m_name.c_str(), f_g, f_h, f_i, f_j,
-                                 input(f_h, in_i, in_j)*upstream_deriv(f_g, out_i, out_j)/mb_size);
-                                */
-                                m_filter_deriv(f_g, f_h, f_i, f_j) += input(f_h, in_i, in_j)*upstream_deriv(f_g, out_i, out_j)/mb_size;
-                            }
-                        }
-                    }
-                    m_bias_deriv(f_g) += upstream_deriv(f_g, out_i, out_j)/mb_size;
-                }
-            }
-        }
-    }
+    // // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
+    // // be done sliding over the input, but I think it would be significantly harder.
+    // auto &input(this->previous_layer->output);
+    // for (size_t out_i = 0; out_i < OUT_H; out_i++) {
+    //     for (size_t out_j = 0; out_j < OUT_W; out_j++) {
+    //
+    //         // We do another "convolution", but instead of computing the dot product, we compute the
+    //         // derivatives.  We do this by essentially iterating over each pair of elements that would have been
+    //         // multipled together for the dot product, but instead of computing the dot product, we add the
+    //         // appropriate amount into the input and weight derivatives, using the product rule for computing
+    //         // derivatives.
+    //
+    //         // Compute the part of the filter that covers up actual input, not the padding.  We do not need to
+    //         // go over the part that covers the padding.  While that part of the input does actually have a
+    //         // derivative, because if it changed, it would in theory change the loss, we can't change it, so we
+    //         // never need the derivative.  We also know that that part of the input cannot contribute to the
+    //         // weight derivative, because the weight derivative is zero for that part (by the product rule for
+    //         // computing derivatives).
+    //         const size_t f_beg_i = std::max(0LL, -ll_t(out_i) + PADDING);
+    //         const size_t f_beg_j = std::max(0LL, -ll_t(out_j) + PADDING);
+    //         const size_t f_end_i = std::min(ll_t(FILTER_H), ll_t(OUT_H) + PADDING - ll_t(out_i));
+    //         const size_t f_end_j = std::min(ll_t(FILTER_W), ll_t(OUT_W) + PADDING - ll_t(out_j));
+    //         /*
+    //         fprintf(stderr, "Filter index ranges: out(%zu, %zu), i(%zu, %zu], j(%zu, %zu]\n",
+    //          out_i, out_j,
+    //          f_beg_i, f_end_i,
+    //          f_beg_j, f_end_j
+    //         );
+    //         */
+    //         assert(f_beg_i < FILTER_H);
+    //         assert(f_beg_j < FILTER_W);
+    //         assert(f_end_i <= FILTER_H);
+    //         assert(f_end_j <= FILTER_W);
+    //         // Note we iterate over the filters, and over the entire input depth.
+    //         for (size_t f_g = 0; f_g < N_FILTERS; f_g++) {
+    //             // Since it is going through a ReLU, if the output is not greater than 0, then the
+    //             // downstream and weight derivative is 0.
+    //             if (this->output(f_g, out_i, out_j) > 0) {
+    //                 for (size_t f_h = 0; f_h < IN_D; f_h++) {
+    //                     for (size_t f_i = f_beg_i; f_i < f_end_i; f_i++) {
+    //                         for (size_t f_j = f_beg_j; f_j < f_end_j; f_j++) {
+    //                             // Note that the output layer depth index is the index of the filter, not the
+    //                             // depth index of the filter.
+    //                             const size_t in_i = out_i + f_i - PADDING;
+    //                             const size_t in_j = out_j + f_j - PADDING;
+    //
+    //                             this->downstream_deriv(f_h, in_i, in_j) += m_filter(f_g, f_h, f_i, f_j)*upstream_deriv(f_g, out_i, out_j);
+    //                             if (m_filter(f_g, f_h, f_i, f_j)*upstream_deriv(f_g, out_i, out_j) != 0) {
+    //                               printf("%lf %lf\n", m_filter(f_g, f_h, f_i, f_j), upstream_deriv(f_g, out_i, out_j) != 0);
+    //                             }
+    //                             /*
+    //                             fprintf(stderr, "layer %s, filter_deriv(%zu, %zu, %zu, %zu) added %f\n",
+    //                              m_name.c_str(), f_g, f_h, f_i, f_j,
+    //                              input(f_h, in_i, in_j)*upstream_deriv(f_g, out_i, out_j)/mb_size);
+    //                             */
+    //                             m_filter_deriv(f_g, f_h, f_i, f_j) += input(f_h, in_i, in_j)*upstream_deriv(f_g, out_i, out_j)/mb_size;
+    //                         }
+    //                     }
+    //                 }
+    //                 m_bias_deriv(f_g) += upstream_deriv(f_g, out_i, out_j)/mb_size;
+    //             }
+    //         }
+    //     }
+    // }
     //=======================================================================
 
     // Paralle execution
@@ -533,7 +533,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     IN_H, IN_D, N_FILTERS);
 
     // ***********************************************************************//
-    // Prove of correctness
+    //                            Prove of correctness
     // double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
     // for (size_t i = 0; i < IN_D; i++) {
     //   for (size_t j = 0; j < IN_H; j++) {
