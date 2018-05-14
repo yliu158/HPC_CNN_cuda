@@ -541,7 +541,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     for (size_t i = 0; i < N_FILTERS; i++) {
       for (size_t j = 0; j < IN_H; j++) {
         for (size_t k = 0; k < IN_W; k++) {
-          if (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]) printf("Right\n");
+          assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
         }
       }
     }
