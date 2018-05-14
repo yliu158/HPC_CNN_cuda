@@ -541,10 +541,18 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     for (size_t i = 0; i < N_FILTERS; i++) {
       for (size_t j = 0; j < IN_H; j++) {
         for (size_t k = 0; k < IN_W; k++) {
-          assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+          // assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+          printf("%lf ", this->downstream_deriv[i][j][k]);
         }
+        for (size_t k = 0; k < IN_W; k++) {
+          // assert (this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+          printf("%lf ", d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+        }
+        printf("===\n");
       }
+      printf("=============================================================================\n");
     }
+    printf("\n");
     exit(1);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
