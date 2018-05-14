@@ -571,7 +571,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
       // printf("=============================================================================\n");
     }
     // printf("\n");
-    exit(1);
+    // exit(1);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
 
