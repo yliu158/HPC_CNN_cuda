@@ -538,6 +538,14 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     conv_backprop_device((double*)&input[0][0][0], (double*)&this->output[0][0][0], d_down_deriv,
     (double*)&upstream_deriv[0][0][0], (double*)&m_filter_deriv[0][0][0], (double*)&m_filter[0][0][0], (double*)&m_bias_deriv[0],
     IN_H, IN_D, N_FILTERS);
+    for (size_t i = 0; i < N_FILTERS; i++) {
+      for (size_t j = 0; j < IN_H; j++) {
+        for (size_t k = 0; k < IN_W; k++) {
+          if (downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]) printf("Right\n");
+        }
+      }
+    }
+    exit(1);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
 
