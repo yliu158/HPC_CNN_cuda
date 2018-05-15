@@ -98,7 +98,7 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   cudaFree(d_filter);
 }
 
-void conv_backprop_filter_device () {
+void conv_backprop_filter_device (double* input, double* up_deriv, double* filter_deriv, size_t size, size_t img_d, size_t fil_d) {
 
 }
 
