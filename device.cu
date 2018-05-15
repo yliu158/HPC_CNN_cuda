@@ -80,18 +80,18 @@ __global__ void conv_backprop_filter_deriv(double* filter_deriv, double* input, 
 
 }
 
-void conv_backprop_downstream_device(double* output, double* down_deriv, double* up_deriv, double* filter_deriv, size_t size, size_t img_d, size_t fil_d) {
+void conv_backprop_downstream_device(double* output, double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
 
   double *d_output, *d_down_deriv, *d_down_deriv_tmp, *d_up_deriv, *d_filter_deriv;
   cudaMalloc((double**)&d_output, sizeof(double)*size*size*fil_d);
   cudaMalloc((double**)&d_down_deriv_tmp, sizeof(double)*(size+4)*(size+4)*img_d*fil_d);
   cudaMalloc((double**)&d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*fil_d);
-  cudaMalloc((double**)&d_filter_deriv, sizeof(double)*5*5*img_d*fil_d);
+  cudaMalloc((double**)&d_filter, sizeof(double)*5*5*img_d*fil_d);
 
   cudaMemcpy(d_output, output, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_filter_deriv, filter_deriv, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
+  cudaMalloc((double**)&d_filter, sizeof(double)*5*5*img_d*fil_d);
 
   dim3 block_size_d(size+4, size+4, 1);
   dim3 grid_size_d(img_d, fil_d, 1);
@@ -131,7 +131,6 @@ void conv_backprop_device(double* input, double* output, double* down_deriv, dou
   dim3 grid_size_d(img_d, fil_d, 1);
   conv_backprop_down_deriv<<<grid_size_d, block_size_d>>>(d_down_deriv_tmp, d_filter, d_up_deriv, d_output);
   conv_backprop_down_deriv_sum<<<img_d, block_size_d>>>(d_down_deriv_tmp, down_deriv, fil_d);
-
 
   cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d, cudaMemcpyDeviceToHost);
   cudaMemcpy(filter_deriv, d_filter_deriv, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyDeviceToHost);

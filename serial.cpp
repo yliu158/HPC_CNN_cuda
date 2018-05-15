@@ -446,7 +446,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::update_weights(const float rate) {
 }
 
 void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter, double* bias_deriv, size_t size, size_t img_d, size_t fil_d);
-void conv_backprop_downstream_device(double* output, double* down_deriv, double* up_deriv, double* filter_deriv, size_t size, size_t img_d, size_t fil_d);
+void conv_backprop_downstream_device(double* output, double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d);
 template <typename IN_DIMS, size_t N_FILTERS>
 void
 ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, const double mb_size) {
@@ -545,7 +545,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
       }
     }
     conv_backprop_downstream_device((double*)&this->output[0][0][0], (double*)&this->downstream_deriv[0][0][0],
-  (double*)&upstream_deriv[0][0][0], (double*)&m_filter_deriv[0][0][0], IN_H, IN_D, N_FILTERS);
+  (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
     // conv_backprop_device((double*)&input[0][0][0], (double*)&this->output[0][0][0], d_down_deriv,
     // (double*)&upstream_deriv[0][0][0], (double*)&m_filter_deriv[0][0][0], (double*)&m_filter[0][0][0], (double*)&m_bias_deriv[0],
     // IN_H, IN_D, N_FILTERS);
