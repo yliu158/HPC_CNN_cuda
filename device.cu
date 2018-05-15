@@ -104,7 +104,7 @@ void conv_backprop_downstream_device(double* output, double* down_deriv, double*
   cudaFree(d_down_deriv_tmp);
   cudaFree(d_down_deriv);
   cudaFree(d_up_deriv);
-  cudaFree(d_filter_deriv);
+  cudaFree(d_filter);
 }
 
 void conv_backprop_device(double* input, double* output, double* down_deriv, double* up_deriv, double* filter_deriv, double* filter, double* bias_deriv, size_t size, size_t img_d, size_t fil_d) {
