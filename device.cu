@@ -82,7 +82,7 @@ __global__ void conv_backprop_filter_deriv(double* filter_deriv, double* input, 
 
 void conv_backprop_downstream_device(double* output, double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
 
-  double *d_output, *d_down_deriv, *d_down_deriv_tmp, *d_up_deriv, *d_filter_deriv;
+  double *d_output, *d_down_deriv, *d_down_deriv_tmp, *d_up_deriv, *d_filter;
   cudaMalloc((double**)&d_output, sizeof(double)*size*size*fil_d);
   cudaMalloc((double**)&d_down_deriv_tmp, sizeof(double)*(size+4)*(size+4)*img_d*fil_d);
   cudaMalloc((double**)&d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d);
