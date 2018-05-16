@@ -64,7 +64,7 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
       }
     }
   }
-  // printf("id: %d  threadIdx.x: %d threadIdx.y%d threadIdx.z%d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", d_id, threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
+  printf("id: %d  threadIdx.x: %d threadIdx.y%d threadIdx.z%d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", d_id, threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
   __syncthreads();
   // printf(" blockDim.x:%d, blockDim.y:%d, gridDim.x:%d, gridDim.y:%d, threadIdx.x:%d, threadIdx.y:%d, blockIdx.x:%d, blockIdx.y:%d\n", blockDim.x, blockDim.y, gridDim.x, gridDim.y, threadIdx.x, threadIdx.y, blockIdx.x, blockIdx.y);
 }
@@ -75,7 +75,7 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   for (size_t i = 0; i < fil_d; i++) {
     d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
-  printf("Hello\n");
+  // printf("Hello\n");
 }
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
