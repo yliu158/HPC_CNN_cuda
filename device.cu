@@ -70,9 +70,9 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   size_t id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
   size_t offset = gridDim.x*blockDim.x*blockDim.y;
   for (size_t i = 0; i < fil_d; i++) {
-    d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
+    // d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
-  printf("There.\n");
+  printf("There. %d\n", id+i*offset);
 }
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
@@ -102,7 +102,7 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
 
 
 __global__ void conv_backprop_filter_deriv(double* input, double* up_deriv, double* filter_deriv, size_t size) {
-  size_t f_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockDim.y*gridDim.x*blockDim.x*blockDim.y;
+  size_t f_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
   size_t u_id = blockIdx.x*size*size + blockIdx.y*gridDim.x*size*size;
   size_t i_id = blockIdx.x*(size+4)*(size+4) + blockIdx.y*gridDim.x*(size+4)*(size+4);
   for (size_t i = 0; i < size; i++) {
