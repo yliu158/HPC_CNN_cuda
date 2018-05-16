@@ -71,7 +71,7 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   size_t id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
   size_t offset = gridDim.x*blockDim.x*blockDim.y;
   for (size_t i = 0; i < fil_d; i++) {
-    // d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
+    d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
   printf("threadIdx.x: %d threadIdx.y %d threadIdx.z %d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
 }
