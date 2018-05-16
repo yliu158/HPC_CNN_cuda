@@ -73,6 +73,7 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   for (size_t i = 0; i < fil_d; i++) {
     d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
+  printf("this time:  %d\n", id);
   // printf("threadIdx.x: %d threadIdx.y %d threadIdx.z %d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
 }
 
