@@ -472,8 +472,8 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     double* d_filter_deriv = (double*)malloc(sizeof(double)*5*5*N_FILTERS*IN_D);
     for (size_t u = 0; u < N_FILTERS; u++) {
       for (size_t i = 0; i < IN_D; i++) {
-        for (size_t j = 0; j < IN_H; j++) {
-          for (size_t k = 0; k < IN_W; k++) {
+        for (size_t j = 0; j < 5; j++) {
+          for (size_t k = 0; k < 5; k++) {
             d_filter_deriv[u*IN_D*25+i*25+j*5+k] = m_filter_deriv[u][i][j][k];
           }
         }
@@ -567,15 +567,15 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     conv_backprop_filter_device((double*)&input[0][0][0], (double*)&upstream_deriv[0][0][0], d_filter_deriv, IN_H, IN_D, N_FILTERS);
     for (size_t u = 0; u < N_FILTERS; u++) {
       for (size_t i = 0; i < IN_D; i++) {
-        for (size_t j = 0; j < IN_H; j++) {
-          for (size_t k = 0; k < IN_W; k++) {
+        for (size_t j = 0; j < 5; j++) {
+          for (size_t k = 0; k < 5; k++) {
             assert(m_filter_deriv[u][i][j][k] == d_filter_deriv[u*IN_D*25+i*25+j*5+k]);
           }
         }
       }
     }
 
-    // exit(1);
+    exit(1);
     // ***********************************************************************//
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
