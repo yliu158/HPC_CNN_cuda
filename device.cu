@@ -72,7 +72,7 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   for (size_t i = 0; i < fil_d; i++) {
     // d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
-  printf("There. %d\n", id+(fil_d-1)*offset);
+  printf("There. x:%d  y:%d  z:%d  id:%d\n", blockDim.x, blockDim.y, gridDim.x, id);
 }
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
