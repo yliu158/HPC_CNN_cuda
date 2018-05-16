@@ -88,8 +88,8 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
   dim3 block_size_d(size+4, size+4, 1);
   dim3 grid_size_d(img_d, fil_d, 1);
-  // dim3 grid_size_s(img_d, 1,1);
-  // dim3 block_size_s(size+4, size+4, 1);
+  dim3 grid_size_s(img_d, 1,1);
+  dim3 block_size_s(size+4, size+4, 1);
   conv_backprop_down_deriv<<<grid_size_d, block_size_d>>>(d_down_deriv_tmp, d_filter, d_up_deriv);
   // conv_backprop_down_deriv_sum<<<grid_size_s, block_size_s>>>(d_down_deriv_tmp, down_deriv, fil_d);
 
