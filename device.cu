@@ -65,7 +65,7 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
     }
   }
   __syncthreads();
-  printf("threadIdx.x: %d threadIdx.y %d threadIdx.z %d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
+  printf("threadIdx.x: %d threadIdx.y %d threadIdx.z %d  blockIdx.x %d  gridDim.y %d  blockIdx.z %d\n", threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, gridDim.y, blockIdx.z);
 }
 
 __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d_down_deriv, size_t fil_d) {
@@ -91,7 +91,8 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   dim3 grid_size_s(img_d, 1,1);
   dim3 block_size_s(size+4, size+4, 1);
   conv_backprop_down_deriv<<<grid_size_d, block_size_d>>>(d_down_deriv_tmp, d_filter, d_up_deriv);
-  conv_backprop_down_deriv_sum<<<grid_size_s, block_size_d>>>(d_down_deriv_tmp, down_deriv, fil_d);
+
+  conv_backprop_down_deriv_sum<<<grid_size_s, block_size_s>>>(d_down_deriv_tmp, down_deriv, fil_d);
 
   cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv_tmp);
