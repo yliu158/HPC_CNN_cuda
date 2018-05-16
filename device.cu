@@ -54,7 +54,7 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 }
 
 __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, double* up_deriv) {
-  size_t d_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockDim.y*gridDim.x*blockDim.x*blockDim.y;
+  size_t d_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
   size_t f_id = blockIdx.x*25 + blockIdx.y*gridDim.x*25;
   size_t u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.y*(blockDim.x-4)*(blockDim.y-4);
   for (size_t i = 0; i < 5; i++) {
@@ -67,8 +67,8 @@ __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, dou
 }
 
 __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d_down_deriv, size_t fil_d) {
-  int id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
-  int offset = gridDim.x*blockDim.x*blockDim.y;
+  size_t id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y;
+  size_t offset = gridDim.x*blockDim.x*blockDim.y;
   for (size_t i = 0; i < fil_d; i++) {
     d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
