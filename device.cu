@@ -96,10 +96,10 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   cudaFree(d_up_deriv);
   cudaFree(d_filter);
 }
-void conv_backprop_downstream_device_helper(double* d_down_deriv_tmp, double* d_down_deriv,size_t size, size_t fil_d) {
+void conv_backprop_downstream_device_helper(double* d_down_deriv_tmp, double* d_down_deriv,size_t size, size_t img_d, size_t fil_d) {
   dim3 block(size+4, size+4, 1);
   dim3 grid(img_d, 1, 1);
-  conv_backprop_down_deriv_sum<<<grid, block>>>(d_down_deriv_tmp, down_deriv, fil_d);
+  conv_backprop_down_deriv_sum<<<grid, block>>>(d_down_deriv_tmp, d_down_deriv, fil_d);
 }
 
 
