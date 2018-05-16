@@ -108,6 +108,7 @@ __global__ void conv_backprop_filter_deriv(double* input, double* up_deriv, doub
       filter_deriv[f_id] += up_deriv[u_id+i*size+j] * input[i_id+(i+threadIdx.y)*(size+4)+j+threadIdx.x];
     }
   }
+  printf("Hello\n");
 }
 
 
