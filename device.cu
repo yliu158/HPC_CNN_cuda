@@ -83,8 +83,8 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   cudaMalloc((double**)&d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*fil_d);
   cudaMalloc((double**)&d_filter, sizeof(double)*5*5*img_d*fil_d);
-  
-  cudaMemcpy(d_filter, filter, sizeof(double)*5*5*img_d*fil_d);
+
+  cudaMemcpy(d_filter, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
   dim3 block_size_d(size+4, size+4, 1);
   dim3 grid_size_d(img_d, fil_d, 1);
