@@ -186,7 +186,7 @@ __global__ void conv_forward(double* in, double* filter, double* bias, double* o
   }
   out[o_id] += bias[blockIdx.y];
   if (out[o_id] < 0) out[o_id] = 0.0;
-  printf("id: %d  threadIdx.x: %d threadIdx.y%d threadIdx.z%d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", d_id, threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
+  printf("threadIdx.x: %d threadIdx.y%d threadIdx.z%d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
 }
 
 
