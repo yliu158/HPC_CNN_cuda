@@ -74,7 +74,7 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   for (size_t i = 0; i < fil_d; i++) {
     // d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
-  printf("id: %d  threadIdx.x: %d threadIdx.y %d\n", id, threadIdx.x, threadIdx.y);
+  printf("id: %d  threadIdx.x: %d threadIdx.y %d  blockIdx.x %d  blockIdx.y %d\n", id, threadIdx.x, threadIdx.y, blockIdx.x, blockIdx.y);
 }
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
