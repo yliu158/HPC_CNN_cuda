@@ -474,7 +474,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
       for (size_t i = 0; i < IN_D; i++) {
         for (size_t j = 0; j < IN_H; j++) {
           for (size_t k = 0; k < IN_W; k++) {
-            d_filter_deriv[u*IN_D*25+i*25+j*5+k] =
+            d_filter_deriv[u*IN_D*25+i*25+j*5+k] = m_filter_deriv[u][i][j][k];
           }
         }
       }
