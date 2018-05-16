@@ -460,11 +460,22 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     using ll_t = long long;
 
     this->downstream_deriv = 0;
-    double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          d_down_deriv[k+j*IN_W+ i*IN_W*IN_H] = this->downstream_deriv[i][j][k];
+
+    // double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       d_down_deriv[k+j*IN_W+ i*IN_W*IN_H] = this->downstream_deriv[i][j][k];
+    //     }
+    //   }
+    // }
+    double* d_filter_deriv = (double*)malloc(sizeof(double)*5*5*N_FILTERS*IN_D);
+    for (size_t u = 0; u < N_FILTERS; u++) {
+      for (size_t i = 0; i < IN_D; i++) {
+        for (size_t j = 0; j < IN_H; j++) {
+          for (size_t k = 0; k < IN_W; k++) {
+            d_filter_deriv[u*IN_D*25+i*25+j*5+k] =
+          }
         }
       }
     }
@@ -537,41 +548,32 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     //=======================================================================
 
     // Paralle execution
-    // conv_backprop_downstream_device((double*)&this->downstream_deriv[0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
+    conv_backprop_downstream_device((double*)&this->downstream_deriv[0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
 
     // ***********************************************************************//
     //                            Prove of correctness
 
-      conv_backprop_downstream_device(d_down_deriv, (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
+      // conv_backprop_downstream_device(d_down_deriv, (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
+      // for (size_t i = 0; i < IN_D; i++) {
+      //   for (size_t j = 0; j < IN_H; j++) {
+      //     for (size_t k = 0; k < IN_W; k++) {
+      //       assert(this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+      //     }
+      //   }
+      // }
+      // exit(1);
+
+
+    conv_backprop_filter_device((double*)&input[0][0][0], (double*)&upstream_deriv[0][0][0], d_filter_deriv, IN_H, IN_D, N_FILTERS);
+    for (size_t u = 0; u < N_FILTERS; u++) {
       for (size_t i = 0; i < IN_D; i++) {
         for (size_t j = 0; j < IN_H; j++) {
           for (size_t k = 0; k < IN_W; k++) {
-            assert(this->downstream_deriv[i][j][k] == d_down_deriv[k+j*IN_W+ i*IN_W*IN_H]);
+            assert(m_filter_deriv[u][i][j][k] == d_filter_deriv[u*IN_D*25+i*25+j*5+k]);
           }
         }
       }
-      exit(1);
-
-    // double* d_filter_deriv = (double*)malloc(sizeof(double)*5*5*N_FILTERS*IN_D);
-    // for (size_t u = 0; u < N_FILTERS; u++) {
-    //   for (size_t i = 0; i < IN_D; i++) {
-    //     for (size_t j = 0; j < IN_H; j++) {
-    //       for (size_t k = 0; k < IN_W; k++) {
-    //         d_filter_deriv[u*IN_D*25+i*25+j*5+k] =
-    //       }
-    //     }
-    //   }
-    // }
-    // conv_backprop_filter_device((double*)&input[0][0][0], (double*)&upstream_deriv[0][0][0], d_filter_deriv, IN_H, IN_D, N_FILTERS);
-    // for (size_t u = 0; u < N_FILTERS; u++) {
-    //   for (size_t i = 0; i < IN_D; i++) {
-    //     for (size_t j = 0; j < IN_H; j++) {
-    //       for (size_t k = 0; k < IN_W; k++) {
-    //         assert(m_filter_deriv[u][i][j][k] == d_filter_deriv[u*IN_D*25+i*25+j*5+k]);
-    //       }
-    //     }
-    //   }
-    // }
+    }
 
     // exit(1);
     // ***********************************************************************//
