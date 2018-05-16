@@ -447,7 +447,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::update_weights(const float rate) {
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d);
 void conv_backprop_filter_device (double* input, double* up_deriv, double* filter_deriv, size_t size, size_t img_d, size_t fil_d);
-void conv_backprop_downstream_device_helper(double* d_down_deriv_tmp, double* d_down_deriv,size_t size, size_t img_d, size_t fil_d);
+// void conv_backprop_downstream_device_helper(double* d_down_deriv_tmp, double* d_down_deriv,size_t size, size_t img_d, size_t fil_d);
 template <typename IN_DIMS, size_t N_FILTERS>
 void
 ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, const double mb_size) {
