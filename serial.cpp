@@ -548,7 +548,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     //=======================================================================
 
     // Paralle execution
-    conv_backprop_downstream_device((double*)&this->downstream_deriv[0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
+    // conv_backprop_downstream_device((double*)&this->downstream_deriv[0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
 
     // ***********************************************************************//
     //                            Prove of correctness

@@ -73,7 +73,6 @@ __global__ void conv_backprop_down_deriv_sum(double* d_down_deriv_tmp, double* d
   for (size_t i = 0; i < fil_d; i++) {
     d_down_deriv[id] += d_down_deriv_tmp[id+i*offset];
   }
-  printf("this time:  %d\n", id);
   // printf("threadIdx.x: %d threadIdx.y %d threadIdx.z %d  blockIdx.x %d  blockIdx.y %d  blockIdx.z %d\n", threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z);
 }
 
@@ -84,13 +83,12 @@ void conv_backprop_downstream_device_helper(double* d_down_deriv_tmp, double* d_
 }
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
-
   double *d_down_deriv, *d_down_deriv_tmp, *d_up_deriv, *d_filter;
   cudaMalloc((double**)&d_down_deriv_tmp, sizeof(double)*(size+4)*(size+4)*img_d*fil_d);
   cudaMalloc((double**)&d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*size*size*fil_d);
   cudaMalloc((double**)&d_filter, sizeof(double)*5*5*img_d*fil_d);
-
+  
   cudaMemcpy(d_filter, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
   dim3 block_size_d(size+4, size+4, 1);
@@ -103,8 +101,6 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   cudaFree(d_up_deriv);
   cudaFree(d_filter);
 }
-
-
 
 
 __global__ void conv_backprop_filter_deriv(double* input, double* up_deriv, double* filter_deriv, size_t size) {
