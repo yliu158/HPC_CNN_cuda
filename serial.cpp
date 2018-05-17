@@ -1249,13 +1249,13 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_de
     this->downstream_deriv = 0;
     auto &input(this->previous_layer->output);
     double* d_down_deriv = (double*)malloc(sizeof(double)*IN_W*IN_H*IN_D);
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          d_down_deriv[i*IN_W*IN_H + j * IN_W +k] = this->downstream_deriv[i][j][k];
-        }
-      }
-    }
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       d_down_deriv[i*IN_W*IN_H + j * IN_W +k] = this->downstream_deriv[i][j][k];
+    //     }
+    //   }
+    // }
     //=======================================================================
     //                          ORIGINAL SERIAL
     for (size_t i = 0; i < N_NEURONS; i++) {
@@ -1282,11 +1282,12 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_de
     //                         END SERIAL
     //=======================================================================
 
+    printf("IN_D%d  IN_W%d  IN_H%d\n", IN_D, IN_W, IN_H);
     full_backprop_downstream_device(d_down_deriv, (double*)&m_current_kept[0], (double*)&upstream_deriv[0], (double*)&m_weight[0][0][0][0], IN_H, IN_D, N_NEURONS);
     for (size_t i = 0; i < IN_D; i++) {
       for (size_t j = 0; j < IN_H; j++) {
         for (size_t k = 0; k < IN_W; k++) {
-          printf("%lf ", d_down_deriv[i*IN_W*IN_H + j * IN_W +k]);
+          printf("%lf ", d_down_deriv[i*IN_W*IN_H + j*IN_W +k]);
         }
         printf("\n");
       }
