@@ -462,24 +462,28 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     this->downstream_deriv = 0;
     // ***********************************************************************//
     //                         Prepare Data
-    double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          d_down_deriv[k+j*IN_W+ i*IN_W*IN_H] = this->downstream_deriv[i][j][k];
-        }
-      }
-    }
-
-    double* d_filter_deriv = (double*)malloc(sizeof(double)*N_FILTERS*IN_D*5*5);
+    // double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       d_down_deriv[k+j*IN_W+ i*IN_W*IN_H] = this->downstream_deriv[i][j][k];
+    //     }
+    //   }
+    // }
+    //
+    // double* d_filter_deriv = (double*)malloc(sizeof(double)*N_FILTERS*IN_D*5*5);
+    // for (size_t i = 0; i < N_FILTERS; i++) {
+    //   for (size_t j = 0; j < IN_D; j++) {
+    //     for (size_t k = 0; k < 5; k++) {
+    //       for (size_t u = 0; u < 5; u++) {
+    //         d_filter_deriv[i*IN_D*25 + j*25 + k*5 +u] = m_filter_deriv[i][j][k][u];
+    //       }
+    //     }
+    //   }
+    // }
+    double* d_bias_deriv = (double*)malloc(sizeof(double)*N_FILTERS);
     for (size_t i = 0; i < N_FILTERS; i++) {
-      for (size_t j = 0; j < IN_D; j++) {
-        for (size_t k = 0; k < 5; k++) {
-          for (size_t u = 0; u < 5; u++) {
-            d_filter_deriv[i*IN_D*25 + j*25 + k*5 +u] = m_filter_deriv[i][j][k][u];
-          }
-        }
-      }
+      d_bias_deriv[i] = 0.0;
     }
     //                        END Preparing
     // ***********************************************************************//
@@ -555,6 +559,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     // Paralle execution
     conv_backprop_downstream_device((double*)&this->downstream_deriv[0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
     conv_backprop_filter_device((double*)&m_filter_deriv[0][0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&input[0][0][0], IN_H, IN_D, N_FILTERS, mb_size);
+
     // ***********************************************************************//
     //                            Prove of correctness
     conv_backprop_downstream_device(d_down_deriv, (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
@@ -578,6 +583,11 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
       }
     }
     // exit(1);
+    conv_backprop_bias_device(d_bias_deriv, (double*)&upstream_deriv[0][0][0], IN_H, N_FILTERS, mb_size);
+    for (size_t i = 0; i < N_FILTERS; i++) {
+      assert(d_bias_deriv[i] == m_bias_deriv[i]);
+    }
+    exit(1);
     //                          END Proving
     // ***********************************************************************//
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
