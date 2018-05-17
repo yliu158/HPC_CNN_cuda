@@ -290,7 +290,7 @@ void conv_backprop_filter_device(double* filter_deriv, double* up_deriv, double*
 }
 
 __global__ void conv_backprop_bias_deriv(double* bias_deriv, double* up_deriv, double mb_size) {
-  __shared__ double share_bd;
+  __shared__ double share_bd = 0.0;
   size_t b_id = blockIdx.x;
   size_t u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x+blockDim.y;
   share_bd += up_deriv[u_id]/mb_size;
@@ -308,7 +308,7 @@ void conv_backprop_bias_device(double* bias_deriv, double* up_deriv, size_t size
   dim3 block(size, size, 1);
   dim3 grid(fil_d, 1, 1);
 
-  conv_backprop_bias_deriv<<<,>>>(d_bias_deriv, d_up_deriv, mb_size);
+  conv_backprop_bias_deriv<<<grid, block>>>(d_bias_deriv, d_up_deriv, mb_size);
 
   cudaMemcpy(bias_deriv, d_bias_deriv, sizeof(double)*fil_d, cudaMemcpyDeviceToHost);
   cudaFree(d_bias_deriv);
