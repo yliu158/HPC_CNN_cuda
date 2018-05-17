@@ -557,31 +557,31 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     //=======================================================================
 
     // Paralle execution
-    conv_backprop_downstream_device((double*)&this->downstream_deriv[0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
-    conv_backprop_filter_device((double*)&m_filter_deriv[0][0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&input[0][0][0], IN_H, IN_D, N_FILTERS, mb_size);
+    // conv_backprop_downstream_device((double*)&this->downstream_deriv[0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
+    // conv_backprop_filter_device((double*)&m_filter_deriv[0][0][0][0], (double*)&upstream_deriv[0][0][0], (double*)&input[0][0][0], IN_H, IN_D, N_FILTERS, mb_size);
 
     // ***********************************************************************//
     //                            Prove of correctness
-    conv_backprop_downstream_device(d_down_deriv, (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          assert (d_down_deriv[k+j*IN_W+ i*IN_W*IN_H] == this->downstream_deriv[i][j][k]);
-        }
-      }
-    }
-    // exit(1);
-
-    conv_backprop_filter_device(d_filter_deriv, (double*)&upstream_deriv[0][0][0], (double*)&input[0][0][0], IN_H, IN_D, N_FILTERS, mb_size);
-    for (size_t u = 0; u < N_FILTERS; u++) {
-      for (size_t i = 0; i < IN_D; i++) {
-        for (size_t j = 0; j < 5; j++) {
-          for (size_t k = 0; k < 5; k++) {
-            assert(m_filter_deriv[u][i][j][k] == d_filter_deriv[u*IN_D*25 + i*25 + j*5 +k]);
-          }
-        }
-      }
-    }
+    // conv_backprop_downstream_device(d_down_deriv, (double*)&upstream_deriv[0][0][0], (double*)&m_filter[0][0][0], IN_H, IN_D, N_FILTERS);
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       assert (d_down_deriv[k+j*IN_W+ i*IN_W*IN_H] == this->downstream_deriv[i][j][k]);
+    //     }
+    //   }
+    // }
+    // // exit(1);
+    //
+    // conv_backprop_filter_device(d_filter_deriv, (double*)&upstream_deriv[0][0][0], (double*)&input[0][0][0], IN_H, IN_D, N_FILTERS, mb_size);
+    // for (size_t u = 0; u < N_FILTERS; u++) {
+    //   for (size_t i = 0; i < IN_D; i++) {
+    //     for (size_t j = 0; j < 5; j++) {
+    //       for (size_t k = 0; k < 5; k++) {
+    //         assert(m_filter_deriv[u][i][j][k] == d_filter_deriv[u*IN_D*25 + i*25 + j*5 +k]);
+    //       }
+    //     }
+    //   }
+    // }
     // exit(1);
     conv_backprop_bias_device(d_bias_deriv, (double*)&upstream_deriv[0][0][0], IN_H, N_FILTERS, mb_size);
     for (size_t i = 0; i < N_FILTERS; i++) {
