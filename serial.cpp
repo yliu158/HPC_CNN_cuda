@@ -460,6 +460,8 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     using ll_t = long long;
 
     this->downstream_deriv = 0;
+    auto &input(this->previous_layer->output);
+    
     // ***********************************************************************//
     //                         Prepare Data
     // double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
@@ -492,7 +494,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     //=======================================================================
     // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
     // be done sliding over the input, but I think it would be significantly harder.
-    // auto &input(this->previous_layer->output);
     // for (size_t out_i = 0; out_i < OUT_H; out_i++) { // 14
     //     for (size_t out_j = 0; out_j < OUT_W; out_j++) {
     //
