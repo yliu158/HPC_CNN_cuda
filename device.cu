@@ -258,20 +258,20 @@ __global__ void conv_backprop_filter_deriv(double* filter_deriv, double* up_deri
     for (size_t j = f_beg_j; j < f_end_j; j++) {
       size_t in_i = threadIdx.x + i - 2;
       size_t in_j = threadIdx.y + j - 2;
-      share_fd[f_id + i*5 + j] += input[i_id + i*size +j] * up_deriv[u_id]/mb_size;
+      share_fd[i*5 + j] += input[i_id + in_i*size + in_j] * up_deriv[u_id]/mb_size;
     }
   }
   __syncthreads();
-  for (size_t i = 0; i < size; i++) {
-    for (size_t j = 0; j < size; j++) {
-      down_deriv[d_id + i*size +j] = share_fd[i*5+j];
+  for (size_t i = 0; i < 5; i++) {
+    for (size_t j = 0; j < 5; j++) {
+      filter_deriv[f_id + i*5 +j] = share_fd[i*5+j];
     }
   }
   // printf("u_id: %d\n", u_id);
 }
 
 
-void conv_backprop_filter_device(double* filter_deriv, double* up_deriv, double* input, size_t size, size_t img_d, size_t fil_d， double mb_size) {
+void conv_backprop_filter_device(double* filter_deriv, double* up_deriv, double* input, size_t size, size_t img_d, size_t fil_d, double mb_size) {
   double *d_filter_deriv, *d_up_deriv, *d_input;
   cudaMalloc((double**)&d_filter_deriv, sizeof(double)*5*5*img_d*fil_d);
   cudaMalloc((double**)&d_up_deriv,sizeof(double)*size*size*fil_d);
@@ -284,8 +284,8 @@ void conv_backprop_filter_device(double* filter_deriv, double* up_deriv, double*
   conv_backprop_filter_deriv<<<grid, block>>>(d_filter_deriv, d_up_deriv, d_input, size, mb_size);
 
   cudaMemcpy(filter_deriv, d_filter_deriv, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyDeviceToHost);
+  cudaFree(d_filter_deriv);
   cudaFree(d_up_deriv);
-  cudaFree(d_filter);
   cudaFree(d_input);
 }
 
