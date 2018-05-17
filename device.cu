@@ -187,7 +187,7 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 
 __global__ void conv_backprop_downstream_deriv(double* down_deriv, double* up_deriv, double* filter, const size_t size) {
   // printf("blockDim.x: %d, blockDim.y: %d, gridDim.x: %d, gridDim.y: %d\n", blockDim.x, blockDim.y, gridDim.x, gridDim.y);
-  __shared__ double share_dd[size*size];
+  __shared__ double share_dd[28*28];
   size_t u_id = blockIdx.x*size*size + threadIdx.y*size + threadIdx.x;
   size_t f_id = blockIdx.x*gridDim.y*5*5 + blockIdx.y*5*5;
   size_t d_id = blockIdx.y*size*size;
@@ -206,13 +206,13 @@ __global__ void conv_backprop_downstream_deriv(double* down_deriv, double* up_de
     for (size_t j = f_beg_j; j < f_end_j; j++) {
       size_t in_i = threadIdx.x + i - 2;
       size_t in_j = threadIdx.y + j - 2;
-      share_dd[in_i*blockDim.x + in_j] += filter[f_id+i*5+j] * up_deriv[u_id];
+      share_dd[in_i*28 + in_j] += filter[f_id+i*5+j] * up_deriv[u_id];
     }
   }
   __syncthreads();
   for (size_t i = 0; i < size; i++) {
     for (size_t j = 0; j < size; j++) {
-      down_deriv[d_id + i*size +j] = share_dd[i*size+j];
+      down_deriv[d_id + i*size +j] = share_dd[i*28+j];
     }
   }
   // printf("u_id: %d\n", u_id);
