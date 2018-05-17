@@ -269,7 +269,7 @@ void full_backprop_downstream_device(double* down_deriv, double* current_kept, d
   cudaMalloc((double**)&d_current_ketp, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_weight, sizeof(double)*h*w*img_d*n_nro);
-  // cudaMemcpy(d_down_deriv, down_deriv, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_down_deriv, down_deriv, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_current_ketp, current_kept,  sizeof(double)*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_weight, weight, sizeof(double)*h*w*img_d*n_nro, cudaMemcpyHostToDevice);
