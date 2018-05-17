@@ -469,18 +469,6 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
         }
       }
     }
-    // double* d_filter_deriv = (double*)malloc(sizeof(double)*5*5*N_FILTERS*IN_D);
-    // for (size_t u = 0; u < N_FILTERS; u++) {
-    //   for (size_t i = 0; i < IN_D; i++) {
-    //     for (size_t j = 0; j < 5; j++) {
-    //       for (size_t k = 0; k < 5; k++) {
-    //         d_filter_deriv[u*IN_D*25+i*25+j*5+k] = m_filter_deriv[u][i][j][k];
-    //       }
-    //     }
-    //   }
-    // }
-    printf("IN_H %d  IN_W %d  IN_D %d\n", IN_H, IN_W, IN_D);
-    printf("OUT_H %d  OUT_W %d \n", OUT_H, OUT_W);
     //=======================================================================
     // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
     // be done sliding over the input, but I think it would be significantly harder.

@@ -53,6 +53,9 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
   cudaFree(d_max_j);
 }
 
+
+
+
 // __global__ void conv_backprop_down_deriv(double* down_deriv, double* filter, double* up_deriv) {
 //   size_t d_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x*blockDim.y + blockIdx.y*gridDim.x*blockDim.x*blockDim.y;
 //   size_t f_id = blockIdx.x*25 + blockIdx.y*gridDim.x*25;
@@ -100,6 +103,12 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 //   cudaFree(d_up_deriv);
 //   cudaFree(d_filter);
 // }
+
+
+
+
+
+
 //
 //
 // __global__ void conv_backprop_filter_deriv(double* input, double* up_deriv, double* filter_deriv, size_t size) {
@@ -176,29 +185,52 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 //   cudaFree(d_bias_deriv);
 // }
 
-__global__ void conv_backprop_downstream_deriv() {
-  printf("blockDim.x: %d, blockDim.y: %d, gridDim.x: %d, gridDim.y: %d\n", blockDim.x, blockDim.y, gridDim.x, gridDim.y);
+__global__ void conv_backprop_downstream_deriv(double* down_deriv, double* up_deriv, double* filter) {
+  // printf("blockDim.x: %d, blockDim.y: %d, gridDim.x: %d, gridDim.y: %d\n", blockDim.x, blockDim.y, gridDim.x, gridDim.y);
+  __shared__ double share_dd[blockDim.x*blockDim.y];
+  size_t u_id = blockIdx.x*blockDim.x*blockDim.y + threadIdx.y*blockDim.x + threadIdx.x;
+  size_t f_id = blockIdx.x*gridDim.y*5*5 + blockIdx.y*5*5;
+  size_t d_id = blockIdx.y*blockDim.x*blockDim.y;
+
+  size_t f_beg_i, f_beg_j, f_end_i, f_end_j;
+  if (-(long long)threadIdx.x + 2LL > 0LL) f_beg_i = -(long long)threadIdx.x + 2LL;
+  else f_beg_i = 0LL;
+  if (-(long long)threadIdx.y + 2LL > 0LL) f_beg_j = -(long long)threadIdx.y + 2LL;
+  else f_beg_j = 0LL;
+  if ((long long)blockDim.x + 2LL - (long long)threadIdx.x < 5LL) f_end_i = (long long)blockDim.x + 2LL - (long long)threadIdx.x;
+  else f_end_i = 5LL;
+  if ((long long)blockDim.y + 2LL - (long long)threadIdx.y < 5LL) f_end_j = (long long)blockDim.y + 2LL - (long long)threadIdx.y;
+  else f_end_j = 5LL;
+
+  for (size_t i = f_beg_i; i < f_end_i; i++) {
+    for (size_t j = f_beg_j; j < f_end_j; j++) {
+      size_t in_i = threadIdx.x + i - 2;
+      size_t in_j = threadIdx.y + j - 2;
+      share_dd[in_i*blockDim.x + in_j] += filter[f_id+i*5+j] * up_deriv[u_id];
+    }
+  }
+  __syncthreads();
+  
+  // printf("u_id: %d\n", u_id);
 }
 
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
-  double *d_down_deriv, *d_up_deriv, *d_filter, *d_down_deriv_tmp;
+  double *d_down_deriv, *d_up_deriv, *d_filter;
   cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
   cudaMalloc((double**)&d_up_deriv,sizeof(double)*size*size*fil_d);
   cudaMalloc((double**)&d_filter,sizeof(double)*5*5*img_d*fil_d);
-  cudaMalloc((double**)&d_down_deriv_tmp, sizeof(double)*size*size*img_d*fil_d);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_filter, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
 
   dim3 block(size, size, 1);
   dim3 grid(fil_d, img_d, 1);
-  conv_backprop_downstream_deriv<<<grid, block>>>();
+  conv_backprop_downstream_deriv<<<grid, block>>>(d_down_deriv, d_up_deriv, d_filter);
 
   cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*size*size*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv);
   cudaFree(d_up_deriv);
   cudaFree(d_filter);
-  cudaFree(d_down_deriv_tmp);
 }
 
 __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
