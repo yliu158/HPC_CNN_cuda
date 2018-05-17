@@ -260,7 +260,7 @@ __global__ void full_backprop_downstream_deriv(double* down_deriv, double* curre
   share_dd[threadIdx.y] += current_kept[c_id]*up_deriv[u_id]*weight[w_id];
   __syncthreads();
   down_deriv[d_id] = share_dd[threadIdx.y];
-  printf("u_id: %d\n", u_id);
+  // printf("u_id: %d\n", u_id);
 }
 
 void full_backprop_downstream_device(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t size, size_t img_d, size_t n_nro) {
