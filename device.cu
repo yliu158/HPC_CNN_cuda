@@ -267,7 +267,7 @@ __global__ void conv_backprop_filter_deriv(double* filter_deriv, double* up_deri
       filter_deriv[f_id + i*5 +j] = share_fd[i*5+j];
     }
   }
-  printf("u_id: %d\n", u_id);
+  // printf("u_id: %d\n", u_id);
 }
 
 
