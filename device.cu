@@ -177,7 +177,7 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 // }
 
 __global__ void conv_backprop_downstream_deriv() {
-
+  printf("blockDim.x: %d, blockDim.y: %d, gridDim.x: %d, gridDim.y: %d\n", blockDim.x, blockDim.y, gridDim.x, gridDim.y);
 }
 
 
@@ -190,7 +190,10 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_filter, filter, sizeof(double)*5*5*img_d*fil_d, cudaMemcpyHostToDevice);
 
-  // printf("d_down_deriv %d,  size: %d  img_d: %d \n", (size+4)*(size+4)*img_d, size, img_d);
+  dim3 block(size, size, 1);
+  dim3 grid(fil_d, img_d, 1);
+  conv_backprop_downstream_deriv<<<grid, block>>>();
+
   cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*size*size*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv);
   cudaFree(d_up_deriv);
