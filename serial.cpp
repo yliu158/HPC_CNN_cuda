@@ -1239,6 +1239,8 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::FullyConnectedLayer(const std::string &
     m_bias_deriv = 0;
 }
 
+void full_backprop_downstream_device(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t size, size_t img_d, size_t n_nro);
+
 template <typename IN_DIMS, size_t N_NEURONS>
 void
 FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_deriv, const double mb_size) {
