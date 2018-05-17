@@ -289,6 +289,17 @@ void conv_backprop_filter_device(double* filter_deriv, double* up_deriv, double*
   cudaFree(d_input);
 }
 
+void conv_backprop_bias_device(double* bias_deriv, double* up_deriv, size_t size, size_t fil_d, double mb_size) {
+  double *d_bias_deriv, *d_up_deriv;
+  cudaMalloc((double**)&d_bias_deriv, sizeof(double)*fil_d);
+  cudaMalloc((double**)&d_up_deriv, sizeof(double)*fil_d*size*size);
+  cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
+
+  cudaMemcpy(bias_deriv, d_bias_deriv, sizeof(double)*fil_d, cudaMemcpyDeviceToHost);
+  cudaFree(d_bias_deriv);
+  cudaFree(d_up_deriv);
+}
+
 __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
   int i_id = (threadIdx.x+2)+(threadIdx.y+2)*(blockDim.x+4)+blockIdx.x*(blockDim.x+4)*(blockDim.y+4);
   int o_id = threadIdx.x+threadIdx.y*blockDim.x+blockIdx.y*blockDim.x*blockDim.y;
