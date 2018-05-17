@@ -461,7 +461,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
 
     this->downstream_deriv = 0;
     auto &input(this->previous_layer->output);
-    
+
     // ***********************************************************************//
     //                         Prepare Data
     // double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
