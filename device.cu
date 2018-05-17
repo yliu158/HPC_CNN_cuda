@@ -178,7 +178,16 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 
 
 void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, double* filter, size_t size, size_t img_d, size_t fil_d) {
-
+  double *d_down_deriv, *d_up_deriv, *d_filter, *d_down_deriv_tmp;
+  cudaMalloc((double**)&d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d);
+  cudaMalloc((double**)&d_up_deriv,sizeof(double)*size*size*fil_d);
+  cudaMalloc((double**)&d_filter,sizeof(double)*5*5*img_d*fil_d);
+  cudaMalloc((double**)&d_down_deriv_tmp), sizeof(double)*(size+4)*(size+4)*img_d*fil_d);
+  
+  cudaFree(d_down_deriv);
+  cudaFree(d_up_deriv);
+  cudaFree(d_filter);
+  cudaFree(d_down_deriv_tmp);
 }
 
 __global__ void conv_forward(double* in, double* filter, double* bias, double* out) {
