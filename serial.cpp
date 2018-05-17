@@ -587,7 +587,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     for (size_t i = 0; i < N_FILTERS; i++) {
       assert(d_bias_deriv[i] == m_bias_deriv[i]);
     }
-    exit(1);
+    // exit(1);
     //                          END Proving
     // ***********************************************************************//
     this->previous_layer->backprop(this->downstream_deriv, mb_size);

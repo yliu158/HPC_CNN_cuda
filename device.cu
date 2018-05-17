@@ -296,7 +296,7 @@ __global__ void conv_backprop_bias_deriv(double* bias_deriv, double* up_deriv, d
   share_bd += up_deriv[u_id]/mb_size;
   __syncthreads();
   bias_deriv[b_id] = share_bd;
-  printf("u_id: %d\n", u_id);
+  // printf("u_id: %d\n", u_id);
 }
 
 void conv_backprop_bias_device(double* bias_deriv, double* up_deriv, size_t size, size_t fil_d, double mb_size) {
