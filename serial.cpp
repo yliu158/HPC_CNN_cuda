@@ -1286,6 +1286,27 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_de
     for (size_t i = 0; i < IN_D; i++) {
       for (size_t j = 0; j < IN_H; j++) {
         for (size_t k = 0; k < IN_W; k++) {
+          printf("%lf ", d_down_deriv[i*IN_W*IN_H + j * IN_W +k]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+
+    for (size_t i = 0; i < IN_D; i++) {
+      for (size_t j = 0; j < IN_H; j++) {
+        for (size_t k = 0; k < IN_W; k++) {
+          printf("%lf ", this->downstream_deriv[i][j][k]);
+        }
+        printf("\n");
+      }
+      printf("\n");
+    }
+
+
+    for (size_t i = 0; i < IN_D; i++) {
+      for (size_t j = 0; j < IN_H; j++) {
+        for (size_t k = 0; k < IN_W; k++) {
           assert(d_down_deriv[i*IN_W*IN_H + j * IN_W +k] == this->downstream_deriv[i][j][k]);
         }
       }
