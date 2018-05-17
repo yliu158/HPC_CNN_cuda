@@ -215,7 +215,7 @@ __global__ void conv_backprop_downstream_deriv(double* down_deriv, double* up_de
       down_deriv[d_id + i*size +j] = share_dd[i*28+j];
     }
   }
-  // printf("u_id: %d\n", u_id);
+  printf("u_id: %d\n", u_id);
 }
 
 
