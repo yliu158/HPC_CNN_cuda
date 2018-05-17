@@ -289,11 +289,26 @@ void conv_backprop_filter_device(double* filter_deriv, double* up_deriv, double*
   cudaFree(d_input);
 }
 
+__global__ void conv_backprop_bias_deriv(double* bias_deriv, double* up_deriv, double mb_size) {
+  __shared__ double share_bd;
+  size_t b_id = blockIdx.x;
+  size_t u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x+blockDim.y;
+  share_bd += up_deriv[u_id]/mb_size;
+  __syncthreads();
+  bias_deriv[b_id] = share_bd;
+  printf("u_id: %d\n", u_id);
+}
+
 void conv_backprop_bias_device(double* bias_deriv, double* up_deriv, size_t size, size_t fil_d, double mb_size) {
   double *d_bias_deriv, *d_up_deriv;
   cudaMalloc((double**)&d_bias_deriv, sizeof(double)*fil_d);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*fil_d*size*size);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
+
+  dim3 block(size, size, 1);
+  dim3 grid(fil_d, 1, 1);
+
+  conv_backprop_bias_deriv<<<,>>>(d_bias_deriv, d_up_deriv, mb_size);
 
   cudaMemcpy(bias_deriv, d_bias_deriv, sizeof(double)*fil_d, cudaMemcpyDeviceToHost);
   cudaFree(d_bias_deriv);
