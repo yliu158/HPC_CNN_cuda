@@ -252,7 +252,7 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
 }
 
 __global__ void full_backprop_downstream_deriv(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t w, size_t h ,size_t img_d) {
-  __shared__ double share_dd[64];
+  __shared__ double share_dd[32];
   size_t d_id = blockIdx.x + blockIdx.y*w + threadIdx.y*w*h;
   size_t c_id = threadIdx.x;
   size_t u_id = threadIdx.x;

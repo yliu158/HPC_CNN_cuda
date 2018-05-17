@@ -1239,7 +1239,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::FullyConnectedLayer(const std::string &
     m_bias_deriv = 0;
 }
 
-void full_backprop_downstream_device(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t size, size_t img_d, size_t n_nro);
+void full_backprop_downstream_device(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t w, size_t h, size_t img_d, size_t n_nro);
 
 template <typename IN_DIMS, size_t N_NEURONS>
 void
@@ -1283,7 +1283,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_de
     //=======================================================================
 
     // printf("IN_D%d  IN_W%d  IN_H%d\n", IN_D, IN_W, IN_H); // 1, 64, 1
-    full_backprop_downstream_device(d_down_deriv, (double*)&m_current_kept[0], (double*)&upstream_deriv[0], (double*)&m_weight[0][0][0][0], IN_H, IN_D, N_NEURONS);
+    full_backprop_downstream_device(d_down_deriv, (double*)&m_current_kept[0], (double*)&upstream_deriv[0], (double*)&m_weight[0][0][0][0], IN_W, IN_H, IN_D, N_NEURONS);
     for (size_t i = 0; i < IN_D; i++) {
       for (size_t j = 0; j < IN_H; j++) {
         for (size_t k = 0; k < IN_W; k++) {
