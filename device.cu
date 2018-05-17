@@ -290,7 +290,7 @@ void conv_backprop_filter_device(double* filter_deriv, double* up_deriv, double*
 }
 
 __global__ void conv_backprop_bias_deriv(double* bias_deriv, double* up_deriv, double mb_size) {
-  __shared__ double share_bd = 0.0;
+  __shared__ double share_bd;
   size_t b_id = blockIdx.x;
   size_t u_id = threadIdx.x + threadIdx.y*blockDim.x + blockIdx.x*blockDim.x+blockDim.y;
   share_bd += up_deriv[u_id]/mb_size;
