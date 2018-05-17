@@ -1274,38 +1274,38 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_de
     //                         END SERIAL
     //=======================================================================
 
-    double* d_down_deriv = (double*)malloc(sizeof(double)*IN_W*IN_H*IN_D);
+    // double* d_down_deriv = (double*)malloc(sizeof(double)*IN_W*IN_H*IN_D);
     // printf("IN_D %d  IN_W %d  IN_H %d  N_NEURONS %d\n", IN_D, IN_W, IN_H, N_NEURONS); // 1, 64, 1
-    full_backprop_downstream_device(d_down_deriv, (double*)&m_current_kept[0], (double*)&upstream_deriv[0], (double*)&m_weight[0][0][0][0], IN_W, IN_H, IN_D, N_NEURONS);
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          printf("%lf ", d_down_deriv[i*IN_W*IN_H + j*IN_W +k]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          printf("%lf ", this->downstream_deriv[i][j][k]);
-        }
-        printf("\n");
-      }
-      printf("\n");
-    }
-
-
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          assert(d_down_deriv[i*IN_W*IN_H + j * IN_W +k] == this->downstream_deriv[i][j][k]);
-        }
-      }
-    }
-    exit(1);
+    // full_backprop_downstream_device(d_down_deriv, (double*)&m_current_kept[0], (double*)&upstream_deriv[0], (double*)&m_weight[0][0][0][0], IN_W, IN_H, IN_D, N_NEURONS);
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       printf("%lf ", d_down_deriv[i*IN_W*IN_H + j*IN_W +k]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    //
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       printf("%lf ", this->downstream_deriv[i][j][k]);
+    //     }
+    //     printf("\n");
+    //   }
+    //   printf("\n");
+    // }
+    //
+    //
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       assert(d_down_deriv[i*IN_W*IN_H + j * IN_W +k] == this->downstream_deriv[i][j][k]);
+    //     }
+    //   }
+    // }
+    // exit(1);
     this->previous_layer->backprop(this->downstream_deriv, mb_size);
 }
 
