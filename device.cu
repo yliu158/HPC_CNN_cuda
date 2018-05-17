@@ -92,8 +92,8 @@ void conv_backprop_downstream_device(double* down_deriv, double* up_deriv, doubl
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*size*size*fil_d, cudaMemcpyHostToDevice);
   dim3 block_size_d(size+4, size+4, 1);
   dim3 grid_size_d(img_d, fil_d, 1);
-  // conv_backprop_down_deriv<<<grid_size_d, block_size_d>>>(d_down_deriv_tmp, d_filter, d_up_deriv);
-  // conv_backprop_downstream_device_helper(d_down_deriv_tmp, d_down_deriv, size, img_d, fil_d);
+  conv_backprop_down_deriv<<<grid_size_d, block_size_d>>>(d_down_deriv_tmp, d_filter, d_up_deriv);
+  conv_backprop_downstream_device_helper(d_down_deriv_tmp, d_down_deriv, size, img_d, fil_d);
   cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*(size+4)*(size+4)*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv_tmp);
   cudaFree(d_down_deriv);
