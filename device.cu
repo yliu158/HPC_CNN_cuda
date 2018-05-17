@@ -276,7 +276,7 @@ void full_backprop_downstream_device(double* down_deriv, double* current_kept, d
 
   dim3 block(n_nro, img_d,1);
   dim3 grid(w, h, 1);
-  full_backprop_downstream_deriv<<< grid, block>>>(d_down_deriv, d_current_ketp, d_up_deriv, d_weight, size, img_d);
+  full_backprop_downstream_deriv<<< grid, block>>>(d_down_deriv, d_current_ketp, d_up_deriv, d_weight, w, h, img_d);
 
   cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*h*w*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv);
