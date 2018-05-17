@@ -185,7 +185,7 @@ void pool_backprop_device(double *down_deriv, double *up_deriv, int *max_i, int 
 //   cudaFree(d_bias_deriv);
 // }
 
-__global__ void conv_backprop_downstream_deriv(double* down_deriv, double* up_deriv, double* filter, size_t size) {
+__global__ void conv_backprop_downstream_deriv(double* down_deriv, double* up_deriv, double* filter, const size_t size) {
   // printf("blockDim.x: %d, blockDim.y: %d, gridDim.x: %d, gridDim.y: %d\n", blockDim.x, blockDim.y, gridDim.x, gridDim.y);
   __shared__ double share_dd[size*size];
   size_t u_id = blockIdx.x*size*size + threadIdx.y*size + threadIdx.x;
