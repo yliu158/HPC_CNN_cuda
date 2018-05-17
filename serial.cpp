@@ -1249,13 +1249,13 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_de
     this->downstream_deriv = 0;
     auto &input(this->previous_layer->output);
     double* d_down_deriv = (double*)malloc(sizeof(double)*IN_W*IN_H*IN_D);
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          d_down_deriv[i*IN_W*IN_H + j * IN_W +k] = this->downstream_deriv[i][j][k]);
-        }
-      }
-    }
+    // for (size_t i = 0; i < IN_D; i++) {
+    //   for (size_t j = 0; j < IN_H; j++) {
+    //     for (size_t k = 0; k < IN_W; k++) {
+    //       d_down_deriv[i*IN_W*IN_H + j * IN_W +k] = this->downstream_deriv[i][j][k]);
+    //     }
+    //   }
+    // }
     //=======================================================================
     //                          ORIGINAL SERIAL
     for (size_t i = 0; i < N_NEURONS; i++) {
