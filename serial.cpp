@@ -485,7 +485,7 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     // Compute downstream derivatives.  Note that we slide over the output, not the input.  It can probably also
     // be done sliding over the input, but I think it would be significantly harder.
     auto &input(this->previous_layer->output);
-    for (size_t out_i = 0; out_i < OUT_H; out_i++) {
+    for (size_t out_i = 0; out_i < OUT_H; out_i++) { // 14
         for (size_t out_j = 0; out_j < OUT_W; out_j++) {
 
             // We do another "convolution", but instead of computing the dot product, we compute the
@@ -516,13 +516,13 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
             assert(f_end_i <= FILTER_H);
             assert(f_end_j <= FILTER_W);
             // Note we iterate over the filters, and over the entire input depth.
-            for (size_t f_g = 0; f_g < N_FILTERS; f_g++) {
+            for (size_t f_g = 0; f_g < N_FILTERS; f_g++) { // 32
                 // Since it is going through a ReLU, if the output is not greater than 0, then the
                 // downstream and weight derivative is 0.
                 if (this->output(f_g, out_i, out_j) > 0) {
-                    for (size_t f_h = 0; f_h < IN_D; f_h++) {
-                        for (size_t f_i = f_beg_i; f_i < f_end_i; f_i++) {
-                            for (size_t f_j = f_beg_j; f_j < f_end_j; f_j++) {
+                    for (size_t f_h = 0; f_h < IN_D; f_h++) { // 32/1
+                        for (size_t f_i = f_beg_i; f_i < f_end_i; f_i++) { //5
+                            for (size_t f_j = f_beg_j; f_j < f_end_j; f_j++) { //5
                                 // Note that the output layer depth index is the index of the filter, not the
                                 // depth index of the filter.
                                 const size_t in_i = out_i + f_i - PADDING;
