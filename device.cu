@@ -257,6 +257,7 @@ __global__ void full_backprop_downstream_deriv(double* down_deriv, double* curre
   size_t c_id = threadIdx.x;
   size_t u_id = threadIdx.x;
   size_t w_id = blockIdx.x + blockIdx.y*w + threadIdx.y*w*h + threadIdx.x*h*w*img_d;
+  printf("%lf  \n",  current_kept[c_id]*up_deriv[u_id]*weight[w_id]);
   share_dd[threadIdx.y] += current_kept[c_id]*up_deriv[u_id]*weight[w_id];
   __syncthreads();
   down_deriv[d_id] = share_dd[threadIdx.y];
@@ -269,7 +270,6 @@ void full_backprop_downstream_device(double* down_deriv, double* current_kept, d
   cudaMalloc((double**)&d_current_ketp, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_weight, sizeof(double)*h*w*img_d*n_nro);
-  cudaMemcpy(d_down_deriv, down_deriv, sizeof(double)*h*w*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_current_ketp, current_kept,  sizeof(double)*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_weight, weight, sizeof(double)*h*w*img_d*n_nro, cudaMemcpyHostToDevice);
