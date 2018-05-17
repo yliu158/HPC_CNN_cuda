@@ -251,34 +251,34 @@ void full_forward_device(double * in, double * out, double * weight, double* bia
   cudaFree(d_weight);
 }
 
-__global__ void full_backprop_downstream_deriv(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t size ,size_t img_d) {
+__global__ void full_backprop_downstream_deriv(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t w, size_t h ,size_t img_d) {
   __shared__ double share_dd[64];
-  size_t d_id = blockIdx.x + blockIdx.y*size + threadIdx.y*size*size;
+  size_t d_id = blockIdx.x + blockIdx.y*w + threadIdx.y*w*h;
   size_t c_id = threadIdx.x;
   size_t u_id = threadIdx.x;
-  size_t w_id = blockIdx.x + blockIdx.y*size + threadIdx.y*size*size + threadIdx.x*size*size*img_d;
+  size_t w_id = blockIdx.x + blockIdx.y*w + threadIdx.y*w*h + threadIdx.x*h*w*img_d;
   share_dd[threadIdx.y] += current_kept[c_id]*up_deriv[u_id]*weight[w_id];
   __syncthreads();
   down_deriv[d_id] = share_dd[threadIdx.y];
   // printf("u_id: %d\n", u_id);
 }
 
-void full_backprop_downstream_device(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t size, size_t img_d, size_t n_nro) {
+void full_backprop_downstream_device(double* down_deriv, double* current_kept, double* up_deriv, double* weight, size_t w, size_t h, size_t img_d, size_t n_nro) {
   double *d_down_deriv, *d_current_ketp, *d_up_deriv, *d_weight;
-  cudaMalloc((double**)&d_down_deriv, sizeof(double)*size*size*img_d);
+  cudaMalloc((double**)&d_down_deriv, sizeof(double)*h*w*img_d);
   cudaMalloc((double**)&d_current_ketp, sizeof(double)*n_nro);
   cudaMalloc((double**)&d_up_deriv, sizeof(double)*n_nro);
-  cudaMalloc((double**)&d_weight, sizeof(double)*size*size*img_d*n_nro);
+  cudaMalloc((double**)&d_weight, sizeof(double)*h*w*img_d*n_nro);
   // cudaMemcpy(d_down_deriv, down_deriv, sizeof(double)*size*size*img_d, cudaMemcpyHostToDevice);
   cudaMemcpy(d_current_ketp, current_kept,  sizeof(double)*n_nro, cudaMemcpyHostToDevice);
   cudaMemcpy(d_up_deriv, up_deriv, sizeof(double)*n_nro, cudaMemcpyHostToDevice);
-  cudaMemcpy(d_weight, weight, sizeof(double)*size*size*img_d*n_nro, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_weight, weight, sizeof(double)*h*w*img_d*n_nro, cudaMemcpyHostToDevice);
 
   dim3 block(n_nro, img_d,1);
-  dim3 grid(size, size, 1);
+  dim3 grid(w, h, 1);
   full_backprop_downstream_deriv<<< grid, block>>>(d_down_deriv, d_current_ketp, d_up_deriv, d_weight, size, img_d);
 
-  cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*size*size*img_d, cudaMemcpyDeviceToHost);
+  cudaMemcpy(down_deriv, d_down_deriv, sizeof(double)*h*w*img_d, cudaMemcpyDeviceToHost);
   cudaFree(d_down_deriv);
   cudaFree(d_current_ketp);
   cudaFree(d_up_deriv);

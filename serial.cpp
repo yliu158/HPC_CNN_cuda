@@ -1282,7 +1282,7 @@ FullyConnectedLayer<IN_DIMS, N_NEURONS>::backprop(const Output &full_upstream_de
     //                         END SERIAL
     //=======================================================================
 
-    printf("IN_D%d  IN_W%d  IN_H%d\n", IN_D, IN_W, IN_H);
+    // printf("IN_D%d  IN_W%d  IN_H%d\n", IN_D, IN_W, IN_H); // 1, 64, 1
     full_backprop_downstream_device(d_down_deriv, (double*)&m_current_kept[0], (double*)&upstream_deriv[0], (double*)&m_weight[0][0][0][0], IN_H, IN_D, N_NEURONS);
     for (size_t i = 0; i < IN_D; i++) {
       for (size_t j = 0; j < IN_H; j++) {
