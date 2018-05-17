@@ -463,10 +463,10 @@ ConvolutionalLayer<IN_DIMS, N_FILTERS>::backprop(const Output &upstream_deriv, c
     printf("IN_H*IN_W*IN_D: %d    IN_H: %d  IN_W: %d  IN_D: %d\n", IN_H*IN_W*IN_D, IN_H, IN_W, IN_D);
 
     double* d_down_deriv = (double*)malloc(sizeof(double)*IN_H*IN_W*IN_D);
-    for (size_t i = 0; i < IN_D; i++) {
-      for (size_t j = 0; j < IN_H; j++) {
-        for (size_t k = 0; k < IN_W; k++) {
-          d_down_deriv[k+j*IN_W+ i*IN_W*IN_H] = this->downstream_deriv[i][j][k];
+    for (size_t i = 0; i < IN_D+4; i++) {
+      for (size_t j = 0; j < IN_H+4; j++) {
+        for (size_t k = 0; k < IN_W+4; k++) {
+          d_down_deriv[k+j*(IN_W+4)+ i*(IN_W+4)*(IN_H+4)] = this->downstream_deriv[i][j][k];
         }
       }
     }
